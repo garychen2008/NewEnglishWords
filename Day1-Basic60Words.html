@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>每日单词 · DAY 1</title>
+<title>基础必背 · DAY 1</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
@@ -52,8 +52,23 @@ body {
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
   box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+  margin-bottom: 14px;
 }
 #startScreen .start-btn:active { transform: scale(0.96); }
+#startScreen .start-btn.secondary {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  box-shadow: none;
+  padding: 16px 64px;
+  font-size: 20px;
+  border: 1.5px solid rgba(255,255,255,0.35);
+}
+#startScreen .btn-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
 
 /* ===== QUIZ SCREEN ===== */
 #quizScreen { display: none; }
@@ -153,6 +168,7 @@ body {
   text-align: center;
   min-height: 52px;
   border-left: 3px solid #667eea;
+  border-right: 3px solid #667eea;
 }
 .example-sentence .highlight-word {
   color: #667eea;
@@ -225,6 +241,99 @@ body {
   color: #fff;
 }
 .choice-btn.disabled { pointer-events: none; }
+
+.wordlist-btn {
+  background: #f0f0f5;
+  border: 1px solid #e0e0ea;
+  border-radius: 18px;
+  padding: 4px 14px;
+  font-size: 13px;
+  color: #667eea;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  font-weight: 600;
+  line-height: 1.6;
+}
+.wordlist-btn:hover { background: #e4e6f0; }
+.wordlist-btn:active { transform: scale(0.95); }
+
+/* ===== WORD LIST OVERLAY ===== */
+#wordlistOverlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #fff;
+  z-index: 1000;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+#wordlistOverlay.open { display: block; }
+.wordlist-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.wordlist-header span { font-size: 18px; font-weight: 700; }
+.wordlist-close {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: #fff;
+  font-size: 14px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+.wordlist-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: #f0f0f0;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.wordlist-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 14px;
+  background: #fff;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-size: 14px;
+  line-height: 1.3;
+}
+.wordlist-item:active { background: #e8edff; }
+.wordlist-item .wl-idx {
+  color: #bbb;
+  font-size: 11px;
+  min-width: 22px;
+  text-align: right;
+  flex-shrink: 0;
+}
+.wordlist-item .wl-word {
+  color: #333;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.wordlist-item .wl-mean {
+  color: #999;
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wordlist-item.current .wl-idx { color: #667eea; font-weight: 700; }
+.wordlist-item.current .wl-word { color: #667eea; }
+.wordlist-item.done { background: #f0f7f0; }
+.wordlist-item.done .wl-word { color: #4caf50; }
+.wordlist-item.done .wl-idx { color: #4caf50; }
 
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
@@ -420,7 +529,10 @@ body {
   <h1>📖 DAY 1</h1>
   <div class="subtitle">基础必背词汇</div>
   <div class="word-count">共 60 个词汇</div>
-  <button class="start-btn" onclick="startQuiz()">开始学习</button>
+  <div class="btn-group">
+    <button class="start-btn" onclick="startQuiz(true)">开始学习（乱序）</button>
+    <button class="start-btn secondary" onclick="startQuiz(false)">开始学习（顺序）</button>
+  </div>
 </div>
 
 <!-- ===== QUIZ SCREEN ===== -->
@@ -430,7 +542,10 @@ body {
     <div class="progress-bar-wrap">
       <div class="progress-bar-fill" id="progressFill"></div>
     </div>
-    <span class="progress-text" id="progressText">0/140</span>
+    <span style="display:flex;align-items:center;gap:8px;">
+      <span class="progress-text" id="progressText">0/60</span>
+      <button class="wordlist-btn" onclick="showWordList()">📋 浏览词汇列表</button>
+    </span>
   </div>
   <div class="quiz-body">
     <div class="word-display">
@@ -484,6 +599,15 @@ body {
       </button>
     </div>
   </div>
+</div>
+
+<!-- ===== WORD LIST OVERLAY ===== -->
+<div id="wordlistOverlay">
+  <div class="wordlist-header">
+    <span>📋 词汇列表</span>
+    <button class="wordlist-close" onclick="hideWordList()">关闭 ✕</button>
+  </div>
+  <div class="wordlist-grid" id="wordlistGrid"></div>
 </div>
 
 <!-- ===== COMPLETION SCREEN ===== -->
@@ -782,8 +906,12 @@ function getVisibleState() {
 // ============================================================
 // NAVIGATION
 // ============================================================
-function startQuiz() {
-  shuffled = shuffleArray([...WORDS]);
+function startQuiz(shuffleMode) {
+  if (shuffleMode) {
+    shuffled = shuffleArray([...WORDS]);
+  } else {
+    shuffled = [...WORDS];
+  }
   currentIndex = 0;
   showQuiz(currentIndex);
 }
@@ -807,6 +935,47 @@ function nextWord() {
 function showComplete() {
   getVisibleState();
   document.getElementById('completeScreen').style.display = 'flex';
+}
+
+// ============================================================
+// WORD LIST
+// ============================================================
+function showWordList() {
+  const overlay = document.getElementById('wordlistOverlay');
+  const grid = document.getElementById('wordlistGrid');
+  overlay.classList.add('open');
+
+  // Build grid from WORDS (original order)
+  grid.innerHTML = WORDS.map((w, i) => {
+    // Find this word in shuffled to check status
+    const shuffledIdx = shuffled.findIndex(s => s.word === w.word);
+    const isDone = shuffledIdx < currentIndex;
+    const isCurrent = shuffledIdx === currentIndex;
+
+    let cls = 'wordlist-item';
+    if (isCurrent) cls += ' current';
+    else if (isDone) cls += ' done';
+
+    const label = (i + 1).toString().padStart(2, '0');
+    return `<div class="${cls}" data-word="${w.word}" onclick="jumpToWord('${w.word.replace(/'/g, "\\'")}')">
+      <span class="wl-idx">${label}</span>
+      <span class="wl-word">${w.word}</span>
+      <span class="wl-mean">${w.meaning}</span>
+    </div>`;
+  }).join('');
+}
+
+function hideWordList() {
+  document.getElementById('wordlistOverlay').classList.remove('open');
+}
+
+function jumpToWord(word) {
+  const idx = shuffled.findIndex(w => w.word === word);
+  if (idx === -1) return;
+  currentIndex = idx;
+  hideWordList();
+  if (utterance && window.speechSynthesis) window.speechSynthesis.cancel();
+  showQuiz(currentIndex);
 }
 
 // ============================================================
