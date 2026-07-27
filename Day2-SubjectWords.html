@@ -22,7 +22,7 @@ body {
   min-height: 100vh;
   padding: 40px 24px;
   text-align: center;
-  background: linear-gradient(135deg, #311b92 0%, #1a0a3e 100%);
+  background: linear-gradient(135deg, #1b4332 0%, #0d2b1a 100%);
   color: #fff;
 }
 #startScreen h1 {
@@ -43,7 +43,7 @@ body {
 }
 #startScreen .start-btn {
   background: #fff;
-  color: #1a0a3e;
+  color: #0d2b1a;
   border: none;
   border-radius: 50px;
   padding: 16px 64px;
@@ -106,7 +106,7 @@ body {
 }
 .quiz-header .progress-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, #311b92, #1a0a3e);
+  background: linear-gradient(90deg, #1b4332, #0d2b1a);
   border-radius: 3px;
   transition: width 0.4s ease;
   width: 0%;
@@ -152,11 +152,11 @@ body {
   border-radius: 50%;
   cursor: pointer;
   transition: background 0.2s;
-  color: #311b92;
+  color: #1b4332;
   font-size: 18px;
 }
 .word-display .speaker-btn:active { background: #e0e0ea; }
-.word-display .speaker-btn.playing { background: #311b92; color: #fff; }
+.word-display .speaker-btn.playing { background: #1b4332; color: #fff; }
 .example-sentence {
   background: #f8f9ff;
   border-radius: 12px;
@@ -167,11 +167,11 @@ body {
   color: #555;
   text-align: center;
   min-height: 52px;
-  border-left: 3px solid #311b92;
-  border-right: 3px solid #311b92;
+  border-left: 3px solid #1b4332;
+  border-right: 3px solid #1b4332;
 }
 .example-sentence .highlight-word {
-  color: #311b92;
+  color: #1b4332;
   font-weight: 700;
 }
 .choices-title {
@@ -241,6 +241,15 @@ body {
   color: #fff;
 }
 .choice-btn.disabled { pointer-events: none; }
+/* Wrong-answer hint showing confused word */
+.choice-btn .wrong-hint {
+  font-size: 12px;
+  color: #c62828;
+  margin-top: 4px;
+  font-weight: 600;
+  text-align: right;
+  padding-right: 4px;
+}
 
 .wordlist-btn {
   background: #f0f0f5;
@@ -248,7 +257,7 @@ body {
   border-radius: 18px;
   padding: 4px 14px;
   font-size: 13px;
-  color: #311b92;
+  color: #1b4332;
   cursor: pointer;
   transition: all 0.2s;
   white-space: nowrap;
@@ -274,7 +283,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 16px 20px;
-  background: linear-gradient(135deg, #311b92, #1a0a3e);
+  background: linear-gradient(135deg, #1b4332, #0d2b1a);
   color: #fff;
   position: sticky;
   top: 0;
@@ -329,8 +338,8 @@ body {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.wordlist-item.current .wl-idx { color: #311b92; font-weight: 700; }
-.wordlist-item.current .wl-word { color: #311b92; }
+.wordlist-item.current .wl-idx { color: #1b4332; font-weight: 700; }
+.wordlist-item.current .wl-word { color: #1b4332; }
 .wordlist-item.done { background: #f0f7f0; }
 .wordlist-item.done .wl-word { color: #4caf50; }
 .wordlist-item.done .wl-idx { color: #4caf50; }
@@ -356,7 +365,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 16px 20px;
-  background: linear-gradient(135deg, #311b92, #1a0a3e);
+  background: linear-gradient(135deg, #1b4332, #0d2b1a);
   color: #fff;
 }
 .answer-header .back-btn {
@@ -450,7 +459,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: linear-gradient(135deg, #311b92, #1a0a3e);
+  background: linear-gradient(135deg, #1b4332, #0d2b1a);
   color: #fff;
   border: none;
   border-radius: 50px;
@@ -459,7 +468,7 @@ body {
   font-weight: 700;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 6px 20px rgba(49,27,146,0.4);
+  box-shadow: 0 6px 20px rgba(27,67,50,0.4);
 }
 .continue-btn:active { transform: scale(0.96); }
 .continue-btn .arrow { font-size: 22px; }
@@ -473,12 +482,15 @@ body {
   min-height: 100vh;
   padding: 40px 24px;
   text-align: center;
-  background: linear-gradient(135deg, #311b92 0%, #1a0a3e 100%);
+  background: linear-gradient(135deg, #1b4332 0%, #0d2b1a 100%);
   color: #fff;
 }
 #completeScreen .trophy { font-size: 72px; margin-bottom: 16px; }
 #completeScreen h1 { font-size: 32px; margin-bottom: 8px; }
 #completeScreen p { font-size: 16px; opacity: 0.85; margin-bottom: 32px; }
+#completeScreen .completion-quote { margin-top: 36px; text-align: center; line-height: 1.7; }
+#completeScreen .completion-quote .en { font-size: 18px; opacity: 0.85; margin-bottom: 4px; font-weight: 600; }
+#completeScreen .completion-quote .cn { font-size: 15px; opacity: 0.65; }
 
 /* ===== TOAST ===== */
 .toast {
@@ -513,8 +525,8 @@ body {
   display: inline-block;
   width: 16px;
   height: 16px;
-  border: 2px solid rgba(49,27,146,0.3);
-  border-top-color: #311b92;
+  border: 2px solid rgba(27,67,50,0.3);
+  border-top-color: #1b4332;
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
   vertical-align: middle;
@@ -615,7 +627,11 @@ body {
   <div class="trophy">🎉</div>
   <h1>DAY 2 完成！</h1>
   <p>恭喜你完成今天全部单词学习！<br>明天继续加油 💪</p>
-  <button class="start-btn" onclick="goHome()" style="background:#fff;color:#1a0a3e;border:none;border-radius:50px;padding:16px 56px;font-size:18px;font-weight:700;cursor:pointer;box-shadow:0 8px 25px rgba(0,0,0,0.2);">👍 太棒了</button>
+  <button class="start-btn" onclick="goHome()" style="background:#fff;color:#0d2b1a;border:none;border-radius:50px;padding:16px 56px;font-size:18px;font-weight:700;cursor:pointer;box-shadow:0 8px 25px rgba(0,0,0,0.2);">👍 太棒了</button>
+  <div class="completion-quote">
+    <div class="en">"Little by little, one travels far."</div>
+    <div class="cn">每日单词 · 积少成多</div>
+  </div>
 </div>
 
 <!-- ===== TOAST ===== -->
@@ -634,18 +650,18 @@ const WORDS = [
   {word:"proper fraction", phonetic:"/ˈprɒpə ˈfrækʃən/", meaning:"n. 真分数", type:"学科·数学"},
   {word:"improper fraction", phonetic:"/ɪmˈprɒpə ˈfrækʃən/", meaning:"n. 假分数", type:"学科·数学"},
   {word:"mixed number", phonetic:"/ˌmɪkst ˈnʌmbə(r)/", meaning:"n. 带分数", type:"学科·数学"},
-  {word:"decimal", phonetic:"/ˈdesɪməl/", meaning:"n./adj. 小数；十进制的", type:"学科·数学"},
-  {word:"percentage", phonetic:"/pəˈsentɪdʒ/", meaning:"n. 百分数；百分比", type:"学科·数学"},
+  {word:"decimal", phonetic:"/ˈdesɪməl/", meaning:"n./adj. 小数;十进制的", type:"学科·数学"},
+  {word:"percentage", phonetic:"/pəˈsentɪdʒ/", meaning:"n. 百分数;百分比", type:"学科·数学"},
   {word:"ratio", phonetic:"/ˈreɪʃiəʊ/", meaning:"n. 比", type:"学科·数学"},
   {word:"vector", phonetic:"/ˈvektə(r)/", meaning:"n. 矢量", type:"学科·物理"},
-  {word:"magnitude", phonetic:"/ˈmæɡnɪtjuːd/", meaning:"n. 大小；量值", type:"学科·物理"},
+  {word:"magnitude", phonetic:"/ˈmæɡnɪtjuːd/", meaning:"n. 大小;量值", type:"学科·物理"},
   {word:"direction", phonetic:"/dəˈrekʃən/", meaning:"n. 方向", type:"学科·物理"},
   {word:"accuracy", phonetic:"/ˈækjərəsi/", meaning:"n. 准确度", type:"学科·物理"},
   {word:"precision", phonetic:"/prɪˈsɪʒən/", meaning:"n. 精密度", type:"学科·物理"},
   {word:"uncertainty", phonetic:"/ʌnˈsɜːtənti/", meaning:"n. 不确定度", type:"学科·物理"},
   {word:"significant figure", phonetic:"/sɪɡˌnɪfɪkənt ˈfɪɡə(r)/", meaning:"n. 有效数字", type:"学科·物理"},
   {word:"decimal place", phonetic:"/ˈdesɪməl ˌpleɪs/", meaning:"n. 小数位", type:"学科·物理"},
-  {word:"standard form", phonetic:"/ˈstændəd ˌfɔːm/", meaning:"n. 标准式；科学记数法", type:"学科·物理"},
+  {word:"standard form", phonetic:"/ˈstændəd ˌfɔːm/", meaning:"n. 标准式;科学记数法", type:"学科·物理"},
   {word:"prefix", phonetic:"/ˈpriːfɪks/", meaning:"n. 单位前缀", type:"学科·物理"},
   {word:"producer", phonetic:"/prəˈdjuːsə(r)/", meaning:"n. 生产者/厂商", type:"学科·经济"},
   {word:"government", phonetic:"/ˈɡʌvənmənt/", meaning:"n. 政府", type:"学科·经济"},
@@ -926,21 +942,41 @@ function showQuiz(index) {
     sentEl.textContent = `"${word.word}" — ${word.meaning.replace(/^[nvadj]+\/\w+\.\s*/,'')}`;
   }
 
-  // Choices
+  // Choices — smarter: avoid duplicate meanings, include word for wrong hints
   const correct = word.meaning;
-  const wrongPool = WORDS.filter(w => w.meaning !== correct);
-  const wrongs = shuffleArray(wrongPool).slice(0, 3).map(w => w.meaning);
-  const choices = shuffleArray([correct, ...wrongs]);
+  const wrongPool = [];
+  const seenMeanings = new Set([correct]);
+  for (const w of WORDS) {
+    if (w.meaning !== correct && !seenMeanings.has(w.meaning)) {
+      seenMeanings.add(w.meaning);
+      wrongPool.push({meaning: w.meaning, word: w.word});
+    }
+  }
+  // Prefer confusable words (same starting letter, similar length)
+  const targetWord = word.word.toLowerCase();
+  const scored = wrongPool.map(item => {
+    let score = Math.random();
+    const ow = item.word.toLowerCase();
+    if (ow[0] === targetWord[0]) score += 3;
+    if (Math.abs(ow.length - targetWord.length) <= 2) score += 1;
+    for (let i = 0; i < Math.min(4, targetWord.length, ow.length); i++) {
+      if (targetWord[i] === ow[i]) score += 1;
+    }
+    return {item, score};
+  });
+  scored.sort((a, b) => b.score - a.score);
+  const wrongs = scored.slice(0, 3).map(s => s.item);
+  const choices = shuffleArray([{meaning: correct, word: word.word}, ...wrongs]);
   const labels = ['A', 'B', 'C', 'D'];
-
   const container = document.getElementById('choicesContainer');
   container.innerHTML = '';
   choices.forEach((choice, i) => {
     const btn = document.createElement('button');
     btn.className = 'choice-btn';
-    btn.innerHTML = `<span class="choice-label">${labels[i]}</span><span>${choice}</span>`;
-    btn.dataset.value = choice;
-    btn.dataset.correct = (choice === correct) ? '1' : '0';
+    btn.innerHTML = `<span class="choice-label">${labels[i]}</span><span>${choice.meaning}</span>`;
+    btn.dataset.value = choice.meaning;
+    btn.dataset.correct = (choice.meaning === correct) ? '1' : '0';
+    btn.dataset.choiceWord = choice.word;
     btn.onclick = () => handleChoice(btn, correct, word);
     container.appendChild(btn);
   });
@@ -956,19 +992,27 @@ function handleChoice(btn, correct, word) {
   const isCorrect = btn.dataset.correct === '1';
 
   if (isCorrect) {
-    // Correct! Disable all, show green, advance
     const allBtns = document.querySelectorAll('.choice-btn');
     allBtns.forEach(b => b.classList.add('disabled'));
     btn.classList.add('correct');
     showToast('✅ 回答正确！', 'success');
     setTimeout(() => showAnswer(word), 600);
   } else {
-    // Wrong — mark this button red and disable only this one
     btn.classList.add('wrong');
     btn.classList.add('disabled');
-    // Vibrate/shake the wrong button effect
     btn.style.animation = 'shake 0.3s ease';
     setTimeout(() => { btn.style.animation = ''; }, 300);
+    // Show which word this wrong meaning belongs to
+    const ww = btn.dataset.choiceWord || '';
+    const vm = btn.dataset.value;
+    let hint = btn.querySelector('.wrong-hint');
+    if (!hint) {
+      hint = document.createElement('div');
+      hint.className = 'wrong-hint';
+      btn.appendChild(hint);
+    }
+    hint.textContent = '→ ' + ww;
+    showToast('❌ ' + ww + ' = ' + vm, 'error');
   }
 }
 

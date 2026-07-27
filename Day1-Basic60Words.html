@@ -241,6 +241,15 @@ body {
   color: #fff;
 }
 .choice-btn.disabled { pointer-events: none; }
+/* Wrong-answer hint showing confused word */
+.choice-btn .wrong-hint {
+  font-size: 12px;
+  color: #c62828;
+  margin-top: 4px;
+  font-weight: 600;
+  text-align: right;
+  padding-right: 4px;
+}
 
 .wordlist-btn {
   background: #f0f0f5;
@@ -479,6 +488,9 @@ body {
 #completeScreen .trophy { font-size: 72px; margin-bottom: 16px; }
 #completeScreen h1 { font-size: 32px; margin-bottom: 8px; }
 #completeScreen p { font-size: 16px; opacity: 0.85; margin-bottom: 32px; }
+#completeScreen .completion-quote { margin-top: 36px; text-align: center; line-height: 1.7; }
+#completeScreen .completion-quote .en { font-size: 18px; opacity: 0.85; margin-bottom: 4px; font-weight: 600; }
+#completeScreen .completion-quote .cn { font-size: 15px; opacity: 0.65; }
 
 /* ===== TOAST ===== */
 .toast {
@@ -616,6 +628,10 @@ body {
   <h1>DAY 1 完成！</h1>
   <p>恭喜你完成今天全部单词学习！<br>明天继续加油 💪</p>
   <button class="start-btn" onclick="goHome()" style="background:#fff;color:#0d2b1a;border:none;border-radius:50px;padding:16px 56px;font-size:18px;font-weight:700;cursor:pointer;box-shadow:0 8px 25px rgba(0,0,0,0.2);">👍 太棒了</button>
+  <div class="completion-quote">
+    <div class="en">"Little by little, one travels far."</div>
+    <div class="cn">每日单词 · 积少成多</div>
+  </div>
 </div>
 
 <!-- ===== TOAST ===== -->
@@ -693,7 +709,7 @@ const WORDS = [
 // SENTENCE EXAMPLES (embedded for reliability)
 // ============================================================
 const SENTENCES = {
-  "fare":"The bus fare has increased to two dollars.",
+    "fare":"The bus fare has increased to two dollars.",
   "generous":"She is a generous person who always helps others.",
   "grow up":"I want to be a doctor when I grow up.",
   "dislike":"I dislike getting up early on cold mornings.",
@@ -709,7 +725,7 @@ const SENTENCES = {
   "kangaroo":"The kangaroo jumped across the field.",
   "jumper":"She wore a warm woolen jumper in winter.",
   "elevator":"Take the elevator to the tenth floor.",
-  "passport":"Don't forget your passport when traveling abroad.",
+  "passport":"Dont forget your passport when traveling abroad.",
   "chip":"Would you like some chips with your burger?",
   "ankle":"He twisted his ankle while playing basketball.",
   "disagree":"I disagree with your opinion on this matter.",
@@ -719,7 +735,7 @@ const SENTENCES = {
   "unit":"This unit covers the topic of grammar.",
   "disappear":"The magician made the coin disappear.",
   "dustbin":"Throw the empty bottle into the dustbin.",
-  "lock":"Don't forget to lock the door when you leave.",
+  "lock":"Dont forget to lock the door when you leave.",
   "decorate":"They decorate the house with lights at Christmas.",
   "boring":"The lecture was so boring that I almost fell asleep.",
   "classical":"My grandfather enjoys listening to classical music.",
@@ -747,17 +763,17 @@ const SENTENCES = {
   "choose":"Please choose a book from the shelf.",
   "hardware":"He works at a hardware store.",
   "expect":"I expect the package to arrive tomorrow.",
-  "act":"It's time to act on your plan.",
+  "act":"It is time to act on your plan.",
   "exhibition":"There is an art exhibition at the museum.",
   "attention":"Please pay attention to what I am saying.",
-  "discuss":"Let's discuss the problem after class.",
+  "discuss":"Lets discuss the problem after class.",
   "film":"We watched a film together last night.",
-  "bestseller":"Her novel became a bestseller within a week.",
+  "bestseller":"Her novel became a bestseller within a week."
 };
 
 const TRANSLATIONS = {
-  "fare":"公交车票价已经涨到了两美元。",
-  "generous":"她是个慷慨的人，总是帮助别人。",
+    "fare":"公交车票价已经涨到了两美元。",
+  "generous":"她是个慷慨的人,总是帮助别人。",
   "grow up":"我长大后想成为一名医生。",
   "dislike":"我不喜欢在寒冷的早晨早起。",
   "expedition":"他们去南极探险了。",
@@ -773,7 +789,7 @@ const TRANSLATIONS = {
   "jumper":"她冬天穿了一件温暖的羊毛衫。",
   "elevator":"乘电梯到十楼。",
   "passport":"出国旅行时别忘了带护照。",
-  "chip":"你想来点薯条配汉堡吗？",
+  "chip":"你想来点薯条配汉堡吗?",
   "ankle":"他打篮球时扭伤了脚踝。",
   "disagree":"我不同意你对这件事的看法。",
   "cliff":"汽车在悬崖边停了下来。",
@@ -784,7 +800,7 @@ const TRANSLATIONS = {
   "dustbin":"把空瓶子扔进垃圾桶。",
   "lock":"离开时别忘了锁门。",
   "decorate":"圣诞节他们用彩灯装饰房子。",
-  "boring":"讲座太无聊了，我差点睡着了。",
+  "boring":"讲座太无聊了,我差点睡着了。",
   "classical":"我爷爷喜欢听古典音乐。",
   "currency":"当地货币是美元。",
   "cushion":"她把一个柔软的垫子放在椅子上。",
@@ -794,11 +810,11 @@ const TRANSLATIONS = {
   "inspire":"他的演讲激励我更加努力。",
   "family":"我家每天晚上一起吃饭。",
   "blackboard":"老师把问题写在了黑板上。",
-  "small":"小猫太小了，跳不上椅子。",
+  "small":"小猫太小了,跳不上椅子。",
   "headphone":"她戴上耳机听音乐。",
   "famous":"这座城市以美丽的海滩闻名。",
   "ant":"蚂蚁把一块食物搬回巢穴。",
-  "explode":"如果你充气太多，气球会爆炸。",
+  "explode":"如果你充气太多,气球会爆炸。",
   "care":"她悉心照料她的宠物狗。",
   "officer":"警察帮助了迷路的孩子。",
   "sense":"狗有很强的嗅觉。",
@@ -819,7 +835,7 @@ const TRANSLATIONS = {
 };
 
 const PHRASES = {
-  "fare":["bus fare 公交车费","taxi fare 出租车费","air fare 机票费"],
+    "fare":["bus fare 公交车费","taxi fare 出租车费","air fare 机票费"],
   "generous":["generous offer 慷慨的提议","generous portion 大份","generous donation 慷慨捐赠"],
   "grow up":["grow up to be... 长大成为..."],
   "dislike":["dislike doing sth. 不喜欢做某事","take a dislike to 讨厌"],
@@ -853,7 +869,7 @@ const PHRASES = {
   "cushion":["cushion the blow 缓冲打击","seat cushion 坐垫"],
   "jug":["water jug 水壶","measuring jug 量杯"],
   "forgive":["forgive and forget 既往不咎","forgive me 请原谅"],
-  "build":["build up 建立；增强","build on 基于"],
+  "build":["build up 建立;增强","build on 基于"],
   "inspire":["inspire sb. to do 激励某人做某事","inspire confidence 激发信心"],
   "family":["family member 家庭成员","family business 家族企业","family reunion 家庭团聚"],
   "blackboard":["blackboard writing 板书","on the blackboard 在黑板上"],
@@ -1006,21 +1022,41 @@ function showQuiz(index) {
     sentEl.textContent = `"${word.word}" — ${word.meaning.replace(/^[nvadj]+\/\w+\.\s*/,'')}`;
   }
 
-  // Choices
+  // Choices — smarter: avoid duplicate meanings, include word for wrong hints
   const correct = word.meaning;
-  const wrongPool = WORDS.filter(w => w.meaning !== correct);
-  const wrongs = shuffleArray(wrongPool).slice(0, 3).map(w => w.meaning);
-  const choices = shuffleArray([correct, ...wrongs]);
+  const wrongPool = [];
+  const seenMeanings = new Set([correct]);
+  for (const w of WORDS) {
+    if (w.meaning !== correct && !seenMeanings.has(w.meaning)) {
+      seenMeanings.add(w.meaning);
+      wrongPool.push({meaning: w.meaning, word: w.word});
+    }
+  }
+  // Prefer confusable words (same starting letter, similar length)
+  const targetWord = word.word.toLowerCase();
+  const scored = wrongPool.map(item => {
+    let score = Math.random();
+    const ow = item.word.toLowerCase();
+    if (ow[0] === targetWord[0]) score += 3;
+    if (Math.abs(ow.length - targetWord.length) <= 2) score += 1;
+    for (let i = 0; i < Math.min(4, targetWord.length, ow.length); i++) {
+      if (targetWord[i] === ow[i]) score += 1;
+    }
+    return {item, score};
+  });
+  scored.sort((a, b) => b.score - a.score);
+  const wrongs = scored.slice(0, 3).map(s => s.item);
+  const choices = shuffleArray([{meaning: correct, word: word.word}, ...wrongs]);
   const labels = ['A', 'B', 'C', 'D'];
-
   const container = document.getElementById('choicesContainer');
   container.innerHTML = '';
   choices.forEach((choice, i) => {
     const btn = document.createElement('button');
     btn.className = 'choice-btn';
-    btn.innerHTML = `<span class="choice-label">${labels[i]}</span><span>${choice}</span>`;
-    btn.dataset.value = choice;
-    btn.dataset.correct = (choice === correct) ? '1' : '0';
+    btn.innerHTML = `<span class="choice-label">${labels[i]}</span><span>${choice.meaning}</span>`;
+    btn.dataset.value = choice.meaning;
+    btn.dataset.correct = (choice.meaning === correct) ? '1' : '0';
+    btn.dataset.choiceWord = choice.word;
     btn.onclick = () => handleChoice(btn, correct, word);
     container.appendChild(btn);
   });
@@ -1036,19 +1072,27 @@ function handleChoice(btn, correct, word) {
   const isCorrect = btn.dataset.correct === '1';
 
   if (isCorrect) {
-    // Correct! Disable all, show green, advance
     const allBtns = document.querySelectorAll('.choice-btn');
     allBtns.forEach(b => b.classList.add('disabled'));
     btn.classList.add('correct');
     showToast('✅ 回答正确！', 'success');
     setTimeout(() => showAnswer(word), 600);
   } else {
-    // Wrong — mark this button red and disable only this one
     btn.classList.add('wrong');
     btn.classList.add('disabled');
-    // Vibrate/shake the wrong button effect
     btn.style.animation = 'shake 0.3s ease';
     setTimeout(() => { btn.style.animation = ''; }, 300);
+    // Show which word this wrong meaning belongs to
+    const ww = btn.dataset.choiceWord || '';
+    const vm = btn.dataset.value;
+    let hint = btn.querySelector('.wrong-hint');
+    if (!hint) {
+      hint = document.createElement('div');
+      hint.className = 'wrong-hint';
+      btn.appendChild(hint);
+    }
+    hint.textContent = '→ ' + ww;
+    showToast('❌ ' + ww + ' = ' + vm, 'error');
   }
 }
 

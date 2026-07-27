@@ -22,7 +22,7 @@ body {
   min-height: 100vh;
   padding: 40px 24px;
   text-align: center;
-  background: linear-gradient(135deg, #d62828 0%, #9b2226 100%);
+  background: linear-gradient(135deg, #1b4332 0%, #0d2b1a 100%);
   color: #fff;
 }
 #startScreen h1 {
@@ -43,7 +43,7 @@ body {
 }
 #startScreen .start-btn {
   background: #fff;
-  color: #9b2226;
+  color: #0d2b1a;
   border: none;
   border-radius: 50px;
   padding: 16px 64px;
@@ -106,7 +106,7 @@ body {
 }
 .quiz-header .progress-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, #d62828, #9b2226);
+  background: linear-gradient(90deg, #1b4332, #0d2b1a);
   border-radius: 3px;
   transition: width 0.4s ease;
   width: 0%;
@@ -152,11 +152,11 @@ body {
   border-radius: 50%;
   cursor: pointer;
   transition: background 0.2s;
-  color: #d62828;
+  color: #1b4332;
   font-size: 18px;
 }
 .word-display .speaker-btn:active { background: #e0e0ea; }
-.word-display .speaker-btn.playing { background: #d62828; color: #fff; }
+.word-display .speaker-btn.playing { background: #1b4332; color: #fff; }
 .example-sentence {
   background: #f8f9ff;
   border-radius: 12px;
@@ -167,11 +167,11 @@ body {
   color: #555;
   text-align: center;
   min-height: 52px;
-  border-left: 3px solid #d62828;
-  border-right: 3px solid #d62828;
+  border-left: 3px solid #1b4332;
+  border-right: 3px solid #1b4332;
 }
 .example-sentence .highlight-word {
-  color: #d62828;
+  color: #1b4332;
   font-weight: 700;
 }
 .choices-title {
@@ -241,6 +241,15 @@ body {
   color: #fff;
 }
 .choice-btn.disabled { pointer-events: none; }
+/* Wrong-answer hint showing confused word */
+.choice-btn .wrong-hint {
+  font-size: 12px;
+  color: #c62828;
+  margin-top: 4px;
+  font-weight: 600;
+  text-align: right;
+  padding-right: 4px;
+}
 
 .wordlist-btn {
   background: #f0f0f5;
@@ -248,7 +257,7 @@ body {
   border-radius: 18px;
   padding: 4px 14px;
   font-size: 13px;
-  color: #d62828;
+  color: #1b4332;
   cursor: pointer;
   transition: all 0.2s;
   white-space: nowrap;
@@ -274,7 +283,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 16px 20px;
-  background: linear-gradient(135deg, #d62828, #9b2226);
+  background: linear-gradient(135deg, #1b4332, #0d2b1a);
   color: #fff;
   position: sticky;
   top: 0;
@@ -329,8 +338,8 @@ body {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.wordlist-item.current .wl-idx { color: #d62828; font-weight: 700; }
-.wordlist-item.current .wl-word { color: #d62828; }
+.wordlist-item.current .wl-idx { color: #1b4332; font-weight: 700; }
+.wordlist-item.current .wl-word { color: #1b4332; }
 .wordlist-item.done { background: #f0f7f0; }
 .wordlist-item.done .wl-word { color: #4caf50; }
 .wordlist-item.done .wl-idx { color: #4caf50; }
@@ -356,7 +365,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 16px 20px;
-  background: linear-gradient(135deg, #d62828, #9b2226);
+  background: linear-gradient(135deg, #1b4332, #0d2b1a);
   color: #fff;
 }
 .answer-header .back-btn {
@@ -450,7 +459,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: linear-gradient(135deg, #d62828, #9b2226);
+  background: linear-gradient(135deg, #1b4332, #0d2b1a);
   color: #fff;
   border: none;
   border-radius: 50px;
@@ -459,7 +468,7 @@ body {
   font-weight: 700;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 6px 20px rgba(214,40,40,0.4);
+  box-shadow: 0 6px 20px rgba(27,67,50,0.4);
 }
 .continue-btn:active { transform: scale(0.96); }
 .continue-btn .arrow { font-size: 22px; }
@@ -473,12 +482,15 @@ body {
   min-height: 100vh;
   padding: 40px 24px;
   text-align: center;
-  background: linear-gradient(135deg, #d62828 0%, #9b2226 100%);
+  background: linear-gradient(135deg, #1b4332 0%, #0d2b1a 100%);
   color: #fff;
 }
 #completeScreen .trophy { font-size: 72px; margin-bottom: 16px; }
 #completeScreen h1 { font-size: 32px; margin-bottom: 8px; }
 #completeScreen p { font-size: 16px; opacity: 0.85; margin-bottom: 32px; }
+#completeScreen .completion-quote { margin-top: 36px; text-align: center; line-height: 1.7; }
+#completeScreen .completion-quote .en { font-size: 18px; opacity: 0.85; margin-bottom: 4px; font-weight: 600; }
+#completeScreen .completion-quote .cn { font-size: 15px; opacity: 0.65; }
 
 /* ===== TOAST ===== */
 .toast {
@@ -513,8 +525,8 @@ body {
   display: inline-block;
   width: 16px;
   height: 16px;
-  border: 2px solid rgba(214,40,40,0.3);
-  border-top-color: #d62828;
+  border: 2px solid rgba(27,67,50,0.3);
+  border-top-color: #1b4332;
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
   vertical-align: middle;
@@ -527,7 +539,7 @@ body {
 <!-- ===== START SCREEN ===== -->
 <div id="startScreen">
   <h1>📖 DAY 2</h1>
-  <div class="subtitle">雅思词汇</div>
+  <div class="subtitle">基础必背词汇</div>
   <div class="word-count">共 40 个词汇</div>
   <div class="btn-group">
     <button class="start-btn" onclick="startQuiz(true)">开始学习（乱序）</button>
@@ -615,7 +627,11 @@ body {
   <div class="trophy">🎉</div>
   <h1>DAY 2 完成！</h1>
   <p>恭喜你完成今天全部单词学习！<br>明天继续加油 💪</p>
-  <button class="start-btn" onclick="goHome()" style="background:#fff;color:#9b2226;border:none;border-radius:50px;padding:16px 56px;font-size:18px;font-weight:700;cursor:pointer;box-shadow:0 8px 25px rgba(0,0,0,0.2);">👍 太棒了</button>
+  <button class="start-btn" onclick="goHome()" style="background:#fff;color:#0d2b1a;border:none;border-radius:50px;padding:16px 56px;font-size:18px;font-weight:700;cursor:pointer;box-shadow:0 8px 25px rgba(0,0,0,0.2);">👍 太棒了</button>
+  <div class="completion-quote">
+    <div class="en">"Little by little, one travels far."</div>
+    <div class="cn">每日单词 · 积少成多</div>
+  </div>
 </div>
 
 <!-- ===== TOAST ===== -->
@@ -716,46 +732,46 @@ const SENTENCES = {
 };
 
 const TRANSLATIONS = {
-    "cheque":"他用支票付了账单.",
+    "cheque":"他用支票付了账单。",
   "cash":"你身上带够现金了吗?",
-  "credit card":"我在网上用信用卡付款.",
-  "debit card":"你可以在这家店使用借记卡.",
-  "money transfer":"转账明天到账.",
-  "humid":"夏天天气又热又潮湿.",
-  "carpet":"客厅的地毯非常柔软.",
-  "sheet":"请每周更换床单.",
-  "pillow":"我需要一个更软的枕头才能睡好.",
-  "blanket":"她用一条温暖的毯子裹住自己.",
-  "towel":"他用干净的毛巾擦干手.",
-  "coffee table":"把杂志放在茶几上.",
-  "armchair":"他坐在扶手椅上看书.",
-  "kettle":"她用烧水壶烧水泡茶.",
-  "tap":"洗完手后关上水龙头.",
-  "sink":"在水槽里洗碗.",
-  "cupboard":"杯子在厨房的橱柜里.",
-  "bath":"她上床前泡了个热水澡.",
-  "toilet":"卫生间在走廊尽头.",
-  "stove":"她在炉灶上煮汤.",
-  "oven":"把蛋糕放进烤箱烤30分钟.",
-  "dishwasher":"把脏盘子放进洗碗机里.",
-  "washing machine":"洗衣机在地下室.",
-  "air-conditioner":"空调让房间保持凉爽.",
-  "microwave oven":"用微波炉加热食物.",
-  "radiator":"暖气片让房子冬天保持温暖.",
-  "satellite TV":"我们通过卫星电视看国际频道.",
-  "cable TV":"这套公寓包含有线电视.",
-  "decorate":"圣诞节他们用彩灯装饰房子.",
-  "curtain":"她拉上窗帘遮挡阳光.",
-  "itinerary":"请查看我们旅行的行程路线.",
-  "expedition":"他们去北极探险了.",
-  "excursion":"我们去附近的小岛短途游览.",
-  "guided tour":"博物馆提供有导游的参观服务.",
-  "backpacker":"这家旅馆很受背包客欢迎.",
-  "hitch-hike":"他试图搭便车穿越全国.",
-  "castle":"古老的城堡坐落在山顶上.",
-  "temple":"我们参观了一座美丽的佛教寺庙.",
-  "cathedral":"这座大教堂有500多年历史了.",
-  "art gallery":"美术馆上午10点开门."
+  "credit card":"我在网上用信用卡付款。",
+  "debit card":"你可以在这家店使用借记卡。",
+  "money transfer":"转账明天到账。",
+  "humid":"夏天天气又热又潮湿。",
+  "carpet":"客厅的地毯非常柔软。",
+  "sheet":"请每周更换床单。",
+  "pillow":"我需要一个更软的枕头才能睡好。",
+  "blanket":"她用一条温暖的毯子裹住自己。",
+  "towel":"他用干净的毛巾擦干手。",
+  "coffee table":"把杂志放在茶几上。",
+  "armchair":"他坐在扶手椅上看书。",
+  "kettle":"她用烧水壶烧水泡茶。",
+  "tap":"洗完手后关上水龙头。",
+  "sink":"在水槽里洗碗。",
+  "cupboard":"杯子在厨房的橱柜里。",
+  "bath":"她上床前泡了个热水澡。",
+  "toilet":"卫生间在走廊尽头。",
+  "stove":"她在炉灶上煮汤。",
+  "oven":"把蛋糕放进烤箱烤30分钟。",
+  "dishwasher":"把脏盘子放进洗碗机里。",
+  "washing machine":"洗衣机在地下室。",
+  "air-conditioner":"空调让房间保持凉爽。",
+  "microwave oven":"用微波炉加热食物。",
+  "radiator":"暖气片让房子冬天保持温暖。",
+  "satellite TV":"我们通过卫星电视看国际频道。",
+  "cable TV":"这套公寓包含有线电视。",
+  "decorate":"圣诞节他们用彩灯装饰房子。",
+  "curtain":"她拉上窗帘遮挡阳光。",
+  "itinerary":"请查看我们旅行的行程路线。",
+  "expedition":"他们去北极探险了。",
+  "excursion":"我们去附近的小岛短途游览。",
+  "guided tour":"博物馆提供有导游的参观服务。",
+  "backpacker":"这家旅馆很受背包客欢迎。",
+  "hitch-hike":"他试图搭便车穿越全国。",
+  "castle":"古老的城堡坐落在山顶上。",
+  "temple":"我们参观了一座美丽的佛教寺庙。",
+  "cathedral":"这座大教堂有500多年历史了。",
+  "art gallery":"美术馆上午10点开门。"
 };
 
 const PHRASES = {
@@ -926,21 +942,41 @@ function showQuiz(index) {
     sentEl.textContent = `"${word.word}" — ${word.meaning.replace(/^[nvadj]+\/\w+\.\s*/,'')}`;
   }
 
-  // Choices
+  // Choices — smarter: avoid duplicate meanings, include word for wrong hints
   const correct = word.meaning;
-  const wrongPool = WORDS.filter(w => w.meaning !== correct);
-  const wrongs = shuffleArray(wrongPool).slice(0, 3).map(w => w.meaning);
-  const choices = shuffleArray([correct, ...wrongs]);
+  const wrongPool = [];
+  const seenMeanings = new Set([correct]);
+  for (const w of WORDS) {
+    if (w.meaning !== correct && !seenMeanings.has(w.meaning)) {
+      seenMeanings.add(w.meaning);
+      wrongPool.push({meaning: w.meaning, word: w.word});
+    }
+  }
+  // Prefer confusable words (same starting letter, similar length)
+  const targetWord = word.word.toLowerCase();
+  const scored = wrongPool.map(item => {
+    let score = Math.random();
+    const ow = item.word.toLowerCase();
+    if (ow[0] === targetWord[0]) score += 3;
+    if (Math.abs(ow.length - targetWord.length) <= 2) score += 1;
+    for (let i = 0; i < Math.min(4, targetWord.length, ow.length); i++) {
+      if (targetWord[i] === ow[i]) score += 1;
+    }
+    return {item, score};
+  });
+  scored.sort((a, b) => b.score - a.score);
+  const wrongs = scored.slice(0, 3).map(s => s.item);
+  const choices = shuffleArray([{meaning: correct, word: word.word}, ...wrongs]);
   const labels = ['A', 'B', 'C', 'D'];
-
   const container = document.getElementById('choicesContainer');
   container.innerHTML = '';
   choices.forEach((choice, i) => {
     const btn = document.createElement('button');
     btn.className = 'choice-btn';
-    btn.innerHTML = `<span class="choice-label">${labels[i]}</span><span>${choice}</span>`;
-    btn.dataset.value = choice;
-    btn.dataset.correct = (choice === correct) ? '1' : '0';
+    btn.innerHTML = `<span class="choice-label">${labels[i]}</span><span>${choice.meaning}</span>`;
+    btn.dataset.value = choice.meaning;
+    btn.dataset.correct = (choice.meaning === correct) ? '1' : '0';
+    btn.dataset.choiceWord = choice.word;
     btn.onclick = () => handleChoice(btn, correct, word);
     container.appendChild(btn);
   });
@@ -956,19 +992,27 @@ function handleChoice(btn, correct, word) {
   const isCorrect = btn.dataset.correct === '1';
 
   if (isCorrect) {
-    // Correct! Disable all, show green, advance
     const allBtns = document.querySelectorAll('.choice-btn');
     allBtns.forEach(b => b.classList.add('disabled'));
     btn.classList.add('correct');
     showToast('✅ 回答正确！', 'success');
     setTimeout(() => showAnswer(word), 600);
   } else {
-    // Wrong — mark this button red and disable only this one
     btn.classList.add('wrong');
     btn.classList.add('disabled');
-    // Vibrate/shake the wrong button effect
     btn.style.animation = 'shake 0.3s ease';
     setTimeout(() => { btn.style.animation = ''; }, 300);
+    // Show which word this wrong meaning belongs to
+    const ww = btn.dataset.choiceWord || '';
+    const vm = btn.dataset.value;
+    let hint = btn.querySelector('.wrong-hint');
+    if (!hint) {
+      hint = document.createElement('div');
+      hint.className = 'wrong-hint';
+      btn.appendChild(hint);
+    }
+    hint.textContent = '→ ' + ww;
+    showToast('❌ ' + ww + ' = ' + vm, 'error');
   }
 }
 
