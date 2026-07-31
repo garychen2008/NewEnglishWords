@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>词测 · DAY 1 · 基础</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", Roboto, "Helvetica Neue", sans-serif;
+  background: #f5f7fb;
+  color: #1a1a2e;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+/* ===== MODE SELECT ===== */
+#modeScreen {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 100vh; padding: 40px 24px; text-align: center;
+  background: linear-gradient(135deg, #1b4332 0%, #0d2b1a 100%);
+  color: #fff;
+}
+#modeScreen h1 { font-size: 40px; font-weight: 800; margin-bottom: 8px; }
+#modeScreen .subtitle { font-size: 18px; opacity: 0.9; margin-bottom: 8px; }
+#modeScreen .word-count { font-size: 14px; opacity: 0.7; margin-bottom: 44px; }
+#modeScreen .start-btn {
+  background: #fff; color: #1b4332; border: none; border-radius: 50px;
+  padding: 16px 48px; font-size: 18px; font-weight: 700; cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2); margin-bottom: 14px; width: 260px;
+}
+#modeScreen .start-btn:active { transform: scale(0.96); }
+#modeScreen .start-btn.secondary {
+  background: rgba(255,255,255,0.15); color: #fff; box-shadow: none;
+  border: 1.5px solid rgba(255,255,255,0.35);
+}
+#modeScreen .btn-group { display: flex; flex-direction: column; align-items: center; }
+#modeScreen .mode-hint { font-size: 13px; opacity: 0.7; margin-top: 20px; line-height: 1.7; }
+
+/* ===== QUIZ ===== */
+#quizScreen { display: none; }
+.exam-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px; background: #fff; border-bottom: 1px solid #eee;
+  position: sticky; top: 0; z-index: 10;
+}
+.exam-header .back-btn { background: none; border: none; font-size: 22px; color: #666; cursor: pointer; padding: 4px 8px; }
+.exam-header .progress-bar-wrap { flex: 1; height: 6px; background: #eee; border-radius: 3px; margin: 0 12px; overflow: hidden; }
+.exam-header .progress-bar-fill { height: 100%; background: linear-gradient(90deg, #1b4332, #0d2b1a); border-radius: 3px; transition: width 0.4s ease; width: 0%; }
+.exam-header .progress-text { font-size: 13px; color: #999; font-weight: 500; white-space: nowrap; }
+.exam-body { padding: 28px 22px; max-width: 480px; margin: 0 auto; }
+
+/* Listen section */
+.listen-section { text-align: center; }
+.listen-section .speaker-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 72px; height: 72px; border: none; border-radius: 50%;
+  background: #f0f0f5; cursor: pointer; transition: background 0.2s;
+  color: #1b4332; font-size: 34px; margin-bottom: 18px;
+}
+.listen-section .speaker-btn.playing { background: #1b4332; color: #fff; }
+.choices-title { font-size: 14px; color: #aaa; margin-bottom: 12px; letter-spacing: 1px; }
+.choices-grid { display: flex; flex-direction: column; gap: 12px; }
+.choice-btn {
+  display: flex; align-items: center; gap: 14px; width: 100%;
+  padding: 16px 20px; background: #fff; border: 2px solid #e8e8f0;
+  border-radius: 14px; font-size: 17px; color: #333; cursor: pointer;
+  transition: all 0.2s; text-align: left;
+}
+.choice-btn .choice-label {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: 50%; background: #f0f0f5;
+  font-size: 13px; font-weight: 700; color: #888; flex-shrink: 0;
+}
+.choice-btn:active { transform: scale(0.98); }
+.choice-btn.correct { border-color: #4caf50; background: #e8f5e9; }
+.choice-btn.correct .choice-label { background: #4caf50; color: #fff; }
+.choice-btn.wrong { border-color: #f44336; background: #ffebee; }
+.choice-btn.wrong .choice-label { background: #f44336; color: #fff; }
+.choice-btn.reveal-correct { border-color: #4caf50; background: #e8f5e9; }
+.choice-btn.reveal-correct .choice-label { background: #4caf50; color: #fff; }
+.choice-btn.disabled { pointer-events: none; }
+
+/* Spell section */
+.spell-section { text-align: center; padding-top: 20px; }
+.spell-section .phonetic {
+  font-size: 22px; color: #888; font-family: "Times New Roman", serif; margin-bottom: 12px;
+}
+.spell-section .chinese-mean {
+  font-size: 24px; color: #333; font-weight: 700; margin-bottom: 32px;
+  padding: 10px 24px; background: #f0f4ff; border-radius: 10px; display: inline-block;
+}
+.spell-section .answer-input {
+  width: 100%; padding: 16px 20px; font-size: 22px; text-align: center;
+  border: 2px solid #d0d0e0; border-radius: 14px; outline: none;
+  color: #1a1a2e; letter-spacing: 1px; margin-bottom: 16px;
+  background: #fff;
+}
+.spell-section .answer-input:focus { border-color: #1b4332; }
+.submit-btn {
+  width: 100%; padding: 15px; border: none; border-radius: 14px;
+  background: linear-gradient(135deg, #1b4332, #0d2b1a); color: #fff;
+  font-size: 18px; font-weight: 700; cursor: pointer; transition: transform 0.2s;
+}
+.submit-btn:active { transform: scale(0.97); }
+
+/* ===== LEARN SCREEN ===== */
+#learnScreen { display: none; }
+.learn-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px; background: linear-gradient(135deg, #1b4332, #0d2b1a); color: #fff;
+}
+.learn-header span { font-size: 16px; font-weight: 700; }
+.learn-header .back-btn {
+  background: rgba(255,255,255,0.2); border: none; color: #fff;
+  font-size: 13px; padding: 6px 12px; border-radius: 20px; cursor: pointer;
+}
+.learn-body { padding: 24px; max-width: 480px; margin: 0 auto; }
+.learn-word-section {
+  text-align: center; margin-bottom: 20px; padding: 28px 20px 20px;
+  background: #fff; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.learn-word-section .word { font-size: 34px; font-weight: 800; color: #1a1a2e; margin-bottom: 6px; }
+.learn-word-section .phonetic { font-size: 17px; color: #888; font-family: "Times New Roman", serif; margin-bottom: 4px; }
+.learn-word-section .speaker-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border: none; background: #f0f0f5;
+  border-radius: 50%; cursor: pointer; color: #1b4332; font-size: 17px;
+  margin-top: 6px; vertical-align: middle;
+}
+.learn-word-section .chinese-mean {
+  font-size: 20px; color: #333; font-weight: 600; margin-top: 8px;
+  padding: 8px 20px; background: #f0f4ff; border-radius: 8px; display: inline-block;
+}
+.learn-card { background: #fff; border-radius: 16px; padding: 18px; margin-bottom: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+.learn-card .card-label { font-size: 12px; color: #aaa; letter-spacing: 1px; margin-bottom: 8px; }
+.learn-card .en-sentence { font-size: 16px; line-height: 1.6; color: #333; margin-bottom: 4px; }
+.learn-card .cn-translation { font-size: 15px; color: #888; line-height: 1.5; }
+.learn-card .phrase-item { font-size: 14px; color: #555; line-height: 1.7; padding: 3px 0; }
+.learn-card .phrase-item .phrase-en { font-weight: 600; }
+.continue-btn-wrap { text-align: center; padding: 12px 0 40px; }
+.continue-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: linear-gradient(135deg, #1b4332, #0d2b1a); color: #fff; border: none;
+  border-radius: 50px; padding: 16px 52px; font-size: 18px; font-weight: 700;
+  cursor: pointer; transition: transform 0.2s; box-shadow: 0 6px 20px rgba(27,67,50,0.4);
+}
+.continue-btn:active { transform: scale(0.96); }
+
+/* ===== RESULT ===== */
+#resultScreen {
+  display: none; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 100vh; padding: 40px 24px; text-align: center;
+  background: linear-gradient(135deg, #1b4332 0%, #0d2b1a 100%); color: #fff;
+}
+#resultScreen .trophy { font-size: 68px; margin-bottom: 14px; }
+#resultScreen h1 { font-size: 30px; margin-bottom: 10px; }
+#resultScreen .result-stats { font-size: 18px; opacity: 0.95; margin-bottom: 8px; line-height: 1.8; }
+#resultScreen .result-score { font-size: 52px; font-weight: 800; margin: 10px 0 6px; }
+#resultScreen .result-level { font-size: 16px; opacity: 0.85; margin-bottom: 30px; }
+#resultScreen .restart-btn {
+  background: #fff; color: #1b4332; border: none; border-radius: 50px;
+  padding: 15px 50px; font-size: 18px; font-weight: 700; cursor: pointer;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2); margin-bottom: 12px;
+}
+#resultScreen .home-btn {
+  background: rgba(255,255,255,0.15); color: #fff; border: 1.5px solid rgba(255,255,255,0.35);
+  border-radius: 50px; padding: 13px 44px; font-size: 15px; font-weight: 600; cursor: pointer;
+}
+#resultScreen .completion-quote { margin-top: 34px; line-height: 1.7; }
+#resultScreen .completion-quote .en { font-size: 17px; opacity: 0.85; font-weight: 600; }
+#resultScreen .completion-quote .cn { font-size: 14px; opacity: 0.6; margin-top: 4px; }
+
+/* ===== TOAST ===== */
+.toast {
+  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px);
+  padding: 12px 24px; border-radius: 50px; font-size: 15px; font-weight: 600;
+  opacity: 0; transition: all 0.3s; z-index: 100; pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.success { background: #4caf50; color: #fff; }
+.toast.error { background: #f44336; color: #fff; }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+@media (max-width: 420px) {
+  .learn-word-section .word { font-size: 28px; }
+  .spell-section .chinese-mean { font-size: 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== MODE SELECT ===== -->
+<div id="modeScreen">
+  <h1>📝 DAY 1 词测</h1>
+  <div class="subtitle">基础词汇</div>
+  <div class="word-count">共 60 词</div>
+  <div class="btn-group">
+    <button class="start-btn" onclick="startExam('listen')">🎧 听音选词</button>
+    <button class="start-btn secondary" onclick="startExam('spell')">✍️ 拼写单词</button>
+  </div>
+  <div class="mode-hint">
+    🎧 听音选词：听单词发音，从 4 个中文释义中选正确答案<br>
+    ✍️ 拼写单词：看音标与中文释义，拼写对应英文单词
+  </div>
+</div>
+
+<!-- ===== QUIZ ===== -->
+<div id="quizScreen">
+  <div class="exam-header">
+    <button class="back-btn" onclick="goHome()">✕</button>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressFill"></div></div>
+    <span class="progress-text" id="progressText">0/60</span>
+  </div>
+  <div class="exam-body">
+    <!-- Listen mode -->
+    <div class="listen-section" id="listenSection" style="display:none;">
+      <button class="speaker-btn" id="speakerBtn" onclick="playWordAudioOnce()">🔊</button>
+      <div class="choices-title">— 听发音，选择正确的中文释义 —</div>
+      <div class="choices-grid" id="choicesContainer"></div>
+    </div>
+    <!-- Spell mode -->
+    <div class="spell-section" id="spellSection" style="display:none;">
+      <div class="phonetic" id="quizPhonetic"></div>
+      <div class="chinese-mean" id="quizMeaning"></div>
+      <input type="text" class="answer-input" id="answerInput" placeholder="输入单词..." autocomplete="off" autocapitalize="off" spellcheck="false">
+      <button class="submit-btn" onclick="checkAnswer()">提交</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LEARN (wrong answer) ===== -->
+<div id="learnScreen">
+  <div class="learn-header">
+    <span>📖 重新学习</span>
+    <button class="back-btn" onclick="goHome()">返回</button>
+  </div>
+  <div class="learn-body">
+    <div class="learn-word-section">
+      <div class="word" id="learnWord"></div>
+      <div class="phonetic" id="learnPhonetic"></div>
+      <button class="speaker-btn" onclick="playWordAudioOnce(document.getElementById('learnWord').textContent)">🔊</button>
+      <div class="chinese-mean" id="learnMeaning"></div>
+    </div>
+    <div class="learn-card">
+      <div class="card-label">📝 英文例句</div>
+      <div class="en-sentence" id="learnExampleEn"></div>
+    </div>
+    <div class="learn-card">
+      <div class="card-label">🌏 中文翻译</div>
+      <div class="cn-translation" id="learnExampleCn"></div>
+    </div>
+    <div class="learn-card" id="learnPhrasesCard" style="display:none;">
+      <div class="card-label">🔗 常用搭配</div>
+      <div id="learnPhrases"></div>
+    </div>
+    <div class="continue-btn-wrap">
+      <button class="continue-btn" onclick="nextQuestion()">继续 <span>→</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== RESULT ===== -->
+<div id="resultScreen">
+  <div class="trophy">🎉</div>
+  <h1>测试完成！</h1>
+  <div class="result-stats">答对 <b id="resultCorrect">0</b> / <b id="resultTotal">0</b> 题</div>
+  <div class="result-score" id="resultScore">0</div>
+  <div class="result-level" id="resultLevel"></div>
+  <button class="restart-btn" onclick="goModeSelect()">🔄 再测一次</button>
+  <button class="home-btn" onclick="goHome()">返回词测主页</button>
+  <div class="completion-quote">
+    <div class="en">"Little by little, one travels far."</div>
+    <div class="cn">每日单词 · 积少成多</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const WORDS = [
+// ---- 基础必背词汇 (1-60) ----
+  {word:"fare", phonetic:"/feə(r)/", meaning:"n. 车费；票价", type:"基础必背"},
+  {word:"generous", phonetic:"/ˈdʒenərəs/", meaning:"adj. 慷慨的；大方的", type:"基础必背"},
+  {word:"grow up", phonetic:"/ɡrəʊ ʌp/", meaning:"长大成人", type:"基础必背"},
+  {word:"dislike", phonetic:"/dɪsˈlaɪk/", meaning:"v. 讨厌", type:"基础必背"},
+  {word:"expedition", phonetic:"/ˌekspəˈdɪʃn/", meaning:"n. 探险", type:"基础必背"},
+  {word:"appear", phonetic:"/əˈpɪə(r)/", meaning:"v. 出现", type:"基础必背"},
+  {word:"basin", phonetic:"/ˈbeɪsn/", meaning:"n. 盆", type:"基础必背"},
+  {word:"backwards", phonetic:"/ˈbækwədz/", meaning:"adv. 向后", type:"基础必背"},
+  {word:"south", phonetic:"/saʊθ/", meaning:"n. 南方", type:"基础必背"},
+  {word:"addition", phonetic:"/əˈdɪʃn/", meaning:"n. 增加", type:"基础必背"},
+  {word:"cosy", phonetic:"/ˈkəʊzi/", meaning:"adj. 舒适温馨的", type:"基础必背"},
+  {word:"ending", phonetic:"/ˈendɪŋ/", meaning:"n. 结局；结尾", type:"基础必背"},
+  {word:"licence", phonetic:"/ˈlaɪsns/", meaning:"n. 执照", type:"基础必背"},
+  {word:"kangaroo", phonetic:"/ˌkæŋɡəˈruː/", meaning:"n. 袋鼠", type:"基础必背"},
+  {word:"jumper", phonetic:"/ˈdʒʌmpə(r)/", meaning:"n. 针织套衫；毛衣", type:"基础必背"},
+  {word:"elevator", phonetic:"/ˈelɪveɪtə(r)/", meaning:"n.（美）电梯", type:"基础必背"},
+  {word:"passport", phonetic:"/ˈpɑːspɔːt/", meaning:"n. 护照", type:"基础必背"},
+  {word:"chip", phonetic:"/tʃɪp/", meaning:"n. 薯条；芯片", type:"基础必背"},
+  {word:"ankle", phonetic:"/ˈæŋkl/", meaning:"n. 脚踝", type:"基础必背"},
+  {word:"disagree", phonetic:"/ˌdɪsəˈɡriː/", meaning:"v. 不同意", type:"基础必背"},
+  {word:"cliff", phonetic:"/klɪf/", meaning:"n. 悬崖", type:"基础必背"},
+  {word:"alarm", phonetic:"/əˈlɑːm/", meaning:"n. 警报", type:"基础必背"},
+  {word:"bedroom", phonetic:"/ˈbedruːm/", meaning:"n. 卧室", type:"基础必背"},
+  {word:"unit", phonetic:"/ˈjuːnɪt/", meaning:"n. 单元；部件", type:"基础必背"},
+  {word:"disappear", phonetic:"/ˌdɪsəˈpɪə(r)/", meaning:"v. 消失", type:"基础必背"},
+  {word:"dustbin", phonetic:"/ˈdʌstbɪn/", meaning:"n.（英）垃圾桶", type:"基础必背"},
+  {word:"lock", phonetic:"/lɒk/", meaning:"n./v. 锁；上锁", type:"基础必背"},
+  {word:"decorate", phonetic:"/ˈdekəreɪt/", meaning:"v. 装饰", type:"基础必背"},
+  {word:"boring", phonetic:"/ˈbɔːrɪŋ/", meaning:"adj. 乏味的", type:"基础必背"},
+  {word:"classical", phonetic:"/ˈklæsɪkl/", meaning:"adj. 古典的", type:"基础必背"},
+  {word:"currency", phonetic:"/ˈkʌrənsi/", meaning:"n. 货币", type:"基础必背"},
+  {word:"cushion", phonetic:"/ˈkʊʃn/", meaning:"n. 坐垫", type:"基础必背"},
+  {word:"jug", phonetic:"/dʒʌɡ/", meaning:"n. 水壶；壶", type:"基础必背"},
+  {word:"forgive", phonetic:"/fəˈɡɪv/", meaning:"v. 原谅", type:"基础必背"},
+  {word:"build", phonetic:"/bɪld/", meaning:"v. 建造", type:"基础必背"},
+  {word:"inspire", phonetic:"/ɪnˈspaɪə(r)/", meaning:"v. 激励；鼓舞", type:"基础必背"},
+  {word:"family", phonetic:"/ˈfæməli/", meaning:"n. 家庭；家人", type:"基础必背"},
+  {word:"blackboard", phonetic:"/ˈblækbɔːd/", meaning:"n. 黑板", type:"基础必背"},
+  {word:"small", phonetic:"/smɔːl/", meaning:"adj. 小", type:"基础必背"},
+  {word:"headphone", phonetic:"/ˈhedfəʊn/", meaning:"n. 耳机", type:"基础必背"},
+  {word:"famous", phonetic:"/ˈfeɪməs/", meaning:"adj. 著名的", type:"基础必背"},
+  {word:"ant", phonetic:"/ænt/", meaning:"n. 蚂蚁", type:"基础必背"},
+  {word:"explode", phonetic:"/ɪkˈspləʊd/", meaning:"v. 爆炸", type:"基础必背"},
+  {word:"care", phonetic:"/keə(r)/", meaning:"n./v. 关心；照料", type:"基础必背"},
+  {word:"officer", phonetic:"/ˈɒfɪsə(r)/", meaning:"n. 官员；职员", type:"基础必背"},
+  {word:"sense", phonetic:"/sens/", meaning:"n. 感觉", type:"基础必背"},
+  {word:"pull", phonetic:"/pʊl/", meaning:"v. 拉", type:"基础必背"},
+  {word:"following", phonetic:"/ˈfɒləʊɪŋ/", meaning:"adj. 接下来的", type:"基础必背"},
+  {word:"homework", phonetic:"/ˈhəʊmwɜːk/", meaning:"n. 家庭作业", type:"基础必背"},
+  {word:"hairdryer", phonetic:"/ˈheədraɪə(r)/", meaning:"n. 吹风机", type:"基础必背"},
+  {word:"action", phonetic:"/ˈækʃn/", meaning:"n. 行动", type:"基础必背"},
+  {word:"choose", phonetic:"/tʃuːz/", meaning:"v. 挑选", type:"基础必背"},
+  {word:"hardware", phonetic:"/ˈhɑːdweə(r)/", meaning:"n. 五金；硬件", type:"基础必背"},
+  {word:"expect", phonetic:"/ɪkˈspekt/", meaning:"v. 期待；预料", type:"基础必背"},
+  {word:"act", phonetic:"/ækt/", meaning:"v./n. 行动；一幕", type:"基础必背"},
+  {word:"exhibition", phonetic:"/ˌeksɪˈbɪʃn/", meaning:"n. 展览", type:"基础必背"},
+  {word:"attention", phonetic:"/əˈtenʃn/", meaning:"n. 注意力", type:"基础必背"},
+  {word:"discuss", phonetic:"/dɪˈskʌs/", meaning:"v. 讨论", type:"基础必背"},
+  {word:"film", phonetic:"/fɪlm/", meaning:"n./v. 电影；拍摄", type:"基础必背"},
+  {word:"bestseller", phonetic:"/ˌbestˈselə(r)/", meaning:"n. 畅销书", type:"基础必背"}
+];
+
+const SENTENCES = {
+"fare":"The bus fare has increased to two dollars.",
+  "generous":"She is a generous person who always helps others.",
+  "grow up":"I want to be a doctor when I grow up.",
+  "dislike":"I dislike getting up early on cold mornings.",
+  "expedition":"They went on an expedition to the South Pole.",
+  "appear":"The sun began to appear from behind the clouds.",
+  "basin":"She filled the basin with warm water.",
+  "backwards":"He took a step backwards to avoid the puddle.",
+  "south":"Birds fly south for the winter.",
+  "addition":"The addition of sugar makes the cake sweeter.",
+  "cosy":"The small room felt warm and cosy.",
+  "ending":"I love movies with a happy ending.",
+  "licence":"You need a driving licence to drive a car.",
+  "kangaroo":"The kangaroo jumped across the field.",
+  "jumper":"She wore a warm woolen jumper in winter.",
+  "elevator":"Take the elevator to the tenth floor.",
+  "passport":"Dont forget your passport when traveling abroad.",
+  "chip":"Would you like some chips with your burger?",
+  "ankle":"He twisted his ankle while playing basketball.",
+  "disagree":"I disagree with your opinion on this matter.",
+  "cliff":"The car stopped just before the edge of the cliff.",
+  "alarm":"The fire alarm went off in the middle of the night.",
+  "bedroom":"She decorated her bedroom with posters.",
+  "unit":"This unit covers the topic of grammar.",
+  "disappear":"The magician made the coin disappear.",
+  "dustbin":"Throw the empty bottle into the dustbin.",
+  "lock":"Dont forget to lock the door when you leave.",
+  "decorate":"They decorate the house with lights at Christmas.",
+  "boring":"The lecture was so boring that I almost fell asleep.",
+  "classical":"My grandfather enjoys listening to classical music.",
+  "currency":"The local currency is the dollar.",
+  "cushion":"She placed a soft cushion on the chair.",
+  "jug":"He poured water from the jug into a glass.",
+  "forgive":"Please forgive me for being late.",
+  "build":"They plan to build a new school in the area.",
+  "inspire":"His speech inspired me to work harder.",
+  "family":"My family has dinner together every evening.",
+  "blackboard":"The teacher wrote the question on the blackboard.",
+  "small":"The kitten was too small to jump onto the chair.",
+  "headphone":"She put on her headphones and listened to music.",
+  "famous":"The city is famous for its beautiful beaches.",
+  "ant":"The ant carried a piece of food back to its nest.",
+  "explode":"The balloon will explode if you fill it too much.",
+  "care":"She takes good care of her pet dog.",
+  "officer":"The police officer helped the lost child.",
+  "sense":"Dogs have a strong sense of smell.",
+  "pull":"Please pull the door to open it.",
+  "following":"Please read the following instructions carefully.",
+  "homework":"I finished my homework before dinner.",
+  "hairdryer":"She used a hairdryer to dry her hair.",
+  "action":"We need to take action immediately.",
+  "choose":"Please choose a book from the shelf.",
+  "hardware":"He works at a hardware store.",
+  "expect":"I expect the package to arrive tomorrow.",
+  "act":"It is time to act on your plan.",
+  "exhibition":"There is an art exhibition at the museum.",
+  "attention":"Please pay attention to what I am saying.",
+  "discuss":"Lets discuss the problem after class.",
+  "film":"We watched a film together last night.",
+  "bestseller":"Her novel became a bestseller within a week."
+};
+
+const TRANSLATIONS = {
+"fare":"公交车票价已经涨到了两美元。",
+  "generous":"她是个慷慨的人,总是帮助别人。",
+  "grow up":"我长大后想成为一名医生。",
+  "dislike":"我不喜欢在寒冷的早晨早起。",
+  "expedition":"他们去南极探险了。",
+  "appear":"太阳开始从云层后面出现。",
+  "basin":"她往盆里装满了温水。",
+  "backwards":"他后退了一步以避开那滩水。",
+  "south":"鸟儿冬天飞往南方。",
+  "addition":"加糖使蛋糕更甜。",
+  "cosy":"这个小房间让人感到温暖舒适。",
+  "ending":"我喜欢有美好结局的电影。",
+  "licence":"开车需要驾驶执照。",
+  "kangaroo":"袋鼠跳过田野。",
+  "jumper":"她冬天穿了一件温暖的羊毛衫。",
+  "elevator":"乘电梯到十楼。",
+  "passport":"出国旅行时别忘了带护照。",
+  "chip":"你想来点薯条配汉堡吗?",
+  "ankle":"他打篮球时扭伤了脚踝。",
+  "disagree":"我不同意你对这件事的看法。",
+  "cliff":"汽车在悬崖边停了下来。",
+  "alarm":"半夜火警响了。",
+  "bedroom":"她用海报装饰了自己的卧室。",
+  "unit":"这个单元讲的是语法。",
+  "disappear":"魔术师让硬币消失了。",
+  "dustbin":"把空瓶子扔进垃圾桶。",
+  "lock":"离开时别忘了锁门。",
+  "decorate":"圣诞节他们用彩灯装饰房子。",
+  "boring":"讲座太无聊了,我差点睡着了。",
+  "classical":"我爷爷喜欢听古典音乐。",
+  "currency":"当地货币是美元。",
+  "cushion":"她把一个柔软的垫子放在椅子上。",
+  "jug":"他把水壶里的水倒进杯子。",
+  "forgive":"请原谅我迟到了。",
+  "build":"他们计划在这个地区建一所新学校。",
+  "inspire":"他的演讲激励我更加努力。",
+  "family":"我家每天晚上一起吃饭。",
+  "blackboard":"老师把问题写在了黑板上。",
+  "small":"小猫太小了,跳不上椅子。",
+  "headphone":"她戴上耳机听音乐。",
+  "famous":"这座城市以美丽的海滩闻名。",
+  "ant":"蚂蚁把一块食物搬回巢穴。",
+  "explode":"如果你充气太多,气球会爆炸。",
+  "care":"她悉心照料她的宠物狗。",
+  "officer":"警察帮助了迷路的孩子。",
+  "sense":"狗有很强的嗅觉。",
+  "pull":"请拉门打开。",
+  "following":"请仔细阅读以下说明。",
+  "homework":"我在晚饭前完成了作业。",
+  "hairdryer":"她用吹风机吹干了头发。",
+  "action":"我们需要立即采取行动。",
+  "choose":"请从书架上选一本书。",
+  "hardware":"他在一家五金店工作。",
+  "expect":"我预计包裹明天到。",
+  "act":"是按你的计划行动的时候了。",
+  "exhibition":"博物馆有一个艺术展览。",
+  "attention":"请注意我说的话。",
+  "discuss":"我们课后讨论这个问题。",
+  "film":"昨晚我们一起看了一部电影。",
+  "bestseller":"她的小说一周内就成了畅销书。"
+};
+
+const PHRASES = {
+"fare":["bus fare 公交车费","taxi fare 出租车费","air fare 机票费"],
+  "generous":["generous offer 慷慨的提议","generous portion 大份","generous donation 慷慨捐赠"],
+  "grow up":["grow up to be... 长大成为..."],
+  "dislike":["dislike doing sth. 不喜欢做某事","take a dislike to 讨厌"],
+  "expedition":["go on an expedition 去探险","scientific expedition 科学考察"],
+  "appear":["appear in public 公开露面","appear to be 似乎是"],
+  "basin":["river basin 流域","wash basin 洗脸盆"],
+  "backwards":["backwards and forwards 来来回回","step backwards 后退一步"],
+  "south":["South Africa 南非","south wind 南风"],
+  "addition":["in addition 此外","in addition to 除…之外"],
+  "cosy":["cosy atmosphere 温馨的氛围","cosy room 舒适的房间"],
+  "ending":["happy ending 大团圆结局","nerve ending 神经末梢"],
+  "licence":["driving licence 驾驶执照","licence plate 车牌"],
+  "kangaroo":["kangaroo court 私设法庭","kangaroo paw 袋鼠爪（花）"],
+  "jumper":["wool jumper 羊毛衫","jumper cable 跨接电缆"],
+  "elevator":["take the elevator 乘电梯","elevator pitch 电梯演讲"],
+  "passport":["passport control 护照检查","passport photo 证件照"],
+  "chip":["chip shop 薯条店","computer chip 电脑芯片"],
+  "ankle":["ankle injury 脚踝受伤","ankle bracelet 脚链"],
+  "disagree":["disagree with sb. 不同意某人","strongly disagree 强烈反对"],
+  "cliff":["cliff edge 悬崖边缘","cliff diving 悬崖跳水"],
+  "alarm":["alarm clock 闹钟","fire alarm 火警","alarm system 警报系统"],
+  "bedroom":["bedroom community 卧城","master bedroom 主卧"],
+  "unit":["family unit 家庭单位","unit price 单价","unit test 单元测试"],
+  "disappear":["disappear from sight 消失不见","disappear into thin air 凭空消失"],
+  "dustbin":["dustbin lorry 垃圾车"],
+  "lock":["lock up 锁好","lock the door 锁门"],
+  "decorate":["decorate with 用…装饰","decorate the house 装饰房子"],
+  "boring":["boring lecture 无聊的讲座","boring job 乏味的工作"],
+  "classical":["classical music 古典音乐","classical literature 古典文学"],
+  "currency":["foreign currency 外币","currency exchange 货币兑换"],
+  "cushion":["cushion the blow 缓冲打击","seat cushion 坐垫"],
+  "jug":["water jug 水壶","measuring jug 量杯"],
+  "forgive":["forgive and forget 既往不咎","forgive me 请原谅"],
+  "build":["build up 建立;增强","build on 基于"],
+  "inspire":["inspire sb. to do 激励某人做某事","inspire confidence 激发信心"],
+  "family":["family member 家庭成员","family business 家族企业","family reunion 家庭团聚"],
+  "blackboard":["blackboard writing 板书","on the blackboard 在黑板上"],
+  "small":["small talk 闲聊","small change 零钱"],
+  "headphone":["wireless headphone 无线耳机","put on headphones 戴上耳机"],
+  "famous":["famous for 以…闻名","famous person 名人"],
+  "ant":["ant colony 蚁群","queen ant 蚁后"],
+  "explode":["explode with anger 勃然大怒","explode into laughter 爆发出笑声"],
+  "care":["take care of 照顾","care about 关心","care for 关怀"],
+  "officer":["police officer 警官","medical officer 医疗官员"],
+  "sense":["sense of humor 幽默感","make sense 有意义","common sense 常识"],
+  "pull":["pull up 停下","pull out 退出","pull over 靠边停车"],
+  "following":["the following day 第二天","following instructions 遵循指示"],
+  "homework":["do homework 做家庭作业","homework assignment 作业任务"],
+  "hairdryer":["use a hairdryer 使用吹风机"],
+  "action":["take action 采取行动","action plan 行动计划","in action 在行动中"],
+  "choose":["choose between 在…之间选择","choose from 从…中选择"],
+  "hardware":["hardware store 五金店","computer hardware 电脑硬件"],
+  "expect":["expect to do 期待做某事","as expected 正如所料"],
+  "act":["act on 按照…行动","act as 充当","in the act of 正在…时"],
+  "exhibition":["art exhibition 艺术展","exhibition hall 展览厅"],
+  "attention":["pay attention to 注意","attract attention 引起注意"],
+  "discuss":["discuss with 与…讨论","discuss in detail 详细讨论"],
+  "film":["film industry 电影产业","film festival 电影节"],
+  "bestseller":["bestseller list 畅销书排行榜","international bestseller 国际畅销书"]
+};
+
+// ============================================================
+// STATE
+// ============================================================
+let mode = '';
+let shuffled = [];
+let currentIndex = 0;
+let correctCount = 0;
+let answered = false;
+let utterance = null;
+let _voicesLoaded = false;
+
+const PREFERRED_VOICES = [
+  'Samantha', 'Karen', 'Daniel', 'Moira', 'Tessa',
+  'Google US English', 'Google UK English Female', 'Google UK English Male',
+  'Albert', 'Kathy', 'Rishi',
+];
+
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function hideAll() {
+  document.getElementById('modeScreen').style.display = 'none';
+  document.getElementById('quizScreen').style.display = 'none';
+  document.getElementById('learnScreen').style.display = 'none';
+  document.getElementById('resultScreen').style.display = 'none';
+}
+
+function goHome() {
+  if (utterance && window.speechSynthesis) window.speechSynthesis.cancel();
+  hideAll();
+  document.getElementById('modeScreen').style.display = 'flex';
+}
+
+function goModeSelect() {
+  if (utterance && window.speechSynthesis) window.speechSynthesis.cancel();
+  hideAll();
+  document.getElementById('modeScreen').style.display = 'flex';
+}
+
+function startExam(m) {
+  mode = m;
+  shuffled = shuffleArray([...WORDS]);
+  currentIndex = 0;
+  correctCount = 0;
+  hideAll();
+  document.getElementById('quizScreen').style.display = 'block';
+  showQuiz();
+}
+
+// ============================================================
+// QUIZ
+// ============================================================
+function showQuiz() {
+  if (currentIndex >= shuffled.length) { showResult(); return; }
+  hideAll();
+  document.getElementById('quizScreen').style.display = 'block';
+  const word = shuffled[currentIndex];
+  const total = shuffled.length;
+  document.getElementById('progressText').textContent = `${currentIndex + 1}/${total}`;
+  document.getElementById('progressFill').style.width = `${((currentIndex + 1) / total) * 100}%`;
+
+  if (mode === 'listen') {
+    document.getElementById('listenSection').style.display = 'block';
+    document.getElementById('spellSection').style.display = 'none';
+    buildChoices(word);
+    playWordAudioTwice(word.word);
+  } else {
+    document.getElementById('listenSection').style.display = 'none';
+    document.getElementById('spellSection').style.display = 'block';
+    document.getElementById('quizPhonetic').textContent = word.phonetic || '';
+    document.getElementById('quizMeaning').textContent = word.meaning;
+    const input = document.getElementById('answerInput');
+    input.value = '';
+    setTimeout(() => input.focus(), 100);
+  }
+  answered = false;
+}
+
+function buildChoices(word) {
+  const correct = word.meaning;
+  const wrongPool = [];
+  const seen = new Set([correct]);
+  for (const w of WORDS) {
+    if (w.meaning !== correct && !seen.has(w.meaning)) {
+      seen.add(w.meaning);
+      wrongPool.push({meaning: w.meaning, word: w.word});
+    }
+  }
+  // prefer confusable
+  const targetWord = word.word.toLowerCase();
+  const scored = wrongPool.map(item => {
+    let score = Math.random();
+    const ow = item.word.toLowerCase();
+    if (ow[0] === targetWord[0]) score += 3;
+    if (Math.abs(ow.length - targetWord.length) <= 2) score += 1;
+    for (let i = 0; i < Math.min(4, targetWord.length, ow.length); i++) {
+      if (targetWord[i] === ow[i]) score += 1;
+    }
+    return {item, score};
+  });
+  scored.sort((a, b) => b.score - a.score);
+  const wrongs = scored.slice(0, 3).map(s => s.item);
+  const choices = shuffleArray([{meaning: correct, word: word.word}, ...wrongs]);
+  const labels = ['A', 'B', 'C', 'D'];
+  const container = document.getElementById('choicesContainer');
+  container.innerHTML = '';
+  choices.forEach((choice, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = `<span class="choice-label">${labels[i]}</span><span>${choice.meaning}</span>`;
+    btn.dataset.correct = (choice.meaning === correct) ? '1' : '0';
+    btn.onclick = () => handleChoice(btn, correct, word);
+    container.appendChild(btn);
+  });
+}
+
+function handleChoice(btn, correct, word) {
+  if (answered) return;
+  answered = true;
+  const isCorrect = btn.dataset.correct === '1';
+  const allBtns = document.querySelectorAll('.choice-btn');
+  allBtns.forEach(b => b.classList.add('disabled'));
+  if (isCorrect) {
+    correctCount++;
+    btn.classList.add('correct');
+    showToast('✅ 回答正确！', 'success');
+    setTimeout(() => nextQuestion(), 700);
+  } else {
+    btn.classList.add('wrong');
+    allBtns.forEach(b => { if (b.dataset.correct === '1') b.classList.add('reveal-correct'); });
+    setTimeout(() => showLearnScreen(word), 800);
+  }
+}
+
+function checkAnswer() {
+  if (answered) return;
+  const word = shuffled[currentIndex];
+  const input = document.getElementById('answerInput').value.trim().toLowerCase();
+  const correct = word.word.toLowerCase();
+  answered = true;
+  if (input === correct) {
+    correctCount++;
+    showToast('✅ 正确！', 'success');
+    setTimeout(() => nextQuestion(), 700);
+  } else {
+    showLearnScreen(word);
+  }
+}
+
+// Enter key submits
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && document.getElementById('quizScreen').style.display === 'block') {
+    const sec = document.getElementById('spellSection');
+    if (sec && sec.style.display === 'block') checkAnswer();
+  }
+});
+
+function nextQuestion() {
+  if (utterance && window.speechSynthesis) window.speechSynthesis.cancel();
+  currentIndex++;
+  if (currentIndex >= shuffled.length) {
+    showResult();
+  } else {
+    showQuiz();
+  }
+}
+
+// ============================================================
+// LEARN SCREEN (wrong answer)
+// ============================================================
+function showLearnScreen(word) {
+  if (utterance && window.speechSynthesis) window.speechSynthesis.cancel();
+  hideAll();
+  document.getElementById('learnScreen').style.display = 'block';
+  const isPhrasal = word.word.includes(' ');
+  const wEl = document.getElementById('learnWord');
+  wEl.textContent = word.word;
+  wEl.className = 'word' + (isPhrasal ? ' phrasal' : '');
+  document.getElementById('learnPhonetic').textContent = word.phonetic || '';
+  document.getElementById('learnMeaning').textContent = word.meaning;
+  const key = word.word;
+  document.getElementById('learnExampleEn').textContent = SENTENCES[key] || '——';
+  document.getElementById('learnExampleCn').textContent = TRANSLATIONS[key] || '——';
+  const pc = document.getElementById('learnPhrasesCard');
+  const pl = document.getElementById('learnPhrases');
+  if (PHRASES[key] && PHRASES[key].length > 0) {
+    pc.style.display = 'block';
+    pl.innerHTML = PHRASES[key].map(p => `<div class="phrase-item"><span class="phrase-en">${p}</span></div>`).join('');
+  } else {
+    pc.style.display = 'none';
+  }
+  // auto play once for learning
+  setTimeout(() => playWordAudioOnce(word.word), 300);
+}
+
+// ============================================================
+// RESULT
+// ============================================================
+function showResult() {
+  hideAll();
+  document.getElementById('resultScreen').style.display = 'flex';
+  const total = shuffled.length;
+  const score = Math.round(correctCount / total * 100);
+  document.getElementById('resultCorrect').textContent = correctCount;
+  document.getElementById('resultTotal').textContent = total;
+  document.getElementById('resultScore').textContent = score + ' 分';
+  let level = '';
+  if (score === 100) level = '🏆 满分！太棒了！';
+  else if (score >= 90) level = '🌟 非常优秀！';
+  else if (score >= 75) level = '👍 表现不错！';
+  else if (score >= 60) level = '📖 及格了，继续加油！';
+  else level = '💪 别灰心，复习后再试一次！';
+  document.getElementById('resultLevel').textContent = level;
+}
+
+// ============================================================
+// AUDIO
+// ============================================================
+function ensureVoices() {
+  return new Promise((resolve) => {
+    if (_voicesLoaded) { resolve(); return; }
+    const voices = window.speechSynthesis.getVoices();
+    if (voices.length > 0) { _voicesLoaded = true; resolve(); return; }
+    window.speechSynthesis.onvoiceschanged = () => { _voicesLoaded = true; resolve(); };
+    setTimeout(() => { _voicesLoaded = true; resolve(); }, 1000);
+  });
+}
+
+function findBestVoice() {
+  const voices = window.speechSynthesis.getVoices();
+  if (!voices || voices.length === 0) return null;
+  for (const name of PREFERRED_VOICES) {
+    const found = voices.find(v => v.name === name);
+    if (found) return found;
+  }
+  const enUS = voices.find(v => v.lang.startsWith('en-US'));
+  if (enUS) return enUS;
+  const enGB = voices.find(v => v.lang.startsWith('en-GB'));
+  if (enGB) return enGB;
+  const anyEn = voices.find(v => v.lang.startsWith('en'));
+  if (anyEn) return anyEn;
+  return voices[0];
+}
+
+function makeUtterance(word) {
+  const u = new SpeechSynthesisUtterance(word);
+  const best = findBestVoice();
+  if (best) { u.voice = best; u.lang = best.lang; } else { u.lang = 'en-US'; }
+  u.rate = 0.82;
+  u.pitch = 1.05;
+  return u;
+}
+
+function playWordAudioOnce(word) {
+  if (!window.speechSynthesis) return;
+  const w = word || (shuffled[currentIndex] && shuffled[currentIndex].word);
+  if (!w) return;
+  window.speechSynthesis.cancel();
+  const spk = document.getElementById('speakerBtn');
+  if (spk) spk.classList.add('playing');
+  utterance = makeUtterance(w);
+  utterance.onend = () => { if (spk) spk.classList.remove('playing'); };
+  utterance.onerror = () => { if (spk) spk.classList.remove('playing'); };
+  window.speechSynthesis.speak(utterance);
+}
+
+function playWordAudioTwice(word) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const spk = document.getElementById('speakerBtn');
+  if (spk) spk.classList.add('playing');
+  const u1 = makeUtterance(word);
+  const u2 = makeUtterance(word);
+  u1.onend = () => {
+    setTimeout(() => {
+      window.speechSynthesis.speak(u2);
+    }, 400);
+  };
+  u2.onend = () => { if (spk) spk.classList.remove('playing'); };
+  u2.onerror = () => { if (spk) spk.classList.remove('playing'); };
+  window.speechSynthesis.speak(u1);
+}
+
+if (window.speechSynthesis) {
+  ensureVoices();
+  window.speechSynthesis.onvoiceschanged = ensureVoices;
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+let toastTimer = null;
+function showToast(msg, type) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast ' + type + ' show';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.classList.remove('show'); }, 1400);
+}
+</script>
+</body>
+</html>

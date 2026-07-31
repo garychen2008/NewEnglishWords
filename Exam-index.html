@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>每日单词 · 主页</title>
+<title>每日词测 · 主页</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", Roboto, "Helvetica Neue", sans-serif;
-  background: #eef2f7;
+  background: #faf3ec;
   color: #1a1a2e;
   min-height: 100vh;
 }
@@ -21,7 +21,7 @@ body {
   background: rgba(255,255,255,0.92);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid #e6e9ef;
+  border-bottom: 1px solid #f0e6dc;
   padding: 12px 20px;
 }
 .topnav .nav-inner {
@@ -34,7 +34,7 @@ body {
 .topnav .nav-brand { font-size: 17px; font-weight: 800; color: #1a1a2e; letter-spacing: 0.5px; }
 .topnav .nav-brand .brand-icon { margin-right: 6px; }
 .topnav .nav-badge {
-  background: linear-gradient(135deg, #1b4332, #311b92);
+  background: linear-gradient(135deg, #d62828, #311b92);
   color: #fff;
   font-size: 12px;
   font-weight: 700;
@@ -44,7 +44,7 @@ body {
 
 /* ===== HERO ===== */
 .hero {
-  background: linear-gradient(135deg, #1b4332 0%, #311b92 100%);
+  background: linear-gradient(135deg, #d62828 0%, #311b92 100%);
   color: #fff;
   text-align: center;
   padding: 44px 24px 40px;
@@ -67,7 +67,7 @@ body {
 .accordion-tools .tool-btns { display: flex; gap: 8px; }
 .accordion-tools button {
   background: #fff;
-  border: 1px solid #e0e0e8;
+  border: 1px solid #f0e0d5;
   border-radius: 18px;
   padding: 6px 14px;
   font-size: 12px;
@@ -101,7 +101,7 @@ body {
   flex-shrink: 0;
 }
 .day-toggle.open .chevron { transform: rotate(90deg); }
-.day-toggle:hover .day-label { color: #1b4332; }
+.day-toggle:hover .day-label { color: #d62828; }
 .day-body {
   max-height: 0;
   overflow: hidden;
@@ -156,17 +156,17 @@ body {
 <!-- ===== TOP NAV ===== -->
 <div class="topnav">
   <div class="nav-inner">
-    <span class="nav-brand"><span class="brand-icon">📖</span>每日单词</span>
-    <span class="nav-badge">共 18 个学习入口</span>
+    <span class="nav-brand"><span class="brand-icon">📝</span>每日词测</span>
+    <span class="nav-badge">共 18 套词测</span>
   </div>
 </div>
 
 <!-- ===== HERO ===== -->
 <div class="hero">
-  <div class="hero-title">每日单词</div>
-  <div class="hero-sub">基础 · 雅思 · 学科词汇 · 每日打卡</div>
-  <div class="hero-quote-en">"Rome wasn't built in a day."</div>
-  <div class="hero-quote-cn">罗马不是一天建成的。</div>
+  <div class="hero-title">每日词测</div>
+  <div class="hero-sub">听音选词 · 拼写单词 · 检验学习成果</div>
+  <div class="hero-quote-en">"Practice makes perfect."</div>
+  <div class="hero-quote-cn">熟能生巧。</div>
 </div>
 
 <div class="container">
@@ -183,32 +183,32 @@ body {
   <div class="day-section">
     <button class="day-toggle" onclick="toggleDay(this)" type="button">
       <span class="day-label">DAY 1</span>
-      <span class="day-sub">共 140 词</span>
+      <span class="day-sub">共 3 套词测</span>
       <span class="chevron">▸</span>
     </button>
     <div class="day-body">
       <div class="type-cards">
-        <a class="type-card basic" href="Day1-Basic60Words.html">
-          <span class="card-icon">📖</span>
+        <a class="type-card basic" href="Exam-Day1-Basic.html">
+          <span class="card-icon">📝</span>
           <div class="card-info">
-            <div class="card-title">基础必背词汇</div>
-            <div class="card-desc">60 个核心基础单词</div>
+            <div class="card-title">基础词汇词测</div>
+            <div class="card-desc">60 题 · 听音选词 / 拼写单词</div>
           </div>
           <span class="card-arrow">›</span>
         </a>
-        <a class="type-card ielts" href="Day1-IELTS40Words.html">
-          <span class="card-icon">🎯</span>
+        <a class="type-card ielts" href="Exam-Day1-IELTS.html">
+          <span class="card-icon">📝</span>
           <div class="card-info">
-            <div class="card-title">雅思词汇</div>
-            <div class="card-desc">40 个雅思核心单词</div>
+            <div class="card-title">雅思词汇词测</div>
+            <div class="card-desc">40 题 · 听音选词 / 拼写单词</div>
           </div>
           <span class="card-arrow">›</span>
         </a>
-        <a class="type-card subject" href="Day1-SubjectWords.html">
-          <span class="card-icon">🔬</span>
+        <a class="type-card subject" href="Exam-Day1-Subject.html">
+          <span class="card-icon">📝</span>
           <div class="card-info">
-            <div class="card-title">学科综合词汇</div>
-            <div class="card-desc">40 个学科词汇（数学·物理·经济·化学）</div>
+            <div class="card-title">学科词汇词测</div>
+            <div class="card-desc">40 题 · 听音选词 / 拼写单词</div>
           </div>
           <span class="card-arrow">›</span>
         </a>
@@ -220,32 +220,32 @@ body {
   <div class="day-section">
     <button class="day-toggle" onclick="toggleDay(this)" type="button">
       <span class="day-label">DAY 2</span>
-      <span class="day-sub">共 140 词</span>
+      <span class="day-sub">共 3 套词测</span>
       <span class="chevron">▸</span>
     </button>
     <div class="day-body">
       <div class="type-cards">
-        <a class="type-card basic" href="Day2-Basic60Words.html">
-          <span class="card-icon">📖</span>
+        <a class="type-card basic" href="Exam-Day2-Basic.html">
+          <span class="card-icon">📝</span>
           <div class="card-info">
-            <div class="card-title">基础必背词汇</div>
-            <div class="card-desc">60 个核心基础单词</div>
+            <div class="card-title">基础词汇词测</div>
+            <div class="card-desc">60 题 · 听音选词 / 拼写单词</div>
           </div>
           <span class="card-arrow">›</span>
         </a>
-        <a class="type-card ielts" href="Day2-IELTS40Words.html">
-          <span class="card-icon">🎯</span>
+        <a class="type-card ielts" href="Exam-Day2-IELTS.html">
+          <span class="card-icon">📝</span>
           <div class="card-info">
-            <div class="card-title">雅思词汇</div>
-            <div class="card-desc">40 个雅思核心单词</div>
+            <div class="card-title">雅思词汇词测</div>
+            <div class="card-desc">40 题 · 听音选词 / 拼写单词</div>
           </div>
           <span class="card-arrow">›</span>
         </a>
-        <a class="type-card subject" href="Day2-SubjectWords.html">
-          <span class="card-icon">🔬</span>
+        <a class="type-card subject" href="Exam-Day2-Subject.html">
+          <span class="card-icon">📝</span>
           <div class="card-info">
-            <div class="card-title">学科综合词汇</div>
-            <div class="card-desc">40 个学科词汇（数学·物理·经济·化学）</div>
+            <div class="card-title">学科词汇词测</div>
+            <div class="card-desc">40 题 · 听音选词 / 拼写单词</div>
           </div>
           <span class="card-arrow">›</span>
         </a>
@@ -257,32 +257,32 @@ body {
   <div class="day-section">
     <button class="day-toggle" onclick="toggleDay(this)" type="button">
       <span class="day-label">DAY 3</span>
-      <span class="day-sub">共 140 词</span>
+      <span class="day-sub">共 3 套词测</span>
       <span class="chevron">▸</span>
     </button>
     <div class="day-body">
       <div class="type-cards">
-        <a class="type-card basic" href="Day3-Basic60Words.html">
-          <span class="card-icon">📖</span>
+        <a class="type-card basic" href="Exam-Day3-Basic.html">
+          <span class="card-icon">📝</span>
           <div class="card-info">
-            <div class="card-title">基础必背词汇</div>
-            <div class="card-desc">60 个核心基础单词</div>
+            <div class="card-title">基础词汇词测</div>
+            <div class="card-desc">60 题 · 听音选词 / 拼写单词</div>
           </div>
           <span class="card-arrow">›</span>
         </a>
-        <a class="type-card ielts" href="Day3-IELTS40Words.html">
-          <span class="card-icon">🎯</span>
+        <a class="type-card ielts" href="Exam-Day3-IELTS.html">
+          <span class="card-icon">📝</span>
           <div class="card-info">
-            <div class="card-title">雅思词汇</div>
-            <div class="card-desc">40 个雅思核心单词</div>
+            <div class="card-title">雅思词汇词测</div>
+            <div class="card-desc">40 题 · 听音选词 / 拼写单词</div>
           </div>
           <span class="card-arrow">›</span>
         </a>
-        <a class="type-card subject" href="Day3-SubjectWords.html">
-          <span class="card-icon">🔬</span>
+        <a class="type-card subject" href="Exam-Day3-Subject.html">
+          <span class="card-icon">📝</span>
           <div class="card-info">
-            <div class="card-title">学科综合词汇</div>
-            <div class="card-desc">40 个学科词汇（数学·物理·经济·化学）</div>
+            <div class="card-title">学科词汇词测</div>
+            <div class="card-desc">40 题 · 听音选词 / 拼写单词</div>
           </div>
           <span class="card-arrow">›</span>
         </a>
@@ -294,32 +294,32 @@ body {
   <div class="day-section">
     <button class="day-toggle" onclick="toggleDay(this)" type="button">
       <span class="day-label">DAY 4</span>
-      <span class="day-sub">共 140 词</span>
+      <span class="day-sub">共 3 套词测</span>
       <span class="chevron">▸</span>
     </button>
     <div class="day-body">
       <div class="type-cards">
-        <a class="type-card basic" href="Day4-Basic60Words.html">
-          <span class="card-icon">📖</span>
+        <a class="type-card basic" href="Exam-Day4-Basic.html">
+          <span class="card-icon">📝</span>
           <div class="card-info">
-            <div class="card-title">基础必背词汇</div>
-            <div class="card-desc">60 个核心基础单词</div>
+            <div class="card-title">基础词汇词测</div>
+            <div class="card-desc">60 题 · 听音选词 / 拼写单词</div>
           </div>
           <span class="card-arrow">›</span>
         </a>
-        <a class="type-card ielts" href="Day4-IELTS40Words.html">
-          <span class="card-icon">🎯</span>
+        <a class="type-card ielts" href="Exam-Day4-IELTS.html">
+          <span class="card-icon">📝</span>
           <div class="card-info">
-            <div class="card-title">雅思词汇</div>
-            <div class="card-desc">40 个雅思核心单词</div>
+            <div class="card-title">雅思词汇词测</div>
+            <div class="card-desc">40 题 · 听音选词 / 拼写单词</div>
           </div>
           <span class="card-arrow">›</span>
         </a>
-        <a class="type-card subject" href="Day4-SubjectWords.html">
-          <span class="card-icon">🔬</span>
+        <a class="type-card subject" href="Exam-Day4-Subject.html">
+          <span class="card-icon">📝</span>
           <div class="card-info">
-            <div class="card-title">学科综合词汇</div>
-            <div class="card-desc">40 个学科词汇（数学·物理·经济·化学）</div>
+            <div class="card-title">学科词汇词测</div>
+            <div class="card-desc">40 题 · 听音选词 / 拼写单词</div>
           </div>
           <span class="card-arrow">›</span>
         </a>
@@ -331,32 +331,32 @@ body {
   <div class="day-section">
     <button class="day-toggle" onclick="toggleDay(this)" type="button">
       <span class="day-label">DAY 5</span>
-      <span class="day-sub">共 140 词</span>
+      <span class="day-sub">共 3 套词测</span>
       <span class="chevron">▸</span>
     </button>
     <div class="day-body">
       <div class="type-cards">
-        <a class="type-card basic" href="Day5-Basic60Words.html">
-          <span class="card-icon">📖</span>
+        <a class="type-card basic" href="Exam-Day5-Basic.html">
+          <span class="card-icon">📝</span>
           <div class="card-info">
-            <div class="card-title">基础必背词汇</div>
-            <div class="card-desc">60 个核心基础单词</div>
+            <div class="card-title">基础词汇词测</div>
+            <div class="card-desc">60 题 · 听音选词 / 拼写单词</div>
           </div>
           <span class="card-arrow">›</span>
         </a>
-        <a class="type-card ielts" href="Day5-IELTS40Words.html">
-          <span class="card-icon">🎯</span>
+        <a class="type-card ielts" href="Exam-Day5-IELTS.html">
+          <span class="card-icon">📝</span>
           <div class="card-info">
-            <div class="card-title">雅思词汇</div>
-            <div class="card-desc">40 个雅思核心单词</div>
+            <div class="card-title">雅思词汇词测</div>
+            <div class="card-desc">40 题 · 听音选词 / 拼写单词</div>
           </div>
           <span class="card-arrow">›</span>
         </a>
-        <a class="type-card subject" href="Day5-SubjectWords.html">
-          <span class="card-icon">🔬</span>
+        <a class="type-card subject" href="Exam-Day5-Subject.html">
+          <span class="card-icon">📝</span>
           <div class="card-info">
-            <div class="card-title">学科综合词汇</div>
-            <div class="card-desc">40 个学科词汇（数学·物理·经济·化学）</div>
+            <div class="card-title">学科词汇词测</div>
+            <div class="card-desc">40 题 · 听音选词 / 拼写单词</div>
           </div>
           <span class="card-arrow">›</span>
         </a>
@@ -368,32 +368,32 @@ body {
   <div class="day-section">
     <button class="day-toggle" onclick="toggleDay(this)" type="button">
       <span class="day-label">DAY 6</span>
-      <span class="day-sub">共 140 词</span>
+      <span class="day-sub">共 3 套词测</span>
       <span class="chevron">▸</span>
     </button>
     <div class="day-body">
       <div class="type-cards">
-        <a class="type-card basic" href="Day6-Basic60Words.html">
-          <span class="card-icon">📖</span>
+        <a class="type-card basic" href="Exam-Day6-Basic.html">
+          <span class="card-icon">📝</span>
           <div class="card-info">
-            <div class="card-title">基础必背词汇</div>
-            <div class="card-desc">60 个核心基础单词</div>
+            <div class="card-title">基础词汇词测</div>
+            <div class="card-desc">60 题 · 听音选词 / 拼写单词</div>
           </div>
           <span class="card-arrow">›</span>
         </a>
-        <a class="type-card ielts" href="Day6-IELTS40Words.html">
-          <span class="card-icon">🎯</span>
+        <a class="type-card ielts" href="Exam-Day6-IELTS.html">
+          <span class="card-icon">📝</span>
           <div class="card-info">
-            <div class="card-title">雅思词汇</div>
-            <div class="card-desc">40 个雅思核心单词</div>
+            <div class="card-title">雅思词汇词测</div>
+            <div class="card-desc">40 题 · 听音选词 / 拼写单词</div>
           </div>
           <span class="card-arrow">›</span>
         </a>
-        <a class="type-card subject" href="Day6-SubjectWords.html">
-          <span class="card-icon">🔬</span>
+        <a class="type-card subject" href="Exam-Day6-Subject.html">
+          <span class="card-icon">📝</span>
           <div class="card-info">
-            <div class="card-title">学科综合词汇</div>
-            <div class="card-desc">40 个学科词汇（数学·物理·经济·化学）</div>
+            <div class="card-title">学科词汇词测</div>
+            <div class="card-desc">40 题 · 听音选词 / 拼写单词</div>
           </div>
           <span class="card-arrow">›</span>
         </a>
@@ -403,7 +403,7 @@ body {
 
   <div class="footer">
     <div class="quote-mini">"Little by little, one travels far."</div>
-    <div>每日单词 · 积少成多</div>
+    <div>每日词测 · 检验学习成果</div>
   </div>
 
 </div>
