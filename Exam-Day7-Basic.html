@@ -155,6 +155,7 @@ body {
 }
 #resultScreen .trophy { font-size: 68px; margin-bottom: 14px; }
 #resultScreen h1 { font-size: 30px; margin-bottom: 10px; }
+#resultScreen .result-mode { font-size: 15px; font-weight: 700; opacity: 0.9; background: rgba(255,255,255,0.18); display: inline-block; padding: 5px 18px; border-radius: 20px; margin-bottom: 14px; }
 #resultScreen .result-stats { font-size: 18px; opacity: 0.95; margin-bottom: 8px; line-height: 1.8; }
 #resultScreen .result-score { font-size: 52px; font-weight: 800; margin: 10px 0 6px; }
 #resultScreen .result-level { font-size: 16px; opacity: 0.85; margin-bottom: 30px; }
@@ -270,6 +271,7 @@ body {
 <div id="resultScreen">
   <div class="trophy">🎉</div>
   <h1>测试完成！</h1>
+  <div class="result-mode" id="resultMode"></div>
   <div class="result-stats">答对 <b id="resultCorrect">0</b> / <b id="resultTotal">0</b> 题</div>
   <div class="result-score" id="resultScore">0</div>
   <div class="result-level" id="resultLevel"></div>
@@ -749,6 +751,7 @@ function showLearnScreen(word) {
 function showResult() {
   hideAll();
   document.getElementById('resultScreen').style.display = 'flex';
+  document.getElementById('resultMode').textContent = mode === 'listen' ? '🎧 听音选词词测' : '✍️ 拼写单词词测';
   const total = shuffled.length;
   const score = Math.round(correctCount / total * 100);
   document.getElementById('resultCorrect').textContent = correctCount;
