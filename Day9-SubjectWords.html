@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>学科综合 · DAY 9</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", Roboto, "Helvetica Neue", sans-serif;
+  background: #f5f7fb;
+  color: #1a1a2e;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+/* ===== START SCREEN ===== */
+#startScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 40px 24px;
+  text-align: center;
+  background: linear-gradient(135deg, #1b4332 0%, #0d2b1a 100%);
+  color: #fff;
+}
+#startScreen h1 {
+  font-size: 42px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+#startScreen .subtitle {
+  font-size: 18px;
+  opacity: 0.9;
+  margin-bottom: 12px;
+}
+#startScreen .word-count {
+  font-size: 14px;
+  opacity: 0.7;
+  margin-bottom: 48px;
+}
+#startScreen .start-btn {
+  background: #fff;
+  color: #0d2b1a;
+  border: none;
+  border-radius: 50px;
+  padding: 16px 64px;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+  margin-bottom: 14px;
+}
+#startScreen .start-btn:active { transform: scale(0.96); }
+#startScreen .start-btn.secondary {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  box-shadow: none;
+  padding: 16px 64px;
+  font-size: 20px;
+  border: 1.5px solid rgba(255,255,255,0.35);
+}
+#startScreen .btn-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+/* ===== QUIZ SCREEN ===== */
+#quizScreen { display: none; }
+.quiz-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.quiz-header .back-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #666;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+.quiz-header .progress-text {
+  font-size: 14px;
+  color: #999;
+  font-weight: 500;
+}
+.quiz-header .progress-bar-wrap {
+  flex: 1;
+  height: 6px;
+  background: #eee;
+  border-radius: 3px;
+  margin: 0 16px;
+  overflow: hidden;
+}
+.quiz-header .progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #1b4332, #0d2b1a);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+  width: 0%;
+}
+.quiz-body {
+  padding: 32px 24px 24px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.word-display {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.word-display .word {
+  font-size: 36px;
+  font-weight: 800;
+  color: #1a1a2e;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+.word-display .word.phrasal { font-size: 28px; }
+.word-display .phonetic-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.word-display .phonetic {
+  font-size: 18px;
+  color: #888;
+  font-family: "Times New Roman", serif;
+}
+.word-display .speaker-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: #f0f0f5;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s;
+  color: #1b4332;
+  font-size: 18px;
+}
+.word-display .speaker-btn:active { background: #e0e0ea; }
+.word-display .speaker-btn.playing { background: #1b4332; color: #fff; }
+.example-sentence {
+  background: #f8f9ff;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 28px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #555;
+  text-align: center;
+  min-height: 52px;
+  border-left: 3px solid #1b4332;
+  border-right: 3px solid #1b4332;
+}
+.example-sentence .highlight-word {
+  color: #1b4332;
+  font-weight: 700;
+}
+.choices-title {
+  font-size: 14px;
+  color: #aaa;
+  margin-bottom: 12px;
+  text-align: center;
+  letter-spacing: 1px;
+}
+.choices-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.choice-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 16px 20px;
+  background: #fff;
+  border: 2px solid #e8e8f0;
+  border-radius: 14px;
+  font-size: 17px;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+.choice-btn .choice-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #f0f0f5;
+  font-size: 13px;
+  font-weight: 700;
+  color: #888;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.choice-btn:active { transform: scale(0.98); }
+.choice-btn.correct {
+  border-color: #4caf50;
+  background: #e8f5e9;
+}
+.choice-btn.correct .choice-label {
+  background: #4caf50;
+  color: #fff;
+}
+.choice-btn.wrong {
+  border-color: #f44336;
+  background: #ffebee;
+}
+.choice-btn.wrong .choice-label {
+  background: #f44336;
+  color: #fff;
+}
+.choice-btn.reveal-correct {
+  border-color: #4caf50;
+  background: #e8f5e9;
+}
+.choice-btn.reveal-correct .choice-label {
+  background: #4caf50;
+  color: #fff;
+}
+.choice-btn.disabled { pointer-events: none; }
+/* Wrong-answer hint showing confused word */
+.choice-btn .wrong-hint {
+  font-size: 12px;
+  color: #c62828;
+  margin-top: 4px;
+  font-weight: 600;
+  text-align: right;
+  padding-right: 4px;
+}
+
+.wordlist-btn {
+  background: #f0f0f5;
+  border: 1px solid #e0e0ea;
+  border-radius: 18px;
+  padding: 4px 14px;
+  font-size: 13px;
+  color: #1b4332;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  font-weight: 600;
+  line-height: 1.6;
+}
+.wordlist-btn:hover { background: #e4e6f0; }
+.wordlist-btn:active { transform: scale(0.95); }
+
+/* ===== WORD LIST OVERLAY ===== */
+#wordlistOverlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #fff;
+  z-index: 1000;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+#wordlistOverlay.open { display: block; }
+.wordlist-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #1b4332, #0d2b1a);
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.wordlist-header span { font-size: 18px; font-weight: 700; }
+.wordlist-close {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: #fff;
+  font-size: 14px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+.wordlist-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: #f0f0f0;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.wordlist-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 14px;
+  background: #fff;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-size: 14px;
+  line-height: 1.3;
+}
+.wordlist-item:active { background: #e8edff; }
+.wordlist-item .wl-idx {
+  color: #bbb;
+  font-size: 11px;
+  min-width: 22px;
+  text-align: right;
+  flex-shrink: 0;
+}
+.wordlist-item .wl-word {
+  color: #333;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.wordlist-item .wl-mean {
+  color: #999;
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wordlist-item.current .wl-idx { color: #1b4332; font-weight: 700; }
+.wordlist-item.current .wl-word { color: #1b4332; }
+.wordlist-item.done { background: #f0f7f0; }
+.wordlist-item.done .wl-word { color: #4caf50; }
+.wordlist-item.done .wl-idx { color: #4caf50; }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+.quiz-footer {
+  text-align: center;
+  padding: 24px;
+  color: #bbb;
+  font-size: 13px;
+}
+
+/* ===== ANSWER (DETAIL) SCREEN ===== */
+#answerScreen { display: none; }
+.answer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #1b4332, #0d2b1a);
+  color: #fff;
+}
+.answer-header .back-btn {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: #fff;
+  font-size: 14px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+.answer-body {
+  padding: 24px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.answer-word-section {
+  text-align: center;
+  margin-bottom: 24px;
+  padding: 32px 20px 24px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.answer-word-section .word {
+  font-size: 34px;
+  font-weight: 800;
+  color: #1a1a2e;
+  margin-bottom: 6px;
+}
+.answer-word-section .word.phrasal { font-size: 26px; }
+.answer-word-section .phonetic {
+  font-size: 17px;
+  color: #888;
+  font-family: "Times New Roman", serif;
+  margin-bottom: 4px;
+}
+.answer-word-section .chinese-mean {
+  font-size: 20px;
+  color: #333;
+  font-weight: 600;
+  margin-top: 8px;
+  padding: 8px 20px;
+  background: #f0f4ff;
+  border-radius: 8px;
+  display: inline-block;
+}
+.answer-word-section .word-type {
+  font-size: 13px;
+  color: #999;
+  margin-top: 4px;
+}
+.answer-detail-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.answer-detail-card .card-label {
+  font-size: 12px;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.answer-detail-card .en-sentence {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+  margin-bottom: 4px;
+}
+.answer-detail-card .cn-translation {
+  font-size: 15px;
+  color: #888;
+  line-height: 1.5;
+}
+.answer-detail-card .phrase-item {
+  font-size: 15px;
+  color: #555;
+  line-height: 1.7;
+  padding: 4px 0;
+}
+.answer-detail-card .phrase-item .phrase-en { font-weight: 600; }
+.answer-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 0 6px;
+}
+.answer-image svg {
+  width: 100%;
+  max-width: 280px;
+  border: 1px solid #e8e3f5;
+}
+.answer-detail-card .phrase-item .phrase-cn { color: #888; margin-left: 8px; }
+.continue-btn-wrap {
+  text-align: center;
+  padding: 16px 0 40px;
+}
+.continue-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #1b4332, #0d2b1a);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: 16px 56px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 6px 20px rgba(27,67,50,0.4);
+}
+.continue-btn:active { transform: scale(0.96); }
+.continue-btn .arrow { font-size: 22px; }
+
+/* ===== COMPLETION SCREEN ===== */
+#completeScreen {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 40px 24px;
+  text-align: center;
+  background: linear-gradient(135deg, #1b4332 0%, #0d2b1a 100%);
+  color: #fff;
+}
+#completeScreen .trophy { font-size: 72px; margin-bottom: 16px; }
+#completeScreen h1 { font-size: 32px; margin-bottom: 8px; }
+#completeScreen p { font-size: 16px; opacity: 0.85; margin-bottom: 32px; }
+#completeScreen .completion-quote { margin-top: 36px; text-align: center; line-height: 1.7; }
+#completeScreen .completion-quote .en { font-size: 18px; opacity: 0.85; margin-bottom: 4px; font-weight: 600; }
+#completeScreen .completion-quote .cn { font-size: 15px; opacity: 0.65; }
+
+/* ===== TOAST ===== */
+.toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-size: 15px;
+  font-weight: 600;
+  opacity: 0;
+  transition: all 0.3s;
+  z-index: 100;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.success { background: #4caf50; color: #fff; }
+.toast.error { background: #f44336; color: #fff; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 420px) {
+  .word-display .word { font-size: 30px; }
+  .word-display .word.phrasal { font-size: 22px; }
+  .answer-word-section .word { font-size: 28px; }
+  .answer-word-section .word.phrasal { font-size: 22px; }
+  .choice-btn { padding: 14px 16px; font-size: 15px; }
+}
+
+/* ===== LOADING SPINNER ===== */
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(27,67,50,0.3);
+  border-top-color: #1b4332;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- ===== START SCREEN ===== -->
+<div id="startScreen">
+  <h1>📖 DAY 9</h1>
+  <div class="subtitle">基础必背词汇</div>
+  <div class="word-count">共 40 个词汇</div>
+  <div class="btn-group">
+    <button class="start-btn" onclick="startQuiz(true)">开始学习（乱序）</button>
+    <button class="start-btn secondary" onclick="startQuiz(false)">开始学习（顺序）</button>
+  </div>
+</div>
+
+<!-- ===== QUIZ SCREEN ===== -->
+<div id="quizScreen">
+  <div class="quiz-header">
+    <button class="back-btn" onclick="goHome()">✕</button>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
+    <span style="display:flex;align-items:center;gap:8px;">
+      <span class="progress-text" id="progressText">0/40</span>
+      <button class="wordlist-btn" onclick="showWordList()">📋 浏览词汇列表</button>
+    </span>
+  </div>
+  <div class="quiz-body">
+    <div class="word-display">
+      <div class="word" id="quizWord">fare</div>
+      <div class="phonetic-row">
+        <span class="phonetic" id="quizPhonetic">/feə(r)/</span>
+        <button class="speaker-btn" id="speakerBtn" onclick="playWordAudio()">🔊</button>
+      </div>
+    </div>
+    <div class="example-sentence" id="quizSentence">
+      <span id="sentenceText">加载例句中...</span>
+    </div>
+    <div class="choices-title">— 选择正确的中文释义 —</div>
+    <div class="choices-grid" id="choicesContainer"></div>
+  </div>
+  <div class="quiz-footer">点击正确答案查看详情</div>
+</div>
+
+<!-- ===== ANSWER (DETAIL) SCREEN ===== -->
+<div id="answerScreen">
+  <div class="answer-header">
+    <span style="font-weight:700;">📖 单词详情</span>
+    <button class="back-btn" onclick="goHome()">返回首页</button>
+  </div>
+  <div class="answer-body">
+    <div class="answer-word-section">
+      <div class="word" id="ansWord">fare</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
+        <span class="phonetic" id="ansPhonetic">/feə(r)/</span>
+        <button class="speaker-btn" id="ansSpeakerBtn" onclick="playWordAudio(document.getElementById('ansWord').textContent)">🔊</button>
+      </div>
+      <div class="chinese-mean" id="ansMeaning">n. 车费；票价</div>
+    </div>
+    <div class="answer-detail-card" id="ansImageCard" style="display:none;">
+      <div class="card-label">📊 示例图示</div>
+      <div class="answer-image" id="ansImage"></div>
+    </div>
+    <div class="answer-detail-card">
+      <div class="card-label">📝 英文例句</div>
+      <div class="en-sentence" id="ansExampleEn">Loading...</div>
+    </div>
+    <div class="answer-detail-card">
+      <div class="card-label">🌏 中文翻译</div>
+      <div class="cn-translation" id="ansExampleCn">加载中...</div>
+    </div>
+    <div id="ansPhrasesContainer" style="display:none;">
+      <div class="answer-detail-card">
+        <div class="card-label">🔗 常用搭配</div>
+        <div id="ansPhrases"></div>
+      </div>
+    </div>
+    <div class="continue-btn-wrap">
+      <button class="continue-btn" onclick="nextWord()">
+        继续 <span class="arrow">→</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== WORD LIST OVERLAY ===== -->
+<div id="wordlistOverlay">
+  <div class="wordlist-header">
+    <span>📋 词汇列表</span>
+    <button class="wordlist-close" onclick="hideWordList()">关闭 ✕</button>
+  </div>
+  <div class="wordlist-grid" id="wordlistGrid"></div>
+</div>
+
+<!-- ===== COMPLETION SCREEN ===== -->
+<div id="completeScreen">
+  <div class="trophy">🎉</div>
+  <h1>DAY 9 完成！</h1>
+  <p>恭喜你完成今天全部单词学习！<br>明天继续加油 💪</p>
+  <button class="start-btn" onclick="goHome()" style="background:#fff;color:#0d2b1a;border:none;border-radius:50px;padding:16px 56px;font-size:18px;font-weight:700;cursor:pointer;box-shadow:0 8px 25px rgba(0,0,0,0.2);">👍 太棒了</button>
+  <div class="completion-quote">
+    <div class="en">"Little by little, one travels far."</div>
+    <div class="cn">每日单词 · 积少成多</div>
+  </div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// WORD DATA
+// ============================================================
+const WORDS = [
+  // ---- 基础必背词汇 (1-60) ----
+  {word:"system of equations", phonetic:"/ˌsɪstəm əv ɪˈkweɪʒənz/", meaning:"n. 方程组", type:"学科·数学"},
+  {word:"simultaneous equations", phonetic:"/ˌsɪməlˈteɪniəs ɪˈkweɪʒənz/", meaning:"n. 联立方程", type:"学科·数学"},
+  {word:"elimination method", phonetic:"/ɪˌlɪmɪˈneɪʃən ˌmeθəd/", meaning:"n. 消元法", type:"学科·数学"},
+  {word:"substitution method", phonetic:"/ˌsʌbstɪˈtjuːʃən ˌmeθəd/", meaning:"n. 代入法", type:"学科·数学"},
+  {word:"discriminant", phonetic:"/dɪˈskrɪmɪnənt/", meaning:"n. 判别式", type:"学科·数学"},
+  {word:"quadratic formula", phonetic:"/kwɒˌdrætɪk ˈfɔːmjələ/", meaning:"n. 求根公式", type:"学科·数学"},
+  {word:"completing the square", phonetic:"/kəmˌpliːtɪŋ ðə ˈskweə/", meaning:"n. 配方法", type:"学科·数学"},
+  {word:"inequality", phonetic:"/ˌɪnɪˈkwɒləti/", meaning:"n. 不等式", type:"学科·数学"},
+  {word:"linear inequality", phonetic:"/ˌlɪniə ɪnɪˈkwɒləti/", meaning:"n. 一元一次不等式", type:"学科·数学"},
+  {word:"inequality sign", phonetic:"/ɪnɪˈkwɒləti saɪn/", meaning:"n. 不等号", type:"学科·数学"},
+  {word:"energy", phonetic:"/ˈenədʒi/", meaning:"n. 能量", type:"学科·物理"},
+  {word:"energy store", phonetic:"/ˈenədʒi ˌstɔː/", meaning:"n. 能量储存形式", type:"学科·物理"},
+  {word:"kinetic energy", phonetic:"/kɪˌnetɪk ˈenədʒi/", meaning:"n. 动能", type:"学科·物理"},
+  {word:"gravitational potential energy", phonetic:"/ˌɡrævɪˈteɪʃənəl pəˌtenʃəl ˈenədʒi/", meaning:"n. 重力势能", type:"学科·物理"},
+  {word:"elastic potential energy", phonetic:"/ɪˌlæstɪk pəˌtenʃəl ˈenədʒi/", meaning:"n. 弹性势能", type:"学科·物理"},
+  {word:"chemical energy", phonetic:"/ˌkemɪkəl ˈenədʒi/", meaning:"n. 化学能", type:"学科·物理"},
+  {word:"nuclear energy", phonetic:"/ˌnjuːkliər ˈenədʒi/", meaning:"n. 核能", type:"学科·物理"},
+  {word:"thermal energy", phonetic:"/ˌθɜːməl ˈenədʒi/", meaning:"n. 热能", type:"学科·物理"},
+  {word:"energy transfer", phonetic:"/ˈenədʒi ˌtrænsfɜː/", meaning:"n. 能量转移", type:"学科·物理"},
+  {word:"conservation of energy", phonetic:"/ˌkɒnsəˈveɪʃən əv ˈenədʒi/", meaning:"n. 能量守恒", type:"学科·物理"},
+  {word:"external", phonetic:"/ɪkˈstɜːnl/", meaning:"adj. 外部的", type:"学科·经济"},
+  {word:"optimum", phonetic:"/ˈɒptɪməm/", meaning:"adj. 最优的", type:"学科·经济"},
+  {word:"information failure", phonetic:"/ˌɪnfəˈmeɪʃn ˈfeɪljə(r)/", meaning:"n. 信息失灵", type:"学科·经济"},
+  {word:"merit good", phonetic:"/ˈmerɪt ɡʊd/", meaning:"n. 有益品;有益商品", type:"学科·经济"},
+  {word:"demerit good", phonetic:"/ˈdemərɪt ɡʊd/", meaning:"n. 有害品;有害商品", type:"学科·经济"},
+  {word:"public good", phonetic:"/ˈpʌblɪk ɡʊd/", meaning:"n. 公共物品", type:"学科·经济"},
+  {word:"non-excludable", phonetic:"/ˌnɒn ɪkˈskluːdəbl/", meaning:"adj. 非排他的", type:"学科·经济"},
+  {word:"non-rival", phonetic:"/ˌnɒn ˈraɪvl/", meaning:"adj. 非竞争性的", type:"学科·经济"},
+  {word:"free rider", phonetic:"/friː ˈraɪdə(r)/", meaning:"n. 搭便车者", type:"学科·经济"},
+  {word:"monopoly", phonetic:"/məˈnɒpəli/", meaning:"n. 垄断", type:"学科·经济"},
+  {word:"chemical formula", phonetic:"/ˌkemɪkəl ˈfɔːmjələ/", meaning:"n. 化学式", type:"学科·化学"},
+  {word:"subscript", phonetic:"/ˈsʌbskrɪpt/", meaning:"n. 下标", type:"学科·化学"},
+  {word:"valency", phonetic:"/ˈveɪlənsi/", meaning:"n. 化合价", type:"学科·化学"},
+  {word:"hydrogen", phonetic:"/ˈhaɪdrədʒən/", meaning:"n. 氢", type:"学科·化学"},
+  {word:"helium", phonetic:"/ˈhiːliəm/", meaning:"n. 氦", type:"学科·化学"},
+  {word:"lithium", phonetic:"/ˈlɪθiəm/", meaning:"n. 锂", type:"学科·化学"},
+  {word:"beryllium", phonetic:"/bəˈrɪliəm/", meaning:"n. 铍", type:"学科·化学"},
+  {word:"boron", phonetic:"/ˈbɔːrɒn/", meaning:"n. 硼", type:"学科·化学"},
+  {word:"carbon", phonetic:"/ˈkɑːbən/", meaning:"n. 碳", type:"学科·化学"},
+  {word:"nitrogen", phonetic:"/ˈnaɪtrədʒən/", meaning:"n. 氮", type:"学科·化学"}
+];
+
+// ============================================================
+// SENTENCE EXAMPLES (embedded for reliability)
+// ============================================================
+const SENTENCES = {
+      "system of equations":"Solve the system of equations.",
+  "simultaneous equations":"The two simultaneous equations share a solution.",
+  "elimination method":"Use the elimination method to remove one variable.",
+  "substitution method":"The substitution method replaces one variable.",
+  "discriminant":"The discriminant shows how many roots there are.",
+  "quadratic formula":"Use the quadratic formula to solve the equation.",
+  "completing the square":"Completing the square changes the equation form.",
+  "inequality":"An inequality compares two values.",
+  "linear inequality":"Solve the linear inequality for x.",
+  "inequality sign":"The inequality sign points to the smaller value.",
+  "energy":"Energy can change form but cannot be created.",
+  "energy store":"Kinetic energy is one type of energy store.",
+  "kinetic energy":"A moving car has kinetic energy.",
+  "gravitational potential energy":"A lifted box has gravitational potential energy.",
+  "elastic potential energy":"A stretched spring stores elastic potential energy.",
+  "chemical energy":"Food contains chemical energy.",
+  "nuclear energy":"Nuclear energy comes from the atom nucleus.",
+  "thermal energy":"Hot water has thermal energy.",
+  "energy transfer":"Energy transfer happens when work is done.",
+  "conservation of energy":"Conservation of energy means energy is never lost.",
+  "external":"External factors affect the market.",
+  "optimum":"The optimum price maximises profit.",
+  "information failure":"Information failure happens when buyers lack knowledge.",
+  "merit good":"Education is a merit good.",
+  "demerit good":"Cigarettes are a demerit good.",
+  "public good":"Street lights are a public good.",
+  "non-excludable":"Public goods are non-excludable.",
+  "non-rival":"One persons use does not reduce anothers.",
+  "free rider":"A free rider enjoys benefits without paying.",
+  "monopoly":"The company has a monopoly on water supply.",
+  "chemical formula":"The chemical formula of water is H2O.",
+  "subscript":"The subscript shows the number of atoms.",
+  "valency":"Oxygen has a valency of two.",
+  "hydrogen":"Hydrogen is the lightest element.",
+  "helium":"Helium is used in balloons.",
+  "lithium":"Lithium is used in batteries.",
+  "beryllium":"Beryllium is a light metal.",
+  "boron":"Boron is a non-metal element.",
+  "carbon":"Carbon is in all living things.",
+  "nitrogen":"Nitrogen makes up most of the air."
+};
+
+const TRANSLATIONS = {
+      "system of equations":"解这个方程组。",
+  "simultaneous equations":"这两个联立方程有共同解。",
+  "elimination method":"用消元法消去一个变量。",
+  "substitution method":"代入法替换一个变量。",
+  "discriminant":"判别式显示有多少个根。",
+  "quadratic formula":"用求根公式解这个方程。",
+  "completing the square":"配方法改变方程的形式。",
+  "inequality":"不等式比较两个值的大小。",
+  "linear inequality":"解这个一元一次不等式求x。",
+  "inequality sign":"不等号指向较小的值。",
+  "energy":"能量可以转化但不能被创造。",
+  "energy store":"动能是能量储存形式之一。",
+  "kinetic energy":"行驶的汽车具有动能。",
+  "gravitational potential energy":"被举起的箱子具有重力势能。",
+  "elastic potential energy":"拉伸的弹簧储存弹性势能。",
+  "chemical energy":"食物含有化学能。",
+  "nuclear energy":"核能来自原子核。",
+  "thermal energy":"热水具有热能。",
+  "energy transfer":"做功时发生能量转移。",
+  "conservation of energy":"能量守恒意味着能量不会消失。",
+  "external":"外部因素影响市场。",
+  "optimum":"最优价格使利润最大化。",
+  "information failure":"信息失灵发生在买方缺乏知识时。",
+  "merit good":"教育是有益品。",
+  "demerit good":"香烟是有害品。",
+  "public good":"路灯是公共物品。",
+  "non-excludable":"公共物品是非排他的。",
+  "non-rival":"一人的使用不会减少他人的使用。",
+  "free rider":"搭便车者不付钱却享受好处。",
+  "monopoly":"这家公司垄断了供水。",
+  "chemical formula":"水的化学式是H2O。",
+  "subscript":"下标表示原子的个数。",
+  "valency":"氧的化合价是2。",
+  "hydrogen":"氢是最轻的元素。",
+  "helium":"氦用于气球。",
+  "lithium":"锂用于电池。",
+  "beryllium":"铍是一种轻金属。",
+  "boron":"硼是非金属元素。",
+  "carbon":"碳存在于所有生物体中。",
+  "nitrogen":"氮气占空气的大部分。"
+};
+
+const PHRASES = {
+      "system of equations":["system of linear equations 线性方程组"],
+  "simultaneous equations":["solve simultaneous equations 解联立方程"],
+  "elimination method":["elimination method example 消元法示例"],
+  "substitution method":["substitution method algebra 代数代入法"],
+  "discriminant":["discriminant formula 判别式公式","positive discriminant 正判别式"],
+  "quadratic formula":["quadratic formula derivation 求根公式推导"],
+  "completing the square":["completing the square method 配方法"],
+  "inequality":["solve an inequality 解不等式","inequality problem 不等式问题"],
+  "linear inequality":["linear inequality graph 一元一次不等式图像"],
+  "inequality sign":["inequality sign rules 不等号规则"],
+  "energy":["energy conversion 能量转换","form of energy 能量形式"],
+  "energy store":["energy store type 能量储存类型"],
+  "kinetic energy":["kinetic energy formula 动能公式","kinetic energy of motion 运动动能"],
+  "gravitational potential energy":["GPE formula 重力势能公式"],
+  "elastic potential energy":["elastic potential energy of spring 弹簧弹性势能"],
+  "chemical energy":["chemical energy store 化学能储存"],
+  "nuclear energy":["nuclear energy source 核能源"],
+  "thermal energy":["thermal energy transfer 热能传递"],
+  "energy transfer":["energy transfer diagram 能量转移图"],
+  "conservation of energy":["law of conservation of energy 能量守恒定律"],
+  "external":["external factor 外部因素","external cost 外部成本"],
+  "optimum":["optimum level 最优水平","optimum allocation 最优配置"],
+  "information failure":["information failure example 信息失灵示例"],
+  "merit good":["merit good example 有益品示例"],
+  "demerit good":["demerit good example 有害品示例"],
+  "public good":["public good characteristics 公共物品特征"],
+  "non-excludable":["non-excludable good 非排他物品"],
+  "non-rival":["non-rival good 非竞争性物品"],
+  "free rider":["free rider problem 搭便车问题"],
+  "monopoly":["natural monopoly 自然垄断","monopoly market 垄断市场"],
+  "chemical formula":["chemical formula of water 水的化学式"],
+  "subscript":["subscript number 下标数字"],
+  "valency":["valency of oxygen 氧的化合价","valency table 化合价表"],
+  "hydrogen":["hydrogen atom 氢原子","hydrogen gas 氢气"],
+  "helium":["helium atom 氦原子","helium gas 氦气"],
+  "lithium":["lithium ion 锂离子","lithium battery 锂电池"],
+  "beryllium":["beryllium element 铍元素"],
+  "boron":["boron element 硼元素"],
+  "carbon":["carbon atom 碳原子","carbon dioxide 二氧化碳"],
+  "nitrogen":["nitrogen gas 氮气","nitrogen atom 氮原子"]
+};
+
+const IMAGES = {
+  "system of equations": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><text x=\"62\" y=\"42\" font-size=\"30\" fill=\"#311b92\" font-family=\"sans-serif\" text-anchor=\"middle\">{</text><text x=\"88\" y=\"42\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">x + y = 5</text><text x=\"88\" y=\"66\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">x − y = 1</text><line x1=\"150\" y1=\"54\" x2=\"185\" y2=\"54\" stroke=\"#6c63ff\" stroke-width=\"2.5\" marker-end=\"url(#d9s1)\"/><defs><marker id=\"d9s1\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#6c63ff\"/></marker></defs><text x=\"210\" y=\"46\" text-anchor=\"True\" font-size=\"12\" fill=\"#6c63ff\" font-family=\"sans-serif\">x = 3</text><text x=\"210\" y=\"64\" text-anchor=\"True\" font-size=\"12\" fill=\"#6c63ff\" font-family=\"sans-serif\">y = 2</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">方程组</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">方程组：几个方程一起求解</text></svg>",
+  "simultaneous equations": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><defs><marker id=\"d9ax\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#333333\"/></marker></defs><line x1=\"35\" y1=\"95\" x2=\"35\" y2=\"18\" stroke=\"#333333\" stroke-width=\"1.8\" marker-end=\"url(#d9ax)\"/><line x1=\"35\" y1=\"95\" x2=\"215\" y2=\"95\" stroke=\"#333333\" stroke-width=\"1.8\" marker-end=\"url(#d9ax)\"/><line x1=\"40\" y1=\"95\" x2=\"200\" y2=\"45\" stroke=\"#311b92\" stroke-width=\"2.5\"/><line x1=\"45\" y1=\"40\" x2=\"195\" y2=\"95\" stroke=\"#6c63ff\" stroke-width=\"2.5\"/><circle cx=\"120\" cy=\"68\" r=\"5\" fill=\"#311b92\"/><line x1=\"120\" y1=\"56\" x2=\"120\" y2=\"80\" stroke=\"#888888\" stroke-width=\"1.5\" stroke-dasharray=\"3 3\"/><text x=\"132\" y=\"64\" text-anchor=\"True\" font-size=\"10\" fill=\"#311b92\" font-family=\"sans-serif\">交点 = 解</text><text x=\"70\" y=\"50\" text-anchor=\"middle\" font-size=\"10\" fill=\"#311b92\" font-family=\"sans-serif\">x + y = 5</text><text x=\"140\" y=\"88\" text-anchor=\"middle\" font-size=\"10\" fill=\"#6c63ff\" font-family=\"sans-serif\">x − y = 1</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">联立方程</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">联立方程：两方程图像的交点即公共解</text></svg>",
+  "elimination method": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><text x=\"70\" y=\"40\" text-anchor=\"True\" font-size=\"13\" fill=\"#311b92\" font-family=\"sans-serif\">x + y = 5</text><text x=\"70\" y=\"64\" text-anchor=\"True\" font-size=\"13\" fill=\"#311b92\" font-family=\"sans-serif\">x − y = 1</text><text x=\"120\" y=\"52\" font-size=\"18\" fill=\"#333333\" font-family=\"sans-serif\">+</text><line x1=\"60\" y1=\"74\" x2=\"150\" y2=\"74\" stroke=\"#888888\" stroke-width=\"1.5\"/><text x=\"120\" y=\"92\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">2x = 6 → x = 3</text><text x=\"120\" y=\"112\" text-anchor=\"True\" font-size=\"10\" fill=\"#6c63ff\" font-family=\"sans-serif\">两式相加消去 y（消元）</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">消元法</text></svg>",
+  "substitution method": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><text x=\"90\" y=\"42\" text-anchor=\"True\" font-size=\"14\" fill=\"#6c63ff\" font-family=\"sans-serif\">y = 2x</text><text x=\"90\" y=\"68\" text-anchor=\"True\" font-size=\"14\" fill=\"#311b92\" font-family=\"sans-serif\">x + y = 9</text><line x1=\"140\" y1=\"52\" x2=\"175\" y2=\"52\" stroke=\"#6c63ff\" stroke-width=\"2.5\" marker-end=\"url(#d9s2)\"/><defs><marker id=\"d9s2\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#6c63ff\"/></marker></defs><text x=\"120\" y=\"90\" text-anchor=\"True\" font-size=\"13\" fill=\"#311b92\" font-family=\"sans-serif\">x + 2x = 9 → x = 3</text><text x=\"120\" y=\"110\" text-anchor=\"True\" font-size=\"10\" fill=\"#6c63ff\" font-family=\"sans-serif\">把 y 的表达式代入另一式</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">代入法</text></svg>",
+  "discriminant": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><text x=\"120\" y=\"40\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">Δ = b² − 4ac</text><line x1=\"60\" y1=\"50\" x2=\"180\" y2=\"50\" stroke=\"#888888\" stroke-width=\"1.5\"/><text x=\"60\" y=\"70\" text-anchor=\"True\" font-size=\"12\" fill=\"#311b92\" font-family=\"sans-serif\">Δ > 0</text><text x=\"60\" y=\"88\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">两个根</text><text x=\"120\" y=\"70\" text-anchor=\"True\" font-size=\"12\" fill=\"#6c63ff\" font-family=\"sans-serif\">Δ = 0</text><text x=\"120\" y=\"88\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">一个根</text><text x=\"180\" y=\"70\" text-anchor=\"True\" font-size=\"12\" fill=\"#311b92\" font-family=\"sans-serif\">Δ < 0</text><text x=\"180\" y=\"88\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">无实根</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">判别式</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">判别式：判断一元二次方程根的个数</text></svg>",
+  "quadratic formula": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><text x=\"120\" y=\"40\" text-anchor=\"True\" font-size=\"13\" fill=\"#311b92\" font-family=\"sans-serif\">ax² + bx + c = 0</text><text x=\"120\" y=\"66\" text-anchor=\"middle\" font-size=\"22\" fill=\"#311b92\" font-family=\"sans-serif\">x = (−b ± √(b²−4ac)) / 2a</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">求根公式</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">求根公式：解任意一元二次方程</text></svg>",
+  "completing the square": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><text x=\"120\" y=\"44\" text-anchor=\"True\" font-size=\"18\" fill=\"#311b92\" font-family=\"sans-serif\">x² + 6x</text><line x1=\"120\" y1=\"54\" x2=\"120\" y2=\"70\" stroke=\"#6c63ff\" stroke-width=\"2.5\" marker-end=\"url(#d9s3)\"/><defs><marker id=\"d9s3\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#6c63ff\"/></marker></defs><text x=\"120\" y=\"92\" text-anchor=\"True\" font-size=\"18\" fill=\"#311b92\" font-family=\"sans-serif\">= (x + 3)² − 9</text><text x=\"120\" y=\"112\" text-anchor=\"True\" font-size=\"10.5\" fill=\"#6c63ff\" font-family=\"sans-serif\">配成完全平方</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">配方法</text></svg>",
+  "inequality": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><line x1=\"40\" y1=\"70\" x2=\"200\" y2=\"70\" stroke=\"#333333\" stroke-width=\"2\"/><defs><marker id=\"d9s4\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#333333\"/></marker></defs><line x1=\"40\" y1=\"70\" x2=\"200\" y2=\"70\" stroke=\"#333333\" stroke-width=\"2\" marker-end=\"url(#d9s4)\"/><line x1=\"120\" y1=\"64\" x2=\"120\" y2=\"76\" stroke=\"#311b92\" stroke-width=\"2.5\"/><circle cx=\"120\" cy=\"70\" r=\"4\" fill=\"#311b92\"/><rect x=\"120\" y=\"58\" width=\"80\" height=\"24\" fill=\"#6c63ff\" opacity=\"0.3\" rx=\"4\"/><text x=\"120\" y=\"90\" text-anchor=\"True\" font-size=\"12\" fill=\"#311b92\" font-family=\"sans-serif\">3</text><text x=\"160\" y=\"50\" text-anchor=\"True\" font-size=\"13\" fill=\"#6c63ff\" font-family=\"sans-serif\">x > 3</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">不等式</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">不等式：用 < > ≤ ≥ 表示大小关系</text></svg>",
+  "linear inequality": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><line x1=\"40\" y1=\"70\" x2=\"200\" y2=\"70\" stroke=\"#333333\" stroke-width=\"2\"/><line x1=\"40\" y1=\"70\" x2=\"200\" y2=\"70\" stroke=\"#333333\" stroke-width=\"2\" marker-end=\"url(#d9s5)\"/><defs><marker id=\"d9s5\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#333333\"/></marker></defs><line x1=\"140\" y1=\"64\" x2=\"140\" y2=\"76\" stroke=\"#311b92\" stroke-width=\"2.5\"/><circle cx=\"140\" cy=\"70\" r=\"4\" fill=\"#311b92\"/><rect x=\"40\" y=\"58\" width=\"100\" height=\"24\" fill=\"#6c63ff\" opacity=\"0.3\" rx=\"4\"/><text x=\"140\" y=\"90\" text-anchor=\"True\" font-size=\"12\" fill=\"#311b92\" font-family=\"sans-serif\">2</text><text x=\"90\" y=\"50\" text-anchor=\"True\" font-size=\"13\" fill=\"#6c63ff\" font-family=\"sans-serif\">x ≤ 2</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#888888\" font-family=\"sans-serif\">如 2x + 1 ≤ 5 → x ≤ 2</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">一元一次不等式</text></svg>",
+  "inequality sign": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"25\" y=\"44\" width=\"40\" height=\"34\" rx=\"6\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"1.5\"/><text x=\"45\" y=\"66\" text-anchor=\"True\" font-size=\"22\" fill=\"#311b92\" font-family=\"sans-serif\"><</text><text x=\"45\" y=\"84\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">小于</text><rect x=\"73\" y=\"44\" width=\"40\" height=\"34\" rx=\"6\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"1.5\"/><text x=\"93\" y=\"66\" text-anchor=\"True\" font-size=\"22\" fill=\"#311b92\" font-family=\"sans-serif\">></text><text x=\"93\" y=\"84\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">大于</text><rect x=\"121\" y=\"44\" width=\"40\" height=\"34\" rx=\"6\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"1.5\"/><text x=\"141\" y=\"66\" text-anchor=\"True\" font-size=\"22\" fill=\"#311b92\" font-family=\"sans-serif\">≤</text><text x=\"141\" y=\"84\" text-anchor=\"middle\" font-size=\"9\" fill=\"#888888\" font-family=\"sans-serif\">小于等于</text><rect x=\"169\" y=\"44\" width=\"40\" height=\"34\" rx=\"6\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"1.5\"/><text x=\"189\" y=\"66\" text-anchor=\"True\" font-size=\"22\" fill=\"#311b92\" font-family=\"sans-serif\">≥</text><text x=\"189\" y=\"84\" text-anchor=\"middle\" font-size=\"9\" fill=\"#888888\" font-family=\"sans-serif\">大于等于</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">不等号</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">不等号：比较大小的符号</text></svg>",
+  "energy": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><path d=\"M120 34 L110 60 L118 60 L108 84 L132 56 L122 56 L134 34 Z\" fill=\"#6c63ff\" stroke=\"#311b92\" stroke-width=\"1.5\"/><text x=\"120\" y=\"104\" text-anchor=\"True\" font-size=\"11.5\" fill=\"#311b92\" font-family=\"sans-serif\">能量：做功的本领</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">能量</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">能量：使物体发生变化的能力</text></svg>",
+  "energy store": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"14\" y=\"40\" width=\"50\" height=\"26\" rx=\"5\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"1.2\"/><text x=\"39\" y=\"57\" text-anchor=\"True\" font-size=\"10\" fill=\"#311b92\" font-family=\"sans-serif\">动能</text><rect x=\"70\" y=\"40\" width=\"50\" height=\"26\" rx=\"5\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"1.2\"/><text x=\"95\" y=\"57\" text-anchor=\"True\" font-size=\"10\" fill=\"#311b92\" font-family=\"sans-serif\">重力势能</text><rect x=\"126\" y=\"40\" width=\"50\" height=\"26\" rx=\"5\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"1.2\"/><text x=\"151\" y=\"57\" text-anchor=\"True\" font-size=\"10\" fill=\"#311b92\" font-family=\"sans-serif\">弹性势能</text><rect x=\"182\" y=\"40\" width=\"44\" height=\"26\" rx=\"5\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"1.2\"/><text x=\"204\" y=\"57\" text-anchor=\"True\" font-size=\"10\" fill=\"#311b92\" font-family=\"sans-serif\">化学能</text><rect x=\"14\" y=\"72\" width=\"50\" height=\"26\" rx=\"5\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"1.2\"/><text x=\"39\" y=\"89\" text-anchor=\"True\" font-size=\"10\" fill=\"#311b92\" font-family=\"sans-serif\">核能</text><rect x=\"70\" y=\"72\" width=\"50\" height=\"26\" rx=\"5\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"1.2\"/><text x=\"95\" y=\"89\" text-anchor=\"True\" font-size=\"10\" fill=\"#311b92\" font-family=\"sans-serif\">热能</text><rect x=\"126\" y=\"72\" width=\"50\" height=\"26\" rx=\"5\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"1.2\"/><text x=\"151\" y=\"89\" text-anchor=\"True\" font-size=\"10\" fill=\"#311b92\" font-family=\"sans-serif\">声能</text><rect x=\"182\" y=\"72\" width=\"44\" height=\"26\" rx=\"5\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"1.2\"/><text x=\"204\" y=\"89\" text-anchor=\"True\" font-size=\"10\" fill=\"#311b92\" font-family=\"sans-serif\">光能</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">能量储存形式</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">能量储存形式：动能·势能·化学能·核能·热能…</text></svg>",
+  "kinetic energy": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"45\" y=\"62\" width=\"46\" height=\"26\" rx=\"6\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><circle cx=\"58\" cy=\"92\" r=\"7\" fill=\"#888888\"/><circle cx=\"80\" cy=\"92\" r=\"7\" fill=\"#888888\"/><line x1=\"105\" y1=\"75\" x2=\"185\" y2=\"75\" stroke=\"#311b92\" stroke-width=\"3.5\" marker-end=\"url(#d9k1)\"/><defs><marker id=\"d9k1\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#311b92\"/></marker></defs><text x=\"120\" y=\"42\" text-anchor=\"True\" font-size=\"10.5\" fill=\"#311b92\" font-family=\"sans-serif\">运动的物体</text><text x=\"120\" y=\"110\" text-anchor=\"True\" font-size=\"13\" fill=\"#311b92\" font-family=\"sans-serif\">动能 Ek = ½mv²</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">动能</text></svg>",
+  "gravitational potential energy": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><line x1=\"40\" y1=\"100\" x2=\"200\" y2=\"100\" stroke=\"#888888\" stroke-width=\"2\"/><rect x=\"95\" y=\"40\" width=\"50\" height=\"30\" rx=\"5\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"120\" y=\"60\" text-anchor=\"True\" font-size=\"14\" fill=\"#311b92\" font-family=\"sans-serif\">m</text><line x1=\"120\" y1=\"34\" x2=\"120\" y2=\"92\" stroke=\"#6c63ff\" stroke-width=\"2\" marker-end=\"url(#d9g1)\"/><defs><marker id=\"d9g1\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#6c63ff\"/></marker></defs><text x=\"132\" y=\"66\" text-anchor=\"True\" font-size=\"12\" fill=\"#6c63ff\" font-family=\"sans-serif\">h</text><text x=\"120\" y=\"112\" text-anchor=\"True\" font-size=\"13\" fill=\"#311b92\" font-family=\"sans-serif\">重力势能 Ep = mgh</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">重力势能</text></svg>",
+  "elastic potential energy": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"50\" y=\"62\" width=\"30\" height=\"28\" rx=\"4\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><polyline points=\"80,76 90,66 100,86 110,66 120,86 130,66 140,76\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"2.5\"/><rect x=\"140\" y=\"62\" width=\"30\" height=\"28\" rx=\"4\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"120\" y=\"44\" text-anchor=\"True\" font-size=\"10.5\" fill=\"#311b92\" font-family=\"sans-serif\">被拉伸的弹簧</text><text x=\"120\" y=\"112\" text-anchor=\"True\" font-size=\"13\" fill=\"#311b92\" font-family=\"sans-serif\">弹性势能 Ep = ½kx²</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">弹性势能</text></svg>",
+  "chemical energy": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><circle cx=\"75\" cy=\"60\" r=\"16\" fill=\"#6c63ff\"/><path d=\"M75 44 q-4 -8 0 -14 M68 52 q-8 -2 -10 -8\" stroke=\"#888888\" stroke-width=\"1.5\" fill=\"none\"/><text x=\"75\" y=\"88\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#888888\" font-family=\"sans-serif\">食物</text><rect x=\"130\" y=\"46\" width=\"34\" height=\"30\" rx=\"5\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><line x1=\"140\" y1=\"56\" x2=\"154\" y2=\"56\" stroke=\"#311b92\" stroke-width=\"2\"/><line x1=\"140\" y1=\"66\" x2=\"154\" y2=\"66\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"147\" y=\"88\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#888888\" font-family=\"sans-serif\">电池</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">化学能：储存在物质中，如食物、电池</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">化学能</text></svg>",
+  "nuclear energy": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><circle cx=\"120\" cy=\"62\" r=\"13\" fill=\"#311b92\"/><circle cx=\"108\" cy=\"58\" r=\"6\" fill=\"#6c63ff\"/><circle cx=\"130\" cy=\"70\" r=\"6\" fill=\"#6c63ff\"/><path d=\"M120 34 q10 8 8 18 M120 34 q-10 8 -8 18 M120 92 q10 -8 8 -18 M120 92 q-10 -8 -8 -18\" stroke=\"#6c63ff\" stroke-width=\"2\" fill=\"none\" marker-end=\"url(#d9n1)\"/><defs><marker id=\"d9n1\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#6c63ff\"/></marker></defs><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"11\" fill=\"#888888\" font-family=\"sans-serif\">核能：来自原子核内部</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">核能</text></svg>",
+  "thermal energy": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><path d=\"M100 96 a20 20 0 0 1 40 0 Z\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><path d=\"M105 96 q15 -8 30 0\" fill=\"#6c63ff\" opacity=\"0.5\"/><path d=\"M140 40 q10 6 0 12 M120 36 q10 6 0 12\" stroke=\"#6c63ff\" stroke-width=\"2\" fill=\"none\"/><text x=\"120\" y=\"30\" text-anchor=\"True\" font-size=\"11\" fill=\"#311b92\" font-family=\"sans-serif\">热水</text><text x=\"120\" y=\"114\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">热能：物体内部分子运动的能量</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">热能</text></svg>",
+  "energy transfer": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"40\" y=\"52\" width=\"56\" height=\"36\" rx=\"6\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"1.5\"/><text x=\"68\" y=\"74\" text-anchor=\"True\" font-size=\"12\" fill=\"#311b92\" font-family=\"sans-serif\">化学能</text><line x1=\"105\" y1=\"70\" x2=\"135\" y2=\"70\" stroke=\"#6c63ff\" stroke-width=\"3\" marker-end=\"url(#d9t1)\"/><defs><marker id=\"d9t1\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#6c63ff\"/></marker></defs><rect x=\"144\" y=\"52\" width=\"56\" height=\"36\" rx=\"6\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"1.5\"/><text x=\"172\" y=\"74\" text-anchor=\"True\" font-size=\"12\" fill=\"#311b92\" font-family=\"sans-serif\">动能</text><text x=\"120\" y=\"40\" text-anchor=\"True\" font-size=\"11\" fill=\"#311b92\" font-family=\"sans-serif\">电池 → 小车行驶</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">能量转移：能量从一种储存形式变成另一种</text></svg>",
+  "conservation of energy": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><line x1=\"120\" y1=\"30\" x2=\"120\" y2=\"98\" stroke=\"#888888\" stroke-width=\"2\"/><circle cx=\"120\" cy=\"34\" r=\"5\" fill=\"#311b92\"/><circle cx=\"85\" cy=\"70\" r=\"5\" fill=\"#6c63ff\"/><circle cx=\"155\" cy=\"70\" r=\"5\" fill=\"#6c63ff\"/><path d=\"M120 34 Q 85 70 120 98 Q 155 70 120 34\" fill=\"none\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"120\" y=\"24\" text-anchor=\"middle\" font-size=\"9\" fill=\"#311b92\" font-family=\"sans-serif\">势能大</text><text x=\"72\" y=\"76\" text-anchor=\"middle\" font-size=\"9\" fill=\"#6c63ff\" font-family=\"sans-serif\">动能大</text><text x=\"168\" y=\"76\" text-anchor=\"middle\" font-size=\"9\" fill=\"#6c63ff\" font-family=\"sans-serif\">动能大</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#888888\" font-family=\"sans-serif\">能量总量不变（势能 ⇄ 动能）</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">能量守恒</text></svg>",
+  "external": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"60\" y=\"52\" width=\"70\" height=\"36\" rx=\"4\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><path d=\"M85 52 q-6 -16 10 -16 q14 0 8 16\" fill=\"none\" stroke=\"#888888\" stroke-width=\"2\"/><circle cx=\"88\" cy=\"40\" r=\"4\" fill=\"#888888\"/><circle cx=\"104\" cy=\"34\" r=\"4\" fill=\"#888888\"/><circle cx=\"118\" cy=\"42\" r=\"3.5\" fill=\"#888888\"/><text x=\"95\" y=\"102\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">工厂</text><circle cx=\"175\" cy=\"68.0\" r=\"7.0\" fill=\"#6c63ff\"/><path d=\"M164.0 100.0 q11.0 -14 22.0 0 l-5 16.0 q-3 3 -6 -1 l-4 -14 l-4 14 q-3 4 -6 1 Z\" fill=\"#6c63ff\" opacity=\"0.85\"/><text x=\"178\" y=\"40\" font-size=\"20\" fill=\"#311b92\" font-family=\"sans-serif\">✕</text><text x=\"120\" y=\"120\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#888888\" font-family=\"sans-serif\">外部成本：工厂污染影响他人</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">外部的</text></svg>",
+  "optimum": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><defs><marker id=\"d9ax\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#333333\"/></marker></defs><line x1=\"35\" y1=\"95\" x2=\"35\" y2=\"18\" stroke=\"#333333\" stroke-width=\"1.8\" marker-end=\"url(#d9ax)\"/><line x1=\"35\" y1=\"95\" x2=\"215\" y2=\"95\" stroke=\"#333333\" stroke-width=\"1.8\" marker-end=\"url(#d9ax)\"/><path d=\"M40 90 Q 120 28 205 88\" fill=\"none\" stroke=\"#311b92\" stroke-width=\"2.5\"/><circle cx=\"120\" cy=\"52\" r=\"5\" fill=\"#311b92\"/><line x1=\"120\" y1=\"42\" x2=\"120\" y2=\"62\" stroke=\"#6c63ff\" stroke-width=\"1.5\" stroke-dasharray=\"3 3\"/><text x=\"128\" y=\"50\" text-anchor=\"True\" font-size=\"10\" fill=\"#6c63ff\" font-family=\"sans-serif\">最优</text><text x=\"120\" y=\"24\" text-anchor=\"True\" font-size=\"11\" fill=\"#311b92\" font-family=\"sans-serif\">利润曲线最高点</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">最优：产量/价格的最佳水平（利润最大）</text></svg>",
+  "information failure": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><circle cx=\"100\" cy=\"68.0\" r=\"7.0\" fill=\"#311b92\"/><path d=\"M89.0 100.0 q11.0 -14 22.0 0 l-5 16.0 q-3 3 -6 -1 l-4 -14 l-4 14 q-3 4 -6 1 Z\" fill=\"#311b92\" opacity=\"0.85\"/><text x=\"75\" y=\"60\" text-anchor=\"True\" font-size=\"18\" fill=\"#6c63ff\" font-family=\"sans-serif\">?</text><text x=\"105\" y=\"46\" text-anchor=\"True\" font-size=\"14\" fill=\"#6c63ff\" font-family=\"sans-serif\">?</text><text x=\"135\" y=\"62\" text-anchor=\"True\" font-size=\"16\" fill=\"#6c63ff\" font-family=\"sans-serif\">?</text><rect x=\"60\" y=\"96\" width=\"80\" height=\"8\" rx=\"3\" fill=\"#ece7fb\" stroke=\"#888888\" stroke-width=\"1\"/><text x=\"120\" y=\"118\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#888888\" font-family=\"sans-serif\">买方缺乏信息 → 错误决策</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">信息失灵</text></svg>",
+  "merit good": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"60\" y=\"48\" width=\"56\" height=\"44\" rx=\"6\" fill=\"#ffffff\" stroke=\"#311b92\" stroke-width=\"2\"/><path d=\"M64 48 l8 -8 l26 0 l0 8 M64 92 l8 8 l26 0 l0 -8\" stroke=\"#311b92\" stroke-width=\"2\" fill=\"none\"/><text x=\"88\" y=\"76\" text-anchor=\"True\" font-size=\"16\" fill=\"#311b92\" font-family=\"sans-serif\">书</text><text x=\"145\" y=\"76\" text-anchor=\"True\" font-size=\"24\" fill=\"#6c63ff\" font-family=\"sans-serif\">+</text><text x=\"185\" y=\"66\" text-anchor=\"True\" font-size=\"10.5\" fill=\"#311b92\" font-family=\"sans-serif\">教育/医疗</text><text x=\"185\" y=\"82\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">消费不足</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">有益品</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">有益品：对人有好处却消费不足，如教育、医疗</text></svg>",
+  "demerit good": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"70\" y=\"52\" width=\"70\" height=\"34\" rx=\"4\" fill=\"#fff\" stroke=\"#311b92\" stroke-width=\"2\"/><line x1=\"80\" y1=\"60\" x2=\"130\" y2=\"60\" stroke=\"#6c63ff\" stroke-width=\"2.5\"/><line x1=\"80\" y1=\"70\" x2=\"125\" y2=\"70\" stroke=\"#6c63ff\" stroke-width=\"2.5\"/><rect x=\"78\" y=\"52\" width=\"10\" height=\"34\" fill=\"#311b92\" opacity=\"0.25\"/><text x=\"145\" y=\"76\" text-anchor=\"True\" font-size=\"24\" fill=\"#6c63ff\" font-family=\"sans-serif\">−</text><text x=\"185\" y=\"66\" text-anchor=\"True\" font-size=\"10.5\" fill=\"#311b92\" font-family=\"sans-serif\">香烟/酒</text><text x=\"185\" y=\"82\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">过度消费</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">有害品</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">有害品：对人有害却过度消费，如香烟、酒精</text></svg>",
+  "public good": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"100\" y=\"38\" width=\"8\" height=\"30\" fill=\"#888888\"/><rect x=\"92\" y=\"32\" width=\"24\" height=\"10\" rx=\"3\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"1.5\"/><path d=\"M104 42 l0 14 M98 50 q6 10 12 0\" stroke=\"#6c63ff\" stroke-width=\"2\" fill=\"none\"/><path d=\"M60 70 q44 -16 88 0\" stroke=\"#6c63ff\" stroke-width=\"2\" fill=\"none\"/><path d=\"M40 88 q80 -26 160 0\" stroke=\"#6c63ff\" stroke-width=\"2\" fill=\"none\" opacity=\"0.6\"/><text x=\"120\" y=\"108\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">路灯：人人可用，不付钱也能用</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">公共物品</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">公共物品：非排他 + 非竞争，如路灯、国防</text></svg>",
+  "non-excludable": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><path d=\"M120 34 l0 20\" stroke=\"#311b92\" stroke-width=\"3\"/><path d=\"M120 54 a14 10 0 0 1 0 -20 a14 10 0 0 1 0 20 Z\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><path d=\"M60 88 q60 -22 120 0\" stroke=\"#6c63ff\" stroke-width=\"2\" fill=\"none\"/><circle cx=\"70\" cy=\"84.0\" r=\"7.0\" fill=\"#311b92\"/><path d=\"M59.0 116.0 q11.0 -14 22.0 0 l-5 16.0 q-3 3 -6 -1 l-4 -14 l-4 14 q-3 4 -6 1 Z\" fill=\"#311b92\" opacity=\"0.85\"/><circle cx=\"170\" cy=\"84.0\" r=\"7.0\" fill=\"#6c63ff\"/><path d=\"M159.0 116.0 q11.0 -14 22.0 0 l-5 16.0 q-3 3 -6 -1 l-4 -14 l-4 14 q-3 4 -6 1 Z\" fill=\"#6c63ff\" opacity=\"0.85\"/><text x=\"170\" y=\"120\" font-size=\"16\" fill=\"#888888\" font-family=\"sans-serif\">✕</text><text x=\"120\" y=\"118\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">不付钱也无法排除（如灯塔光）</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">非排他的</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">非排他：无法阻止未付费者使用</text></svg>",
+  "non-rival": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><circle cx=\"120\" cy=\"60\" r=\"16\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><path d=\"M120 44 a16 16 0 0 1 16 16\" fill=\"none\" stroke=\"#311b92\" stroke-width=\"1.5\"/><path d=\"M60 60 q10 -14 30 -20 M180 60 q-10 -14 -30 -20\" stroke=\"#6c63ff\" stroke-width=\"2\" fill=\"none\" marker-end=\"url(#d9r1)\"/><defs><marker id=\"d9r1\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#6c63ff\"/></marker></defs><circle cx=\"50\" cy=\"76.0\" r=\"7.0\" fill=\"#311b92\"/><path d=\"M39.0 108.0 q11.0 -14 22.0 0 l-5 16.0 q-3 3 -6 -1 l-4 -14 l-4 14 q-3 4 -6 1 Z\" fill=\"#311b92\" opacity=\"0.85\"/><circle cx=\"190\" cy=\"76.0\" r=\"7.0\" fill=\"#6c63ff\"/><path d=\"M179.0 108.0 q11.0 -14 22.0 0 l-5 16.0 q-3 3 -6 -1 l-4 -14 l-4 14 q-3 4 -6 1 Z\" fill=\"#6c63ff\" opacity=\"0.85\"/><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">广播：多人听互不影响</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">非竞争性的</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">非竞争：一人使用不减少他人可用量</text></svg>",
+  "free rider": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><path d=\"M120 40 l0 18\" stroke=\"#311b92\" stroke-width=\"3\"/><path d=\"M120 58 a12 9 0 0 1 0 -18 a12 9 0 0 1 0 18 Z\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><path d=\"M70 90 q50 -14 100 0\" stroke=\"#6c63ff\" stroke-width=\"2\" fill=\"none\"/><path d=\"M35 52 l20 0 M35 62 l20 0 M35 72 l20 0\" stroke=\"#888888\" stroke-width=\"3\"/><circle cx=\"95\" cy=\"86.0\" r=\"7.0\" fill=\"#888888\"/><path d=\"M84.0 118.0 q11.0 -14 22.0 0 l-5 16.0 q-3 3 -6 -1 l-4 -14 l-4 14 q-3 4 -6 1 Z\" fill=\"#888888\" opacity=\"0.85\"/><text x=\"180\" y=\"88\" font-size=\"14\" fill=\"#888888\" font-family=\"sans-serif\">未付费</text><text x=\"120\" y=\"122\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">搭便车者：不付钱却享受好处</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">搭便车者</text></svg>",
+  "monopoly": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"70\" y=\"40\" width=\"70\" height=\"40\" rx=\"6\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><path d=\"M85 40 l-5 -12 l14 0 M105 40 l-5 -12 l14 0\" fill=\"none\" stroke=\"#888888\" stroke-width=\"2\"/><text x=\"105\" y=\"66\" text-anchor=\"True\" font-size=\"12\" fill=\"#311b92\" font-family=\"sans-serif\">唯一卖方</text><circle cx=\"45\" cy=\"84.0\" r=\"7.0\" fill=\"#6c63ff\"/><path d=\"M34.0 116.0 q11.0 -14 22.0 0 l-5 16.0 q-3 3 -6 -1 l-4 -14 l-4 14 q-3 4 -6 1 Z\" fill=\"#6c63ff\" opacity=\"0.85\"/><circle cx=\"120\" cy=\"88.0\" r=\"7.0\" fill=\"#6c63ff\"/><path d=\"M109.0 120.0 q11.0 -14 22.0 0 l-5 16.0 q-3 3 -6 -1 l-4 -14 l-4 14 q-3 4 -6 1 Z\" fill=\"#6c63ff\" opacity=\"0.85\"/><circle cx=\"195\" cy=\"84.0\" r=\"7.0\" fill=\"#6c63ff\"/><path d=\"M184.0 116.0 q11.0 -14 22.0 0 l-5 16.0 q-3 3 -6 -1 l-4 -14 l-4 14 q-3 4 -6 1 Z\" fill=\"#6c63ff\" opacity=\"0.85\"/><line x1=\"58\" y1=\"88\" x2=\"90\" y2=\"82\" stroke=\"#6c63ff\" stroke-width=\"1.8\" marker-end=\"url(#d9m1)\"/><line x1=\"120\" y1=\"88\" x2=\"120\" y2=\"82\" stroke=\"#6c63ff\" stroke-width=\"1.8\" marker-end=\"url(#d9m1)\"/><line x1=\"182\" y1=\"88\" x2=\"150\" y2=\"82\" stroke=\"#6c63ff\" stroke-width=\"1.8\" marker-end=\"url(#d9m1)\"/><defs><marker id=\"d9m1\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#6c63ff\"/></marker></defs><text x=\"120\" y=\"28\" text-anchor=\"True\" font-size=\"10.5\" fill=\"#311b92\" font-family=\"sans-serif\">没有其他选择</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">垄断：市场上只有一个卖方</text></svg>",
+  "chemical formula": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><text x=\"85\" y=\"62\" text-anchor=\"True\" font-size=\"26\" fill=\"#311b92\" font-family=\"sans-serif\">H₂O</text><text x=\"175\" y=\"62\" text-anchor=\"True\" font-size=\"26\" fill=\"#311b92\" font-family=\"sans-serif\">CO₂</text><text x=\"120\" y=\"94\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#888888\" font-family=\"sans-serif\">表示物质由什么元素组成</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">化学式</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">化学式：如 H₂O（水）、CO₂（二氧化碳）</text></svg>",
+  "subscript": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><text x=\"120\" y=\"58\" text-anchor=\"True\" font-size=\"30\" fill=\"#311b92\" font-family=\"sans-serif\">H₂O</text><line x1=\"133\" y1=\"60\" x2=\"133\" y2=\"72\" stroke=\"#6c63ff\" stroke-width=\"2\"/><text x=\"142\" y=\"78\" text-anchor=\"True\" font-size=\"11\" fill=\"#6c63ff\" font-family=\"sans-serif\">下标 = 2</text><text x=\"120\" y=\"100\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#888888\" font-family=\"sans-serif\">表示有 2 个氢原子</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">下标</text></svg>",
+  "valency": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><text x=\"120\" y=\"56\" text-anchor=\"True\" font-size=\"28\" fill=\"#311b92\" font-family=\"sans-serif\">H₂O</text><text x=\"82\" y=\"80\" text-anchor=\"True\" font-size=\"10\" fill=\"#6c63ff\" font-family=\"sans-serif\">H 化合价 +1</text><text x=\"160\" y=\"80\" text-anchor=\"True\" font-size=\"10\" fill=\"#6c63ff\" font-family=\"sans-serif\">O 化合价 −2</text><text x=\"120\" y=\"104\" text-anchor=\"True\" font-size=\"11\" fill=\"#311b92\" font-family=\"sans-serif\">2×(+1) + (−2) = 0</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">化合价</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">化合价：元素化合时的结合能力</text></svg>",
+  "hydrogen": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><circle cx=\"120\" cy=\"64\" r=\"30\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"120\" y=\"74\" text-anchor=\"True\" font-size=\"30\" fill=\"#311b92\" font-family=\"sans-serif\">H</text><text x=\"120\" y=\"100\" text-anchor=\"True\" font-size=\"11\" fill=\"#6c63ff\" font-family=\"sans-serif\">原子序数 1</text><path d=\"M70 40 q10 -14 26 -16 M60 30 q6 -10 16 -12\" stroke=\"#888888\" stroke-width=\"1.5\" fill=\"none\"/><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">氢</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">氢：最轻的元素，非金属</text></svg>",
+  "helium": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><circle cx=\"120\" cy=\"70\" r=\"30\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"120\" y=\"80\" text-anchor=\"True\" font-size=\"26\" fill=\"#311b92\" font-family=\"sans-serif\">He</text><path d=\"M120 40 q-2 -14 10 -16\" stroke=\"#6c63ff\" stroke-width=\"2\" fill=\"none\"/><path d=\"M90 66 l-14 0 M150 66 l14 0\" stroke=\"#888888\" stroke-width=\"2\"/><text x=\"120\" y=\"110\" text-anchor=\"True\" font-size=\"10\" fill=\"#6c63ff\" font-family=\"sans-serif\">原子序数 2 · 惰性气体</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">氦</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">氦：充气球用，很稳定</text></svg>",
+  "lithium": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"90\" y=\"44\" width=\"60\" height=\"42\" rx=\"6\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"120\" y=\"62\" text-anchor=\"True\" font-size=\"26\" fill=\"#311b92\" font-family=\"sans-serif\">Li</text><text x=\"120\" y=\"80\" text-anchor=\"True\" font-size=\"12\" fill=\"#6c63ff\" font-family=\"sans-serif\">3</text><line x1=\"100\" y1=\"92\" x2=\"100\" y2=\"100\" stroke=\"#888888\" stroke-width=\"2\"/><line x1=\"140\" y1=\"92\" x2=\"140\" y2=\"100\" stroke=\"#888888\" stroke-width=\"2\"/><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">碱金属 · 用于电池</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">锂</text></svg>",
+  "beryllium": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"85\" y=\"52\" width=\"70\" height=\"40\" rx=\"6\" fill=\"#d8d8e0\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"120\" y=\"78\" text-anchor=\"True\" font-size=\"26\" fill=\"#311b92\" font-family=\"sans-serif\">Be</text><text x=\"120\" y=\"108\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">原子序数 4 · 轻金属</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">铍</text></svg>",
+  "boron": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><circle cx=\"120\" cy=\"64\" r=\"28\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"120\" y=\"72\" text-anchor=\"True\" font-size=\"26\" fill=\"#311b92\" font-family=\"sans-serif\">B</text><circle cx=\"120\" cy=\"40\" r=\"3\" fill=\"#6c63ff\"/><circle cx=\"142\" cy=\"54\" r=\"3\" fill=\"#6c63ff\"/><circle cx=\"136\" cy=\"82\" r=\"3\" fill=\"#6c63ff\"/><circle cx=\"104\" cy=\"82\" r=\"3\" fill=\"#6c63ff\"/><circle cx=\"98\" cy=\"54\" r=\"3\" fill=\"#6c63ff\"/><line x1=\"120\" y1=\"44\" x2=\"136\" y2=\"53\" stroke=\"#888888\" stroke-width=\"1\"/><line x1=\"136\" y1=\"58\" x2=\"133\" y2=\"78\" stroke=\"#888888\" stroke-width=\"1\"/><text x=\"120\" y=\"108\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">原子序数 5 · 非金属</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">硼</text></svg>",
+  "carbon": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><path d=\"M120 36 L152 52 L152 84 L120 100 L88 84 L88 52 Z\" fill=\"none\" stroke=\"#311b92\" stroke-width=\"2.5\"/><text x=\"120\" y=\"78\" text-anchor=\"True\" font-size=\"24\" fill=\"#311b92\" font-family=\"sans-serif\">C</text><text x=\"120\" y=\"116\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">原子序数 6 · 金刚石/石墨</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">碳</text></svg>",
+  "nitrogen": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><path d=\"M60 74 a20 13 0 0 1 0 -26 a18 11 0 0 1 34 0 a18 11 0 0 1 34 0 a20 13 0 0 1 0 26 Z\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"120\" y=\"66\" text-anchor=\"True\" font-size=\"20\" fill=\"#311b92\" font-family=\"sans-serif\">N₂</text><text x=\"120\" y=\"90\" text-anchor=\"True\" font-size=\"10.5\" fill=\"#6c63ff\" font-family=\"sans-serif\">占空气约 78%</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">原子序数 7</text><text x=\"120\" y=\"26\" text-anchor=\"True\" font-size=\"15\" fill=\"#311b92\" font-family=\"sans-serif\">氮</text></svg>"
+};
+
+
+// ============================================================
+// APP STATE
+// ============================================================
+let currentIndex = 0;
+let shuffled = [];
+let utterance = null;
+
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function getVisibleState() {
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('quizScreen').style.display = 'none';
+  document.getElementById('answerScreen').style.display = 'none';
+  document.getElementById('completeScreen').style.display = 'none';
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function startQuiz(shuffleMode) {
+  if (shuffleMode) {
+    shuffled = shuffleArray([...WORDS]);
+  } else {
+    shuffled = [...WORDS];
+  }
+  currentIndex = 0;
+  showQuiz(currentIndex);
+}
+
+function goHome() {
+  if (utterance && window.speechSynthesis) window.speechSynthesis.cancel();
+  getVisibleState();
+  document.getElementById('startScreen').style.display = 'flex';
+}
+
+function nextWord() {
+  if (utterance && window.speechSynthesis) window.speechSynthesis.cancel();
+  currentIndex++;
+  if (currentIndex >= shuffled.length) {
+    showComplete();
+  } else {
+    showQuiz(currentIndex);
+  }
+}
+
+function showComplete() {
+  getVisibleState();
+  document.getElementById('completeScreen').style.display = 'flex';
+}
+
+// ============================================================
+// WORD LIST
+// ============================================================
+function showWordList() {
+  const overlay = document.getElementById('wordlistOverlay');
+  const grid = document.getElementById('wordlistGrid');
+  overlay.classList.add('open');
+
+  // Build grid from WORDS (original order)
+  grid.innerHTML = WORDS.map((w, i) => {
+    // Find this word in shuffled to check status
+    const shuffledIdx = shuffled.findIndex(s => s.word === w.word);
+    const isDone = shuffledIdx < currentIndex;
+    const isCurrent = shuffledIdx === currentIndex;
+
+    let cls = 'wordlist-item';
+    if (isCurrent) cls += ' current';
+    else if (isDone) cls += ' done';
+
+    const label = (i + 1).toString().padStart(2, '0');
+    return `<div class="${cls}" data-word="${w.word}" onclick="jumpToWord('${w.word.replace(/'/g, "\\'")}')">
+      <span class="wl-idx">${label}</span>
+      <span class="wl-word">${w.word}</span>
+      <span class="wl-mean">${w.meaning}</span>
+    </div>`;
+  }).join('');
+}
+
+function hideWordList() {
+  document.getElementById('wordlistOverlay').classList.remove('open');
+}
+
+function jumpToWord(word) {
+  const idx = shuffled.findIndex(w => w.word === word);
+  if (idx === -1) return;
+  currentIndex = idx;
+  hideWordList();
+  if (utterance && window.speechSynthesis) window.speechSynthesis.cancel();
+  showQuiz(currentIndex);
+}
+
+// ============================================================
+// QUIZ
+// ============================================================
+function showQuiz(index) {
+  getVisibleState();
+  document.getElementById('quizScreen').style.display = 'block';
+
+  const word = shuffled[index];
+  const total = shuffled.length;
+  document.getElementById('progressText').textContent = `${index+1}/${total}`;
+  document.getElementById('progressFill').style.width = `${((index+1)/total)*100}%`;
+
+  const isPhrasal = word.word.includes(' ');
+  const wordEl = document.getElementById('quizWord');
+  wordEl.textContent = word.word;
+  wordEl.className = 'word' + (isPhrasal ? ' phrasal' : '');
+
+  document.getElementById('quizPhonetic').textContent = word.phonetic;
+
+  // Example sentence
+  const sentKey = word.word;
+  const sentEl = document.getElementById('sentenceText');
+  if (SENTENCES[sentKey]) {
+    sentEl.textContent = SENTENCES[sentKey];
+  } else {
+    sentEl.textContent = `"${word.word}" — ${word.meaning.replace(/^[nvadj]+\/\w+\.\s*/,'')}`;
+  }
+
+  // Choices — smarter: avoid duplicate meanings, include word for wrong hints
+  const correct = word.meaning;
+  const wrongPool = [];
+  const seenMeanings = new Set([correct]);
+  for (const w of WORDS) {
+    if (w.meaning !== correct && !seenMeanings.has(w.meaning)) {
+      seenMeanings.add(w.meaning);
+      wrongPool.push({meaning: w.meaning, word: w.word});
+    }
+  }
+  // Prefer confusable words (same starting letter, similar length)
+  const targetWord = word.word.toLowerCase();
+  const scored = wrongPool.map(item => {
+    let score = Math.random();
+    const ow = item.word.toLowerCase();
+    if (ow[0] === targetWord[0]) score += 3;
+    if (Math.abs(ow.length - targetWord.length) <= 2) score += 1;
+    for (let i = 0; i < Math.min(4, targetWord.length, ow.length); i++) {
+      if (targetWord[i] === ow[i]) score += 1;
+    }
+    return {item, score};
+  });
+  scored.sort((a, b) => b.score - a.score);
+  const wrongs = scored.slice(0, 3).map(s => s.item);
+  const choices = shuffleArray([{meaning: correct, word: word.word}, ...wrongs]);
+  const labels = ['A', 'B', 'C', 'D'];
+  const container = document.getElementById('choicesContainer');
+  container.innerHTML = '';
+  choices.forEach((choice, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = `<span class="choice-label">${labels[i]}</span><span>${choice.meaning}</span>`;
+    btn.dataset.value = choice.meaning;
+    btn.dataset.correct = (choice.meaning === correct) ? '1' : '0';
+    btn.dataset.choiceWord = choice.word;
+    btn.onclick = () => handleChoice(btn, correct, word);
+    container.appendChild(btn);
+  });
+
+  // Reset any remaining wrong-button state from previous attempts
+  document.querySelectorAll('.choice-btn.wrong').forEach(b => {
+    b.classList.remove('wrong');
+    b.classList.remove('disabled');
+  });
+}
+
+function handleChoice(btn, correct, word) {
+  const isCorrect = btn.dataset.correct === '1';
+
+  if (isCorrect) {
+    const allBtns = document.querySelectorAll('.choice-btn');
+    allBtns.forEach(b => b.classList.add('disabled'));
+    btn.classList.add('correct');
+    showToast('✅ 回答正确！', 'success');
+    setTimeout(() => showAnswer(word), 600);
+  } else {
+    btn.classList.add('wrong');
+    btn.classList.add('disabled');
+    btn.style.animation = 'shake 0.3s ease';
+    setTimeout(() => { btn.style.animation = ''; }, 300);
+    // Show which word this wrong meaning belongs to
+    const ww = btn.dataset.choiceWord || '';
+    const vm = btn.dataset.value;
+    let hint = btn.querySelector('.wrong-hint');
+    if (!hint) {
+      hint = document.createElement('div');
+      hint.className = 'wrong-hint';
+      btn.appendChild(hint);
+    }
+    hint.textContent = '→ ' + ww;
+    showToast('❌ ' + ww + ' = ' + vm, 'error');
+  }
+}
+
+// ============================================================
+// ANSWER (DETAIL) PAGE
+// ============================================================
+function showAnswer(word) {
+  if (utterance && window.speechSynthesis) window.speechSynthesis.cancel();
+  getVisibleState();
+  document.getElementById('answerScreen').style.display = 'block';
+
+  const isPhrasal = word.word.includes(' ');
+  const ansWordEl = document.getElementById('ansWord');
+  ansWordEl.textContent = word.word;
+  ansWordEl.className = 'word' + (isPhrasal ? ' phrasal' : '');
+
+  document.getElementById('ansPhonetic').textContent = word.phonetic;
+  document.getElementById('ansMeaning').textContent = word.meaning;
+
+  const sentKey = word.word;
+  document.getElementById('ansExampleEn').textContent = SENTENCES[sentKey] || '——';
+  document.getElementById('ansExampleCn').textContent = TRANSLATIONS[sentKey] || '——';
+
+  // Phrases
+  const phrasesContainer = document.getElementById('ansPhrasesContainer');
+  const phrasesEl = document.getElementById('ansPhrases');
+  if (PHRASES[sentKey] && PHRASES[sentKey].length > 0) {
+    phrasesContainer.style.display = 'block';
+    phrasesEl.innerHTML = PHRASES[sentKey].map(p =>
+      `<div class="phrase-item"><span class="phrase-en">${p}</span></div>`
+    ).join('');
+  } else {
+    phrasesContainer.style.display = 'none';
+  }
+
+  // Example image (subject words)
+  const imgCard = document.getElementById('ansImageCard');
+  const imgEl = document.getElementById('ansImage');
+  if (typeof IMAGES !== 'undefined' && IMAGES[sentKey]) {
+    imgCard.style.display = 'block';
+    imgEl.innerHTML = IMAGES[sentKey];
+  } else {
+    imgCard.style.display = 'none';
+  }
+
+  // Auto-play pronunciation
+  playWordAudio(word.word);
+}
+
+// ============================================================
+// AUDIO (Web Speech API)
+// ============================================================
+let _voicesLoaded = false;
+const PREFERRED_VOICES = [
+  // Tier 1: best natural macOS voices
+  'Samantha',   // en-US — excellent
+  'Karen',      // en-AU — excellent
+  'Daniel',     // en-GB — excellent British
+  'Moira',      // en-IE — excellent Irish
+  'Tessa',      // en-ZA — excellent
+  // Tier 2: Google Chrome voices
+  'Google US English',
+  'Google UK English Female',
+  'Google UK English Male',
+  // Tier 3: remaining macOS English voices
+  'Flo (英语（美国）)', 'Flo (英语（英国）)',
+  'Reed (英语（美国）)', 'Reed (英语（英国）)',
+  'Sandy (英语（美国）)', 'Sandy (英语（英国）)',
+  'Shelley (英语（美国）)', 'Shelley (英语（英国）)',
+  'Grandma (英语（美国）)', 'Grandma (英语（英国）)',
+  'Grandpa (英语（美国）)', 'Grandpa (英语（英国）)',
+  'Rocko (英语（美国）)', 'Rocko (英语（英国）)',
+  'Eddy (英语（美国）)', 'Eddy (英语（英国）)',
+  'Albert', 'Kathy', 'Rishi',
+  // Fallback - any English
+];
+
+function ensureVoices() {
+  return new Promise((resolve) => {
+    if (_voicesLoaded) { resolve(); return; }
+    const voices = window.speechSynthesis.getVoices();
+    if (voices.length > 0) {
+      _voicesLoaded = true;
+      resolve();
+      return;
+    }
+    window.speechSynthesis.onvoiceschanged = () => {
+      _voicesLoaded = true;
+      resolve();
+    };
+    // Safety timeout
+    setTimeout(() => { _voicesLoaded = true; resolve(); }, 1000);
+  });
+}
+
+function findBestVoice() {
+  const voices = window.speechSynthesis.getVoices();
+  if (!voices || voices.length === 0) return null;
+
+  // 1. Try preferred voices by name
+  for (const name of PREFERRED_VOICES) {
+    const found = voices.find(v => v.name === name);
+    if (found) return found;
+  }
+
+  // 2. Try any English voice, prefer en-US then en-GB
+  const enUS = voices.find(v => v.lang.startsWith('en-US'));
+  if (enUS) return enUS;
+  const enGB = voices.find(v => v.lang.startsWith('en-GB'));
+  if (enGB) return enGB;
+  const enAU = voices.find(v => v.lang.startsWith('en-AU'));
+  if (enAU) return enAU;
+  const anyEn = voices.find(v => v.lang.startsWith('en'));
+  if (anyEn) return anyEn;
+
+  // 3. Last resort: first available voice
+  return voices[0];
+}
+
+function playWordAudio(forceWord) {
+  if (!window.speechSynthesis) return;
+  const word = forceWord || shuffled[currentIndex]?.word;
+  if (!word) return;
+
+  window.speechSynthesis.cancel();
+
+  // Handle speaker button on whichever page is visible
+  const quizSpeaker = document.getElementById('speakerBtn');
+  const ansSpeaker = document.getElementById('ansSpeakerBtn');
+  [quizSpeaker, ansSpeaker].forEach(el => { if (el) el.classList.add('playing'); });
+
+  utterance = new SpeechSynthesisUtterance(word);
+
+  const best = findBestVoice();
+  if (best) {
+    utterance.voice = best;
+    utterance.lang = best.lang;
+  } else {
+    utterance.lang = 'en-US';
+  }
+
+  // HIFI: slower, clearer, with natural pitch variation
+  utterance.rate = 0.82;
+  utterance.pitch = 1.05;
+  utterance.volume = 1.0;
+
+  utterance.onend = () => {
+    [quizSpeaker, ansSpeaker].forEach(el => { if (el) el.classList.remove('playing'); });
+  };
+  utterance.onerror = () => {
+    [quizSpeaker, ansSpeaker].forEach(el => { if (el) el.classList.remove('playing'); });
+  };
+
+  window.speechSynthesis.speak(utterance);
+}
+
+// Load voices eagerly
+if (window.speechSynthesis) {
+  ensureVoices();
+  // Refresh voices list periodically (Chrome loads them async)
+  window.speechSynthesis.onvoiceschanged = ensureVoices;
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+let toastTimer = null;
+function showToast(msg, type) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast ' + type + ' show';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    el.classList.remove('show');
+  }, 1500);
+}
+</script>
+</body>
+</html>

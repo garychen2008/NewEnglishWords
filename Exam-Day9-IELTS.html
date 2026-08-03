@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>词测 · DAY 9 · 雅思</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", Roboto, "Helvetica Neue", sans-serif;
+  background: #f5f7fb;
+  color: #1a1a2e;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+/* ===== MODE SELECT ===== */
+#modeScreen {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 100vh; padding: 40px 24px; text-align: center;
+  background: linear-gradient(135deg, #d62828 0%, #9b2226 100%);
+  color: #fff;
+}
+#modeScreen h1 { font-size: 40px; font-weight: 800; margin-bottom: 8px; }
+#modeScreen .subtitle { font-size: 18px; opacity: 0.9; margin-bottom: 8px; }
+#modeScreen .word-count { font-size: 14px; opacity: 0.7; margin-bottom: 44px; }
+#modeScreen .start-btn {
+  background: #fff; color: #d62828; border: none; border-radius: 50px;
+  padding: 16px 48px; font-size: 18px; font-weight: 700; cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2); margin-bottom: 14px; width: 260px;
+}
+#modeScreen .start-btn:active { transform: scale(0.96); }
+#modeScreen .start-btn.secondary {
+  background: rgba(255,255,255,0.15); color: #fff; box-shadow: none;
+  border: 1.5px solid rgba(255,255,255,0.35);
+}
+#modeScreen .btn-group { display: flex; flex-direction: column; align-items: center; }
+#modeScreen .mode-hint { font-size: 13px; opacity: 0.7; margin-top: 20px; line-height: 1.7; }
+
+/* ===== QUIZ ===== */
+#quizScreen { display: none; }
+.exam-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px; background: #fff; border-bottom: 1px solid #eee;
+  position: sticky; top: 0; z-index: 10;
+}
+.exam-header .back-btn { background: none; border: none; font-size: 22px; color: #666; cursor: pointer; padding: 4px 8px; }
+.exam-header .progress-bar-wrap { flex: 1; height: 6px; background: #eee; border-radius: 3px; margin: 0 12px; overflow: hidden; }
+.exam-header .progress-bar-fill { height: 100%; background: linear-gradient(90deg, #d62828, #9b2226); border-radius: 3px; transition: width 0.4s ease; width: 0%; }
+.exam-header .progress-text { font-size: 13px; color: #999; font-weight: 500; white-space: nowrap; }
+.exam-body { padding: 28px 22px; max-width: 480px; margin: 0 auto; }
+
+/* Listen section */
+.listen-section { text-align: center; }
+.listen-section .speaker-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 72px; height: 72px; border: none; border-radius: 50%;
+  background: #f0f0f5; cursor: pointer; transition: background 0.2s;
+  color: #d62828; font-size: 34px; margin-bottom: 18px;
+}
+.listen-section .speaker-btn.playing { background: #d62828; color: #fff; }
+.choices-title { font-size: 14px; color: #aaa; margin-bottom: 12px; letter-spacing: 1px; }
+.choices-grid { display: flex; flex-direction: column; gap: 12px; }
+.choice-btn {
+  display: flex; align-items: center; gap: 14px; width: 100%;
+  padding: 16px 20px; background: #fff; border: 2px solid #e8e8f0;
+  border-radius: 14px; font-size: 17px; color: #333; cursor: pointer;
+  transition: all 0.2s; text-align: left;
+}
+.choice-btn .choice-label {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: 50%; background: #f0f0f5;
+  font-size: 13px; font-weight: 700; color: #888; flex-shrink: 0;
+}
+.choice-btn:active { transform: scale(0.98); }
+.choice-btn.correct { border-color: #4caf50; background: #e8f5e9; }
+.choice-btn.correct .choice-label { background: #4caf50; color: #fff; }
+.choice-btn.wrong { border-color: #f44336; background: #ffebee; }
+.choice-btn.wrong .choice-label { background: #f44336; color: #fff; }
+.choice-btn.reveal-correct { border-color: #4caf50; background: #e8f5e9; }
+.choice-btn.reveal-correct .choice-label { background: #4caf50; color: #fff; }
+.choice-btn.disabled { pointer-events: none; }
+
+/* Spell section */
+.spell-section { text-align: center; padding-top: 20px; }
+.spell-section .phonetic {
+  font-size: 22px; color: #888; font-family: "Times New Roman", serif; margin-bottom: 12px;
+}
+.spell-section .chinese-mean {
+  font-size: 24px; color: #333; font-weight: 700; margin-bottom: 32px;
+  padding: 10px 24px; background: #f0f4ff; border-radius: 10px; display: inline-block;
+}
+.spell-section .answer-input {
+  width: 100%; padding: 16px 20px; font-size: 22px; text-align: center;
+  border: 2px solid #d0d0e0; border-radius: 14px; outline: none;
+  color: #1a1a2e; letter-spacing: 1px; margin-bottom: 16px;
+  background: #fff;
+}
+.spell-section .answer-input:focus { border-color: #d62828; }
+.submit-btn {
+  width: 100%; padding: 15px; border: none; border-radius: 14px;
+  background: linear-gradient(135deg, #d62828, #9b2226); color: #fff;
+  font-size: 18px; font-weight: 700; cursor: pointer; transition: transform 0.2s;
+}
+.submit-btn:active { transform: scale(0.97); }
+
+/* ===== LEARN SCREEN ===== */
+#learnScreen { display: none; }
+.learn-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px; background: linear-gradient(135deg, #d62828, #9b2226); color: #fff;
+}
+.learn-header span { font-size: 16px; font-weight: 700; }
+.learn-header .back-btn {
+  background: rgba(255,255,255,0.2); border: none; color: #fff;
+  font-size: 13px; padding: 6px 12px; border-radius: 20px; cursor: pointer;
+}
+.learn-body { padding: 24px; max-width: 480px; margin: 0 auto; }
+.learn-word-section {
+  text-align: center; margin-bottom: 20px; padding: 28px 20px 20px;
+  background: #fff; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.learn-word-section .word { font-size: 34px; font-weight: 800; color: #1a1a2e; margin-bottom: 6px; }
+.learn-word-section .phonetic { font-size: 17px; color: #888; font-family: "Times New Roman", serif; margin-bottom: 4px; }
+.learn-word-section .speaker-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border: none; background: #f0f0f5;
+  border-radius: 50%; cursor: pointer; color: #d62828; font-size: 17px;
+  margin-top: 6px; vertical-align: middle;
+}
+.learn-word-section .chinese-mean {
+  font-size: 20px; color: #333; font-weight: 600; margin-top: 8px;
+  padding: 8px 20px; background: #f0f4ff; border-radius: 8px; display: inline-block;
+}
+.learn-card { background: #fff; border-radius: 16px; padding: 18px; margin-bottom: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+.learn-card .card-label { font-size: 12px; color: #aaa; letter-spacing: 1px; margin-bottom: 8px; }
+.learn-card .en-sentence { font-size: 16px; line-height: 1.6; color: #333; margin-bottom: 4px; }
+.learn-card .cn-translation { font-size: 15px; color: #888; line-height: 1.5; }
+.learn-card .phrase-item { font-size: 14px; color: #555; line-height: 1.7; padding: 3px 0; }
+.learn-card .phrase-item .phrase-en { font-weight: 600; }
+.continue-btn-wrap { text-align: center; padding: 12px 0 40px; }
+.continue-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: linear-gradient(135deg, #d62828, #9b2226); color: #fff; border: none;
+  border-radius: 50px; padding: 16px 52px; font-size: 18px; font-weight: 700;
+  cursor: pointer; transition: transform 0.2s; box-shadow: 0 6px 20px rgba(214,40,40,0.4);
+}
+.continue-btn:active { transform: scale(0.96); }
+
+/* ===== RESULT ===== */
+#resultScreen {
+  display: none; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 100vh; padding: 40px 24px; text-align: center;
+  background: linear-gradient(135deg, #d62828 0%, #9b2226 100%); color: #fff;
+}
+#resultScreen .trophy { font-size: 68px; margin-bottom: 14px; }
+#resultScreen h1 { font-size: 30px; margin-bottom: 10px; }
+#resultScreen .result-mode { font-size: 15px; font-weight: 700; opacity: 0.9; background: rgba(255,255,255,0.18); display: inline-block; padding: 5px 18px; border-radius: 20px; margin-bottom: 14px; }
+#resultScreen .result-stats { font-size: 18px; opacity: 0.95; margin-bottom: 8px; line-height: 1.8; }
+#resultScreen .result-score { font-size: 52px; font-weight: 800; margin: 10px 0 6px; }
+#resultScreen .result-level { font-size: 16px; opacity: 0.85; margin-bottom: 30px; }
+#resultScreen .restart-btn {
+  background: #fff; color: #d62828; border: none; border-radius: 50px;
+  padding: 15px 50px; font-size: 18px; font-weight: 700; cursor: pointer;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2); margin-bottom: 12px;
+}
+#resultScreen .home-btn {
+  background: rgba(255,255,255,0.15); color: #fff; border: 1.5px solid rgba(255,255,255,0.35);
+  border-radius: 50px; padding: 13px 44px; font-size: 15px; font-weight: 600; cursor: pointer;
+}
+#resultScreen .completion-quote { margin-top: 34px; line-height: 1.7; }
+#resultScreen .completion-quote .en { font-size: 17px; opacity: 0.85; font-weight: 600; }
+#resultScreen .completion-quote .cn { font-size: 14px; opacity: 0.6; margin-top: 4px; }
+
+/* ===== TOAST ===== */
+.toast {
+  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px);
+  padding: 12px 24px; border-radius: 50px; font-size: 15px; font-weight: 600;
+  opacity: 0; transition: all 0.3s; z-index: 100; pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.success { background: #4caf50; color: #fff; }
+.toast.error { background: #f44336; color: #fff; }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+@media (max-width: 420px) {
+  .learn-word-section .word { font-size: 28px; }
+  .spell-section .chinese-mean { font-size: 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== MODE SELECT ===== -->
+<div id="modeScreen">
+  <h1>📝 DAY 9 词测</h1>
+  <div class="subtitle">雅思词汇</div>
+  <div class="word-count">共 39 词</div>
+  <div class="btn-group">
+    <button class="start-btn" onclick="startExam('listen')">🎧 听音选词</button>
+    <button class="start-btn secondary" onclick="startExam('spell')">✍️ 拼写单词</button>
+  </div>
+  <div class="mode-hint">
+    🎧 听音选词：听单词发音，从 4 个中文释义中选正确答案<br>
+    ✍️ 拼写单词：看音标与中文释义，拼写对应英文单词
+  </div>
+</div>
+
+<!-- ===== QUIZ ===== -->
+<div id="quizScreen">
+  <div class="exam-header">
+    <button class="back-btn" onclick="goHome()">✕</button>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressFill"></div></div>
+    <span class="progress-text" id="progressText">0/39</span>
+  </div>
+  <div class="exam-body">
+    <!-- Listen mode -->
+    <div class="listen-section" id="listenSection" style="display:none;">
+      <button class="speaker-btn" id="speakerBtn" onclick="playWordAudioOnce()">🔊</button>
+      <div class="choices-title">— 听发音，选择正确的中文释义 —</div>
+      <div class="choices-grid" id="choicesContainer"></div>
+    </div>
+    <!-- Spell mode -->
+    <div class="spell-section" id="spellSection" style="display:none;">
+      <div class="phonetic" id="quizPhonetic"></div>
+      <div class="chinese-mean" id="quizMeaning"></div>
+      <input type="text" class="answer-input" id="answerInput" placeholder="输入单词..." autocomplete="off" autocapitalize="off" spellcheck="false">
+      <button class="submit-btn" onclick="checkAnswer()">提交</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LEARN (wrong answer) ===== -->
+<div id="learnScreen">
+  <div class="learn-header">
+    <span>📖 重新学习</span>
+    <button class="back-btn" onclick="goHome()">返回</button>
+  </div>
+  <div class="learn-body">
+    <div class="learn-word-section">
+      <div class="word" id="learnWord"></div>
+      <div class="phonetic" id="learnPhonetic"></div>
+      <button class="speaker-btn" onclick="playWordAudioOnce(document.getElementById('learnWord').textContent)">🔊</button>
+      <div class="chinese-mean" id="learnMeaning"></div>
+    </div>
+    <div class="learn-card">
+      <div class="card-label">📝 英文例句</div>
+      <div class="en-sentence" id="learnExampleEn"></div>
+    </div>
+    <div class="learn-card">
+      <div class="card-label">🌏 中文翻译</div>
+      <div class="cn-translation" id="learnExampleCn"></div>
+    </div>
+    <div class="learn-card" id="learnPhrasesCard" style="display:none;">
+      <div class="card-label">🔗 常用搭配</div>
+      <div id="learnPhrases"></div>
+    </div>
+    <div class="continue-btn-wrap">
+      <button class="continue-btn" onclick="nextQuestion()">继续 <span>→</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== RESULT ===== -->
+<div id="resultScreen">
+  <div class="trophy">🎉</div>
+  <h1>测试完成！</h1>
+  <div class="result-mode" id="resultMode"></div>
+  <div class="result-stats">答对 <b id="resultCorrect">0</b> / <b id="resultTotal">0</b> 题</div>
+  <div class="result-score" id="resultScore">0</div>
+  <div class="result-level" id="resultLevel"></div>
+  <button class="restart-btn" onclick="goModeSelect()">🔄 再测一次</button>
+  <button class="home-btn" onclick="goHome()">返回词测主页</button>
+  <div class="completion-quote">
+    <div class="en">"Little by little, one travels far."</div>
+    <div class="cn">每日单词 · 积少成多</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const WORDS = [
+// ---- 基础必背词汇 (1-60) ----
+  {word:"insurance", phonetic:"/ɪnˈʃʊərəns/", meaning:"n. 保险", type:"雅思"},
+  {word:"promotion", phonetic:"/prəˈməʊʃn/", meaning:"n. 晋升", type:"雅思"},
+  {word:"challenging", phonetic:"/ˈtʃælɪndʒɪŋ/", meaning:"adj. 有挑战性的", type:"雅思"},
+  {word:"attendance", phonetic:"/əˈtendəns/", meaning:"n. 出勤", type:"雅思"},
+  {word:"report", phonetic:"/rɪˈpɔːt/", meaning:"n. 报告", type:"雅思"},
+  {word:"reference", phonetic:"/ˈrefrəns/", meaning:"n. 参考文献", type:"雅思"},
+  {word:"bibliography", phonetic:"/ˌbɪbliˈɒɡrəfi/", meaning:"n. 参考书目", type:"雅思"},
+  {word:"plagiarism", phonetic:"/ˈpleɪdʒərɪzəm/", meaning:"n. 抄袭", type:"雅思"},
+  {word:"cheat", phonetic:"/tʃiːt/", meaning:"v. 作弊", type:"雅思"},
+  {word:"distinction", phonetic:"/dɪˈstɪŋkʃn/", meaning:"n. 优异;优秀等级", type:"雅思"},
+  {word:"credit", phonetic:"/ˈkredɪt/", meaning:"n. 学分;良好等级", type:"雅思"},
+  {word:"pass", phonetic:"/pɑːs/", meaning:"n./v. 及格;通过", type:"雅思"},
+  {word:"fail", phonetic:"/feɪl/", meaning:"v./n. 不及格", type:"雅思"},
+  {word:"quiz", phonetic:"/kwɪz/", meaning:"n. 小测验", type:"雅思"},
+  {word:"oral test", phonetic:"/ˈɔːrəl test/", meaning:"口语考试", type:"雅思"},
+  {word:"drop out", phonetic:"/drɒp aʊt/", meaning:"辍学", type:"雅思"},
+  {word:"curriculum", phonetic:"/kəˈrɪkjələm/", meaning:"课程;全部教学大纲", type:"雅思"},
+  {word:"enrollment", phonetic:"/ɪnˈrəʊlmənt/", meaning:"n. 注册", type:"雅思"},
+  {word:"register", phonetic:"/ˈredʒɪstə(r)/", meaning:"v. 登记注册", type:"雅思"},
+  {word:"enroll", phonetic:"/ɪnˈrəʊl/", meaning:"注册;入学;报道", type:"雅思"},
+  {word:"opening ceremony", phonetic:"/ˈəʊpnɪŋ ˈserəməni/", meaning:"开学典礼", type:"雅思"},
+  {word:"orientation", phonetic:"/ˌɔːriənˈteɪʃn/", meaning:"n. 新生入学指导", type:"雅思"},
+  {word:"application form", phonetic:"/ˌæplɪˈkeɪʃn fɔːm/", meaning:"申请表", type:"雅思"},
+  {word:"letter of recommendation", phonetic:"/ˈletər əv ˌrekəmenˈdeɪʃn/", meaning:"推荐信", type:"雅思"},
+  {word:"point", phonetic:"/pɔɪnt/", meaning:"n. (比赛)分数;得分", type:"雅思"},
+  {word:"mark", phonetic:"/mɑːk/", meaning:"n. (试卷)分数;得分", type:"雅思"},
+  {word:"score", phonetic:"/skɔː(r)/", meaning:"n. 得分", type:"雅思"},
+  {word:"grade", phonetic:"/ɡreɪd/", meaning:"n. 等级分", type:"雅思"},
+  {word:"assessment", phonetic:"/əˈsesmənt/", meaning:"n. 课程评估", type:"雅思"},
+  {word:"handout", phonetic:"/ˈhændaʊt/", meaning:"n. 讲义", type:"雅思"},
+  {word:"assignment", phonetic:"/əˈsaɪnmənt/", meaning:"n. 作业", type:"雅思"},
+  {word:"presentation", phonetic:"/ˌpreznˈteɪʃn/", meaning:"n. 课堂展示", type:"雅思"},
+  {word:"project", phonetic:"/ˈprɒdʒekt/", meaning:"n. 课题", type:"雅思"},
+  {word:"paper", phonetic:"/ˈpeɪpə(r)/", meaning:"n. 论文", type:"雅思"},
+  {word:"thesis", phonetic:"/ˈθiːsɪs/", meaning:"n. 硕士论文", type:"雅思"},
+  {word:"dissertation", phonetic:"/ˌdɪsəˈteɪʃn/", meaning:"n. 博士论文", type:"雅思"},
+  {word:"essay", phonetic:"/ˈeseɪ/", meaning:"n. 短文", type:"雅思"},
+  {word:"draft", phonetic:"/drɑːft/", meaning:"n. 草稿", type:"雅思"},
+  {word:"defense", phonetic:"/dɪˈfens/", meaning:"n. 答辩", type:"雅思"}
+];
+
+const SENTENCES = {
+"insurance":"Health insurance is important.",
+  "promotion":"She got a promotion at work.",
+  "challenging":"This job is challenging but interesting.",
+  "attendance":"Attendance is checked every day.",
+  "report":"Write a report about the experiment.",
+  "reference":"List your references at the end.",
+  "bibliography":"The bibliography lists all sources.",
+  "plagiarism":"Plagiarism is strictly forbidden.",
+  "cheat":"Never cheat in an exam.",
+  "distinction":"She passed with distinction.",
+  "credit":"You need 120 credits to graduate.",
+  "pass":"You need 60 points to pass.",
+  "fail":"He failed the test.",
+  "quiz":"We have a quiz every Friday.",
+  "oral test":"The oral test lasts ten minutes.",
+  "drop out":"He dropped out of school.",
+  "curriculum":"The curriculum includes science.",
+  "enrollment":"Enrollment closes next week.",
+  "register":"Register before the deadline.",
+  "enroll":"She enrolled in the course.",
+  "opening ceremony":"The opening ceremony starts at nine.",
+  "orientation":"New students attend orientation.",
+  "application form":"Fill in the application form.",
+  "letter of recommendation":"Ask your teacher for a letter of recommendation.",
+  "point":"She scored 95 points.",
+  "mark":"The highest mark is 100.",
+  "score":"His score improved this term.",
+  "grade":"She received a high grade.",
+  "assessment":"The course assessment includes a final exam.",
+  "handout":"The professor gave us a handout.",
+  "assignment":"The assignment is due on Friday.",
+  "presentation":"We have a presentation next week.",
+  "project":"The project takes two months.",
+  "paper":"She published a paper.",
+  "thesis":"He is writing his thesis.",
+  "dissertation":"Her dissertation is on economics.",
+  "essay":"Write a short essay.",
+  "draft":"Show me the first draft.",
+  "defense":"The thesis defense is in June."
+};
+
+const TRANSLATIONS = {
+"insurance":"健康保险很重要。",
+  "promotion":"她在工作中得到了晋升。",
+  "challenging":"这份工作有挑战性但很有趣。",
+  "attendance":"每天检查出勤。",
+  "report":"写一份关于实验的报告。",
+  "reference":"在最后列出参考文献。",
+  "bibliography":"参考书目列出了所有来源。",
+  "plagiarism":"抄袭是严格禁止的。",
+  "cheat":"考试中绝不能作弊。",
+  "distinction":"她以优异的成绩通过。",
+  "credit":"毕业需要120个学分。",
+  "pass":"60分及格。",
+  "fail":"他考试不及格。",
+  "quiz":"我们每周五有小测验。",
+  "oral test":"口语考试持续十分钟。",
+  "drop out":"他辍学了。",
+  "curriculum":"课程大纲包括科学。",
+  "enrollment":"注册下周截止。",
+  "register":"在截止日期前登记注册。",
+  "enroll":"她注册了这门课程。",
+  "opening ceremony":"开学典礼九点开始。",
+  "orientation":"新生参加入学指导。",
+  "application form":"填写申请表。",
+  "letter of recommendation":"请老师给你写一封推荐信。",
+  "point":"她得了95分。",
+  "mark":"最高分是100分。",
+  "score":"这学期他的得分提高了。",
+  "grade":"她获得了高分等级。",
+  "assessment":"课程评估包括期末考试。",
+  "handout":"教授给了我们一份讲义。",
+  "assignment":"作业星期五到期。",
+  "presentation":"我们下周有一个课堂展示。",
+  "project":"这个课题需要两个月。",
+  "paper":"她发表了一篇论文。",
+  "thesis":"他正在写硕士论文。",
+  "dissertation":"她的博士论文是关于经济学的。",
+  "essay":"写一篇短文。",
+  "draft":"让我看看初稿。",
+  "defense":"论文答辩在六月。"
+};
+
+const PHRASES = {
+"insurance":["health insurance 健康保险","insurance policy 保险单"],
+  "promotion":["get a promotion 获得晋升","promotion opportunity 晋升机会"],
+  "challenging":["challenging task 有挑战性的任务","challenging job 有挑战的工作"],
+  "attendance":["attendance record 出勤记录","attendance rate 出勤率"],
+  "report":["write a report 写报告","annual report 年度报告"],
+  "reference":["reference list 参考文献列表","make reference to 提及"],
+  "bibliography":["bibliography page 参考书目页"],
+  "plagiarism":["plagiarism check 查重","academic plagiarism 学术抄袭"],
+  "cheat":["cheat in exam 考试作弊","cheat sheet 小抄"],
+  "distinction":["pass with distinction 以优异成绩通过"],
+  "credit":["credit system 学分制","gain credits 获得学分"],
+  "pass":["pass the exam 通过考试","pass mark 及格分"],
+  "fail":["fail the test 考试不及格"],
+  "quiz":["pop quiz 突击测验","weekly quiz 每周小测"],
+  "oral test":["oral test practice 口语考试练习"],
+  "drop out":["drop out of school 辍学"],
+  "curriculum":["curriculum design 课程设计","core curriculum 核心课程"],
+  "enrollment":["enrollment number 注册人数","enrollment deadline 注册截止"],
+  "register":["register for a course 选课注册","register online 网上注册"],
+  "enroll":["enroll in 注册(课程)","enroll at university 入读大学"],
+  "opening ceremony":["school opening ceremony 开学典礼"],
+  "orientation":["orientation week 迎新周","orientation program 入学指导"],
+  "application form":["fill in the application form 填写申请表"],
+  "letter of recommendation":["write a letter of recommendation 写推荐信"],
+  "point":["win points 得分","score points 拿分"],
+  "mark":["exam mark 考试分数","full mark 满分"],
+  "score":["high score 高分","test score 测试得分"],
+  "grade":["final grade 期末等级","grade point 绩点"],
+  "assessment":["continuous assessment 持续评估","assessment criteria 评估标准"],
+  "handout":["class handout 课堂讲义"],
+  "assignment":["homework assignment 家庭作业","submit assignment 提交作业"],
+  "presentation":["give a presentation 做展示","oral presentation 口头汇报"],
+  "project":["research project 研究课题","project work 课题作业"],
+  "paper":["research paper 研究论文","term paper 学期论文"],
+  "thesis":["thesis statement 论文陈述","write a thesis 写论文"],
+  "dissertation":["doctoral dissertation 博士论文"],
+  "essay":["essay question 论述题","short essay 短文"],
+  "draft":["first draft 初稿","rough draft 草稿"],
+  "defense":["thesis defense 论文答辩","defense committee 答辩委员会"]
+};
+
+// ============================================================
+// STATE
+// ============================================================
+let mode = '';
+let shuffled = [];
+let currentIndex = 0;
+let correctCount = 0;
+let answered = false;
+let utterance = null;
+let _voicesLoaded = false;
+
+const PREFERRED_VOICES = [
+  'Samantha', 'Karen', 'Daniel', 'Moira', 'Tessa',
+  'Google US English', 'Google UK English Female', 'Google UK English Male',
+  'Albert', 'Kathy', 'Rishi',
+];
+
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function hideAll() {
+  document.getElementById('modeScreen').style.display = 'none';
+  document.getElementById('quizScreen').style.display = 'none';
+  document.getElementById('learnScreen').style.display = 'none';
+  document.getElementById('resultScreen').style.display = 'none';
+}
+
+function goHome() {
+  if (utterance && window.speechSynthesis) window.speechSynthesis.cancel();
+  hideAll();
+  document.getElementById('modeScreen').style.display = 'flex';
+}
+
+function goModeSelect() {
+  if (utterance && window.speechSynthesis) window.speechSynthesis.cancel();
+  hideAll();
+  document.getElementById('modeScreen').style.display = 'flex';
+}
+
+function startExam(m) {
+  mode = m;
+  shuffled = shuffleArray([...WORDS]);
+  currentIndex = 0;
+  correctCount = 0;
+  hideAll();
+  document.getElementById('quizScreen').style.display = 'block';
+  showQuiz();
+}
+
+// ============================================================
+// QUIZ
+// ============================================================
+function showQuiz() {
+  if (currentIndex >= shuffled.length) { showResult(); return; }
+  hideAll();
+  document.getElementById('quizScreen').style.display = 'block';
+  const word = shuffled[currentIndex];
+  const total = shuffled.length;
+  document.getElementById('progressText').textContent = `${currentIndex + 1}/${total}`;
+  document.getElementById('progressFill').style.width = `${((currentIndex + 1) / total) * 100}%`;
+
+  if (mode === 'listen') {
+    document.getElementById('listenSection').style.display = 'block';
+    document.getElementById('spellSection').style.display = 'none';
+    buildChoices(word);
+    playWordAudioTwice(word.word);
+  } else {
+    document.getElementById('listenSection').style.display = 'none';
+    document.getElementById('spellSection').style.display = 'block';
+    document.getElementById('quizPhonetic').textContent = word.phonetic || '';
+    document.getElementById('quizMeaning').textContent = word.meaning;
+    const input = document.getElementById('answerInput');
+    input.value = '';
+    setTimeout(() => input.focus(), 100);
+  }
+  answered = false;
+}
+
+function buildChoices(word) {
+  const correct = word.meaning;
+  const wrongPool = [];
+  const seen = new Set([correct]);
+  for (const w of WORDS) {
+    if (w.meaning !== correct && !seen.has(w.meaning)) {
+      seen.add(w.meaning);
+      wrongPool.push({meaning: w.meaning, word: w.word});
+    }
+  }
+  // prefer confusable
+  const targetWord = word.word.toLowerCase();
+  const scored = wrongPool.map(item => {
+    let score = Math.random();
+    const ow = item.word.toLowerCase();
+    if (ow[0] === targetWord[0]) score += 3;
+    if (Math.abs(ow.length - targetWord.length) <= 2) score += 1;
+    for (let i = 0; i < Math.min(4, targetWord.length, ow.length); i++) {
+      if (targetWord[i] === ow[i]) score += 1;
+    }
+    return {item, score};
+  });
+  scored.sort((a, b) => b.score - a.score);
+  const wrongs = scored.slice(0, 3).map(s => s.item);
+  const choices = shuffleArray([{meaning: correct, word: word.word}, ...wrongs]);
+  const labels = ['A', 'B', 'C', 'D'];
+  const container = document.getElementById('choicesContainer');
+  container.innerHTML = '';
+  choices.forEach((choice, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = `<span class="choice-label">${labels[i]}</span><span>${choice.meaning}</span>`;
+    btn.dataset.correct = (choice.meaning === correct) ? '1' : '0';
+    btn.onclick = () => handleChoice(btn, correct, word);
+    container.appendChild(btn);
+  });
+}
+
+function handleChoice(btn, correct, word) {
+  if (answered) return;
+  answered = true;
+  const isCorrect = btn.dataset.correct === '1';
+  const allBtns = document.querySelectorAll('.choice-btn');
+  allBtns.forEach(b => b.classList.add('disabled'));
+  if (isCorrect) {
+    correctCount++;
+    btn.classList.add('correct');
+    showToast('✅ 回答正确！', 'success');
+    setTimeout(() => nextQuestion(), 700);
+  } else {
+    btn.classList.add('wrong');
+    allBtns.forEach(b => { if (b.dataset.correct === '1') b.classList.add('reveal-correct'); });
+    setTimeout(() => showLearnScreen(word), 800);
+  }
+}
+
+function checkAnswer() {
+  if (answered) return;
+  const word = shuffled[currentIndex];
+  const input = document.getElementById('answerInput').value.trim().toLowerCase();
+  const correct = word.word.toLowerCase();
+  answered = true;
+  if (input === correct) {
+    correctCount++;
+    showToast('✅ 正确！', 'success');
+    setTimeout(() => nextQuestion(), 700);
+  } else {
+    showLearnScreen(word);
+  }
+}
+
+// Enter key submits
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && document.getElementById('quizScreen').style.display === 'block') {
+    const sec = document.getElementById('spellSection');
+    if (sec && sec.style.display === 'block') checkAnswer();
+  }
+});
+
+function nextQuestion() {
+  if (utterance && window.speechSynthesis) window.speechSynthesis.cancel();
+  currentIndex++;
+  if (currentIndex >= shuffled.length) {
+    showResult();
+  } else {
+    showQuiz();
+  }
+}
+
+// ============================================================
+// LEARN SCREEN (wrong answer)
+// ============================================================
+function showLearnScreen(word) {
+  if (utterance && window.speechSynthesis) window.speechSynthesis.cancel();
+  hideAll();
+  document.getElementById('learnScreen').style.display = 'block';
+  const isPhrasal = word.word.includes(' ');
+  const wEl = document.getElementById('learnWord');
+  wEl.textContent = word.word;
+  wEl.className = 'word' + (isPhrasal ? ' phrasal' : '');
+  document.getElementById('learnPhonetic').textContent = word.phonetic || '';
+  document.getElementById('learnMeaning').textContent = word.meaning;
+  const key = word.word;
+  document.getElementById('learnExampleEn').textContent = SENTENCES[key] || '——';
+  document.getElementById('learnExampleCn').textContent = TRANSLATIONS[key] || '——';
+  const pc = document.getElementById('learnPhrasesCard');
+  const pl = document.getElementById('learnPhrases');
+  if (PHRASES[key] && PHRASES[key].length > 0) {
+    pc.style.display = 'block';
+    pl.innerHTML = PHRASES[key].map(p => `<div class="phrase-item"><span class="phrase-en">${p}</span></div>`).join('');
+  } else {
+    pc.style.display = 'none';
+  }
+  // auto play once for learning
+  setTimeout(() => playWordAudioOnce(word.word), 300);
+}
+
+// ============================================================
+// RESULT
+// ============================================================
+function showResult() {
+  hideAll();
+  document.getElementById('resultScreen').style.display = 'flex';
+  document.getElementById('resultMode').textContent = mode === 'listen' ? '🎧 听音选词词测' : '✍️ 拼写单词词测';
+  const total = shuffled.length;
+  const score = Math.round(correctCount / total * 100);
+  document.getElementById('resultCorrect').textContent = correctCount;
+  document.getElementById('resultTotal').textContent = total;
+  document.getElementById('resultScore').textContent = score + ' 分';
+  let level = '';
+  if (score === 100) level = '🏆 满分！太棒了！';
+  else if (score >= 90) level = '🌟 非常优秀！';
+  else if (score >= 75) level = '👍 表现不错！';
+  else if (score >= 60) level = '📖 及格了，继续加油！';
+  else level = '💪 别灰心，复习后再试一次！';
+  document.getElementById('resultLevel').textContent = level;
+}
+
+// ============================================================
+// AUDIO
+// ============================================================
+function ensureVoices() {
+  return new Promise((resolve) => {
+    if (_voicesLoaded) { resolve(); return; }
+    const voices = window.speechSynthesis.getVoices();
+    if (voices.length > 0) { _voicesLoaded = true; resolve(); return; }
+    window.speechSynthesis.onvoiceschanged = () => { _voicesLoaded = true; resolve(); };
+    setTimeout(() => { _voicesLoaded = true; resolve(); }, 1000);
+  });
+}
+
+function findBestVoice() {
+  const voices = window.speechSynthesis.getVoices();
+  if (!voices || voices.length === 0) return null;
+  for (const name of PREFERRED_VOICES) {
+    const found = voices.find(v => v.name === name);
+    if (found) return found;
+  }
+  const enUS = voices.find(v => v.lang.startsWith('en-US'));
+  if (enUS) return enUS;
+  const enGB = voices.find(v => v.lang.startsWith('en-GB'));
+  if (enGB) return enGB;
+  const anyEn = voices.find(v => v.lang.startsWith('en'));
+  if (anyEn) return anyEn;
+  return voices[0];
+}
+
+function makeUtterance(word) {
+  const u = new SpeechSynthesisUtterance(word);
+  const best = findBestVoice();
+  if (best) { u.voice = best; u.lang = best.lang; } else { u.lang = 'en-US'; }
+  u.rate = 0.82;
+  u.pitch = 1.05;
+  return u;
+}
+
+function playWordAudioOnce(word) {
+  if (!window.speechSynthesis) return;
+  const w = word || (shuffled[currentIndex] && shuffled[currentIndex].word);
+  if (!w) return;
+  window.speechSynthesis.cancel();
+  const spk = document.getElementById('speakerBtn');
+  if (spk) spk.classList.add('playing');
+  utterance = makeUtterance(w);
+  utterance.onend = () => { if (spk) spk.classList.remove('playing'); };
+  utterance.onerror = () => { if (spk) spk.classList.remove('playing'); };
+  window.speechSynthesis.speak(utterance);
+}
+
+function playWordAudioTwice(word) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const spk = document.getElementById('speakerBtn');
+  if (spk) spk.classList.add('playing');
+  const u1 = makeUtterance(word);
+  const u2 = makeUtterance(word);
+  u1.onend = () => {
+    setTimeout(() => {
+      window.speechSynthesis.speak(u2);
+    }, 400);
+  };
+  u2.onend = () => { if (spk) spk.classList.remove('playing'); };
+  u2.onerror = () => { if (spk) spk.classList.remove('playing'); };
+  window.speechSynthesis.speak(u1);
+}
+
+if (window.speechSynthesis) {
+  ensureVoices();
+  window.speechSynthesis.onvoiceschanged = ensureVoices;
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+let toastTimer = null;
+function showToast(msg, type) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast ' + type + ' show';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.classList.remove('show'); }, 1400);
+}
+</script>
+</body>
+</html>
