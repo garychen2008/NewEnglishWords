@@ -170,6 +170,25 @@ body {
 #resultScreen .result-stats { font-size: 18px; opacity: 0.95; margin-bottom: 8px; line-height: 1.8; }
 #resultScreen .result-score { font-size: 52px; font-weight: 800; margin: 10px 0 6px; }
 #resultScreen .result-level { font-size: 16px; opacity: 0.85; margin-bottom: 30px; }
+#resultScreen .mistake-section {
+  width: 100%; max-width: 340px; margin: 0 auto 30px; text-align: left;
+}
+#resultScreen .mistake-section .mistake-title {
+  font-size: 15px; font-weight: 700; margin-bottom: 10px; opacity: 0.95;
+}
+#resultScreen .mistake-table {
+  width: 100%; border-collapse: collapse; font-size: 13px;
+  background: rgba(255,255,255,0.08); border-radius: 12px; overflow: hidden;
+}
+#resultScreen .mistake-table th {
+  background: rgba(255,255,255,0.15); padding: 8px 10px; text-align: left;
+  font-size: 12px; letter-spacing: 0.5px;
+}
+#resultScreen .mistake-table td { padding: 7px 10px; border-top: 1px solid rgba(255,255,255,0.1); }
+#resultScreen .mistake-table .wrong-col { color: #ffd6a5; }
+#resultScreen .mistake-table .correct-col { font-weight: 700; }
+#resultScreen .mistake-table .meaning-col { opacity: 0.85; }
+#resultScreen .mistake-count { font-size: 12px; opacity: 0.6; margin-top: 8px; }
 #resultScreen .restart-btn {
   background: #fff; color: #311b92; border: none; border-radius: 50px;
   padding: 15px 50px; font-size: 18px; font-weight: 700; cursor: pointer;
@@ -290,6 +309,20 @@ body {
   <div class="result-stats">答对 <b id="resultCorrect">0</b> / <b id="resultTotal">0</b> 题</div>
   <div class="result-score" id="resultScore">0</div>
   <div class="result-level" id="resultLevel"></div>
+  <div class="mistake-section" id="mistakeSection" style="display:none;">
+    <div class="mistake-title">📝 拼写错误回顾</div>
+    <table class="mistake-table">
+      <thead>
+        <tr>
+          <th>❌ 我的拼写</th>
+          <th>✅ 正确拼写</th>
+          <th>中文释义</th>
+        </tr>
+      </thead>
+      <tbody id="mistakeBody"></tbody>
+    </table>
+    <div class="mistake-count">共 <b id="mistakeCount">0</b> 个拼写错误</div>
+  </div>
   <button class="restart-btn" onclick="goModeSelect()">🔄 再测一次</button>
   <button class="home-btn" onclick="goHome()">返回词测主页</button>
   <div class="completion-quote">
@@ -530,6 +563,7 @@ let shuffled = [];
 let currentIndex = 0;
 let correctCount = 0;
 let answered = false;
+let spellMistakes = [];
 let utterance = null;
 let _voicesLoaded = false;
 
@@ -574,6 +608,7 @@ function startExam(m) {
   shuffled = shuffleArray([...WORDS]);
   currentIndex = 0;
   correctCount = 0;
+  spellMistakes = [];
   hideAll();
   document.getElementById('quizScreen').style.display = 'block';
   showQuiz();
@@ -667,7 +702,8 @@ function handleChoice(btn, correct, word) {
 function checkAnswer() {
   if (answered) return;
   const word = shuffled[currentIndex];
-  const input = document.getElementById('answerInput').value.trim().toLowerCase();
+  const raw = document.getElementById('answerInput').value.trim();
+  const input = raw.toLowerCase();
   const correct = word.word.toLowerCase();
   answered = true;
   if (input === correct) {
@@ -675,6 +711,7 @@ function checkAnswer() {
     showToast('✅ 正确！', 'success');
     setTimeout(() => nextQuestion(), 700);
   } else {
+    spellMistakes.push({ wrong: raw || '(空)', correct: word.word, meaning: word.meaning });
     showLearnScreen(word);
   }
 }
@@ -753,6 +790,21 @@ function showResult() {
   else if (score >= 60) level = '📖 及格了，继续加油！';
   else level = '💪 别灰心，复习后再试一次！';
   document.getElementById('resultLevel').textContent = level;
+
+  // 拼写模式：显示错误拼写回顾（仅拼写模式有拼写输入）
+  const ms = document.getElementById('mistakeSection');
+  if (mode === 'spell' && spellMistakes.length > 0) {
+    document.getElementById('mistakeCount').textContent = spellMistakes.length;
+    document.getElementById('mistakeBody').innerHTML = spellMistakes.map(m =>
+      `<tr>
+        <td class="wrong-col">${m.wrong}</td>
+        <td class="correct-col">${m.correct}</td>
+        <td class="meaning-col">${m.meaning}</td>
+      </tr>`).join('');
+    ms.style.display = 'block';
+  } else {
+    ms.style.display = 'none';
+  }
 }
 
 // ============================================================
