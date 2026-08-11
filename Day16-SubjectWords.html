@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>学科综合 · DAY 16</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", Roboto, "Helvetica Neue", sans-serif;
+  background: #f5f7fb;
+  color: #1a1a2e;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+/* ===== START SCREEN ===== */
+#startScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 40px 24px;
+  text-align: center;
+  background: linear-gradient(135deg, #1b4332 0%, #0d2b1a 100%);
+  color: #fff;
+}
+#startScreen h1 {
+  font-size: 42px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+#startScreen .subtitle {
+  font-size: 18px;
+  opacity: 0.9;
+  margin-bottom: 12px;
+}
+#startScreen .word-count {
+  font-size: 14px;
+  opacity: 0.7;
+  margin-bottom: 48px;
+}
+#startScreen .start-btn {
+  background: #fff;
+  color: #0d2b1a;
+  border: none;
+  border-radius: 50px;
+  padding: 16px 64px;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+  margin-bottom: 14px;
+}
+#startScreen .start-btn:active { transform: scale(0.96); }
+#startScreen .start-btn.secondary {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  box-shadow: none;
+  padding: 16px 64px;
+  font-size: 20px;
+  border: 1.5px solid rgba(255,255,255,0.35);
+}
+#startScreen .btn-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+/* ===== QUIZ SCREEN ===== */
+#quizScreen { display: none; }
+.quiz-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.quiz-header .back-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #666;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+.quiz-header .progress-text {
+  font-size: 14px;
+  color: #999;
+  font-weight: 500;
+}
+.quiz-header .progress-bar-wrap {
+  flex: 1;
+  height: 6px;
+  background: #eee;
+  border-radius: 3px;
+  margin: 0 16px;
+  overflow: hidden;
+}
+.quiz-header .progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #1b4332, #0d2b1a);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+  width: 0%;
+}
+.quiz-body {
+  padding: 32px 24px 24px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.word-display {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.word-display .word {
+  font-size: 36px;
+  font-weight: 800;
+  color: #1a1a2e;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+.word-display .word.phrasal { font-size: 28px; }
+.word-display .phonetic-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.word-display .phonetic {
+  font-size: 18px;
+  color: #888;
+  font-family: "Times New Roman", serif;
+}
+.word-display .speaker-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: #f0f0f5;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s;
+  color: #1b4332;
+  font-size: 18px;
+}
+.word-display .speaker-btn:active { background: #e0e0ea; }
+.word-display .speaker-btn.playing { background: #1b4332; color: #fff; }
+.example-sentence {
+  background: #f8f9ff;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 28px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #555;
+  text-align: center;
+  min-height: 52px;
+  border-left: 3px solid #1b4332;
+  border-right: 3px solid #1b4332;
+}
+.example-sentence .highlight-word {
+  color: #1b4332;
+  font-weight: 700;
+}
+.choices-title {
+  font-size: 14px;
+  color: #aaa;
+  margin-bottom: 12px;
+  text-align: center;
+  letter-spacing: 1px;
+}
+.choices-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.choice-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 16px 20px;
+  background: #fff;
+  border: 2px solid #e8e8f0;
+  border-radius: 14px;
+  font-size: 17px;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+.choice-btn .choice-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #f0f0f5;
+  font-size: 13px;
+  font-weight: 700;
+  color: #888;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.choice-btn:active { transform: scale(0.98); }
+.choice-btn.correct {
+  border-color: #4caf50;
+  background: #e8f5e9;
+}
+.choice-btn.correct .choice-label {
+  background: #4caf50;
+  color: #fff;
+}
+.choice-btn.wrong {
+  border-color: #f44336;
+  background: #ffebee;
+}
+.choice-btn.wrong .choice-label {
+  background: #f44336;
+  color: #fff;
+}
+.choice-btn.reveal-correct {
+  border-color: #4caf50;
+  background: #e8f5e9;
+}
+.choice-btn.reveal-correct .choice-label {
+  background: #4caf50;
+  color: #fff;
+}
+.choice-btn.disabled { pointer-events: none; }
+/* Wrong-answer hint showing confused word */
+.choice-btn .wrong-hint {
+  font-size: 12px;
+  color: #c62828;
+  margin-top: 4px;
+  font-weight: 600;
+  text-align: right;
+  padding-right: 4px;
+}
+
+.wordlist-btn {
+  background: #f0f0f5;
+  border: 1px solid #e0e0ea;
+  border-radius: 18px;
+  padding: 4px 14px;
+  font-size: 13px;
+  color: #1b4332;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  font-weight: 600;
+  line-height: 1.6;
+}
+.wordlist-btn:hover { background: #e4e6f0; }
+.wordlist-btn:active { transform: scale(0.95); }
+
+/* ===== WORD LIST OVERLAY ===== */
+#wordlistOverlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #fff;
+  z-index: 1000;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+#wordlistOverlay.open { display: block; }
+.wordlist-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #1b4332, #0d2b1a);
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.wordlist-header span { font-size: 18px; font-weight: 700; }
+.wordlist-close {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: #fff;
+  font-size: 14px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+.wordlist-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: #f0f0f0;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.wordlist-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 14px;
+  background: #fff;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-size: 14px;
+  line-height: 1.3;
+}
+.wordlist-item:active { background: #e8edff; }
+.wordlist-item .wl-idx {
+  color: #bbb;
+  font-size: 11px;
+  min-width: 22px;
+  text-align: right;
+  flex-shrink: 0;
+}
+.wordlist-item .wl-word {
+  color: #333;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.wordlist-item .wl-mean {
+  color: #999;
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wordlist-item.current .wl-idx { color: #1b4332; font-weight: 700; }
+.wordlist-item.current .wl-word { color: #1b4332; }
+.wordlist-item.done { background: #f0f7f0; }
+.wordlist-item.done .wl-word { color: #4caf50; }
+.wordlist-item.done .wl-idx { color: #4caf50; }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+.quiz-footer {
+  text-align: center;
+  padding: 24px;
+  color: #bbb;
+  font-size: 13px;
+}
+
+/* ===== ANSWER (DETAIL) SCREEN ===== */
+#answerScreen { display: none; }
+.answer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #1b4332, #0d2b1a);
+  color: #fff;
+}
+.answer-header .back-btn {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: #fff;
+  font-size: 14px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+.answer-body {
+  padding: 24px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.answer-word-section {
+  text-align: center;
+  margin-bottom: 24px;
+  padding: 32px 20px 24px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.answer-word-section .word {
+  font-size: 34px;
+  font-weight: 800;
+  color: #1a1a2e;
+  margin-bottom: 6px;
+}
+.answer-word-section .word.phrasal { font-size: 26px; }
+.answer-word-section .phonetic {
+  font-size: 17px;
+  color: #888;
+  font-family: "Times New Roman", serif;
+  margin-bottom: 4px;
+}
+.answer-word-section .chinese-mean {
+  font-size: 20px;
+  color: #333;
+  font-weight: 600;
+  margin-top: 8px;
+  padding: 8px 20px;
+  background: #f0f4ff;
+  border-radius: 8px;
+  display: inline-block;
+}
+.answer-word-section .word-type {
+  font-size: 13px;
+  color: #999;
+  margin-top: 4px;
+}
+.answer-detail-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.answer-detail-card .card-label {
+  font-size: 12px;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.answer-detail-card .en-sentence {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+  margin-bottom: 4px;
+}
+.answer-detail-card .cn-translation {
+  font-size: 15px;
+  color: #888;
+  line-height: 1.5;
+}
+.answer-detail-card .phrase-item {
+  font-size: 15px;
+  color: #555;
+  line-height: 1.7;
+  padding: 4px 0;
+}
+.answer-detail-card .phrase-item .phrase-en { font-weight: 600; }
+.answer-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 0 6px;
+}
+.answer-image svg {
+  width: 100%;
+  max-width: 280px;
+  border: 1px solid #e8e3f5;
+}
+.answer-detail-card .phrase-item .phrase-cn { color: #888; margin-left: 8px; }
+.continue-btn-wrap {
+  text-align: center;
+  padding: 16px 0 40px;
+}
+.continue-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #1b4332, #0d2b1a);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: 16px 56px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 6px 20px rgba(27,67,50,0.4);
+}
+.continue-btn:active { transform: scale(0.96); }
+.continue-btn .arrow { font-size: 22px; }
+
+/* ===== COMPLETION SCREEN ===== */
+#completeScreen {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 40px 24px;
+  text-align: center;
+  background: linear-gradient(135deg, #1b4332 0%, #0d2b1a 100%);
+  color: #fff;
+}
+#completeScreen .trophy { font-size: 72px; margin-bottom: 16px; }
+#completeScreen h1 { font-size: 32px; margin-bottom: 8px; }
+#completeScreen p { font-size: 16px; opacity: 0.85; margin-bottom: 32px; }
+#completeScreen .completion-quote { margin-top: 36px; text-align: center; line-height: 1.7; }
+#completeScreen .completion-quote .en { font-size: 18px; opacity: 0.85; margin-bottom: 4px; font-weight: 600; }
+#completeScreen .completion-quote .cn { font-size: 15px; opacity: 0.65; }
+
+/* ===== TOAST ===== */
+.toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-size: 15px;
+  font-weight: 600;
+  opacity: 0;
+  transition: all 0.3s;
+  z-index: 100;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.success { background: #4caf50; color: #fff; }
+.toast.error { background: #f44336; color: #fff; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 420px) {
+  .word-display .word { font-size: 30px; }
+  .word-display .word.phrasal { font-size: 22px; }
+  .answer-word-section .word { font-size: 28px; }
+  .answer-word-section .word.phrasal { font-size: 22px; }
+  .choice-btn { padding: 14px 16px; font-size: 15px; }
+}
+
+/* ===== LOADING SPINNER ===== */
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(27,67,50,0.3);
+  border-top-color: #1b4332;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- ===== START SCREEN ===== -->
+<div id="startScreen">
+  <h1>📖 DAY 16</h1>
+  <div class="subtitle">基础必背词汇</div>
+  <div class="word-count">共 40 个词汇</div>
+  <div class="btn-group">
+    <button class="start-btn" onclick="startQuiz(true)">开始学习（乱序）</button>
+    <button class="start-btn secondary" onclick="startQuiz(false)">开始学习（顺序）</button>
+  </div>
+</div>
+
+<!-- ===== QUIZ SCREEN ===== -->
+<div id="quizScreen">
+  <div class="quiz-header">
+    <button class="back-btn" onclick="goHome()">✕</button>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
+    <span style="display:flex;align-items:center;gap:8px;">
+      <span class="progress-text" id="progressText">0/40</span>
+      <button class="wordlist-btn" onclick="showWordList()">📋 浏览词汇列表</button>
+    </span>
+  </div>
+  <div class="quiz-body">
+    <div class="word-display">
+      <div class="word" id="quizWord">fare</div>
+      <div class="phonetic-row">
+        <span class="phonetic" id="quizPhonetic">/feə(r)/</span>
+        <button class="speaker-btn" id="speakerBtn" onclick="playWordAudio()">🔊</button>
+      </div>
+    </div>
+    <div class="example-sentence" id="quizSentence">
+      <span id="sentenceText">加载例句中...</span>
+    </div>
+    <div class="choices-title">— 选择正确的中文释义 —</div>
+    <div class="choices-grid" id="choicesContainer"></div>
+  </div>
+  <div class="quiz-footer">点击正确答案查看详情</div>
+</div>
+
+<!-- ===== ANSWER (DETAIL) SCREEN ===== -->
+<div id="answerScreen">
+  <div class="answer-header">
+    <span style="font-weight:700;">📖 单词详情</span>
+    <button class="back-btn" onclick="goHome()">返回首页</button>
+  </div>
+  <div class="answer-body">
+    <div class="answer-word-section">
+      <div class="word" id="ansWord">fare</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
+        <span class="phonetic" id="ansPhonetic">/feə(r)/</span>
+        <button class="speaker-btn" id="ansSpeakerBtn" onclick="playWordAudio(document.getElementById('ansWord').textContent)">🔊</button>
+      </div>
+      <div class="chinese-mean" id="ansMeaning">n. 车费；票价</div>
+    </div>
+    <div class="answer-detail-card" id="ansImageCard" style="display:none;">
+      <div class="card-label">📊 示例图示</div>
+      <div class="answer-image" id="ansImage"></div>
+    </div>
+    <div class="answer-detail-card">
+      <div class="card-label">📝 英文例句</div>
+      <div class="en-sentence" id="ansExampleEn">Loading...</div>
+    </div>
+    <div class="answer-detail-card">
+      <div class="card-label">🌏 中文翻译</div>
+      <div class="cn-translation" id="ansExampleCn">加载中...</div>
+    </div>
+    <div id="ansPhrasesContainer" style="display:none;">
+      <div class="answer-detail-card">
+        <div class="card-label">🔗 常用搭配</div>
+        <div id="ansPhrases"></div>
+      </div>
+    </div>
+    <div class="continue-btn-wrap">
+      <button class="continue-btn" onclick="nextWord()">
+        继续 <span class="arrow">→</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== WORD LIST OVERLAY ===== -->
+<div id="wordlistOverlay">
+  <div class="wordlist-header">
+    <span>📋 词汇列表</span>
+    <button class="wordlist-close" onclick="hideWordList()">关闭 ✕</button>
+  </div>
+  <div class="wordlist-grid" id="wordlistGrid"></div>
+</div>
+
+<!-- ===== COMPLETION SCREEN ===== -->
+<div id="completeScreen">
+  <div class="trophy">🎉</div>
+  <h1>DAY 16 完成！</h1>
+  <p>恭喜你完成今天全部单词学习！<br>明天继续加油 💪</p>
+  <button class="start-btn" onclick="goHome()" style="background:#fff;color:#0d2b1a;border:none;border-radius:50px;padding:16px 56px;font-size:18px;font-weight:700;cursor:pointer;box-shadow:0 8px 25px rgba(0,0,0,0.2);">👍 太棒了</button>
+  <div class="completion-quote">
+    <div class="en">"Little by little, one travels far."</div>
+    <div class="cn">每日单词 · 积少成多</div>
+  </div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// WORD DATA
+// ============================================================
+const WORDS = [
+  // ---- 基础必背词汇 (1-60) ----
+  {word:"alternate angles", phonetic:"/ɔːlˌtɜːnət ˈæŋɡlz/", meaning:"n. 内错角", type:"学科·数学"},
+  {word:"interior angles", phonetic:"/ɪnˌtɪəriə ˈæŋɡlz/", meaning:"n. 内角", type:"学科·数学"},
+  {word:"exterior angle", phonetic:"/ɪkˌstɪəriər ˈæŋɡl/", meaning:"n. 外角", type:"学科·数学"},
+  {word:"angle bisector", phonetic:"/ˈæŋɡl baɪˌsektə(r)/", meaning:"n. 角平分线", type:"学科·数学"},
+  {word:"perpendicular bisector", phonetic:"/ˌpɜːpənˈdɪkjələ baɪˌsektə(r)/", meaning:"n. 垂直平分线", type:"学科·数学"},
+  {word:"distance", phonetic:"/ˈdɪstəns/", meaning:"n. 距离", type:"学科·数学"},
+  {word:"midpoint", phonetic:"/ˈmɪdpɔɪnt/", meaning:"n. 中点", type:"学科·数学"},
+  {word:"congruent", phonetic:"/ˈkɒŋɡruənt/", meaning:"adj. 全等的", type:"学科·数学"},
+  {word:"similar", phonetic:"/ˈsɪmɪlə(r)/", meaning:"adj. 相似的", type:"学科·数学"},
+  {word:"symmetry", phonetic:"/ˈsɪmətri/", meaning:"n. 对称", type:"学科·数学"},
+  {word:"electromagnetic spectrum", phonetic:"/ɪˌlektrəʊmæɡˈnetɪk ˈspektrəm/", meaning:"n. 电磁波谱", type:"学科·物理"},
+  {word:"electromagnetic wave", phonetic:"/ɪˌlektrəʊmæɡˈnetɪk weɪv/", meaning:"n. 电磁波", type:"学科·物理"},
+  {word:"light", phonetic:"/laɪt/", meaning:"n. 光", type:"学科·物理"},
+  {word:"ray", phonetic:"/reɪ/", meaning:"n. 光线", type:"学科·物理"},
+  {word:"normal", phonetic:"/ˈnɔːml/", meaning:"n. 法线", type:"学科·物理"},
+  {word:"angle of incidence", phonetic:"/ˈæŋɡl əv ˈɪnsɪdəns/", meaning:"n. 入射角", type:"学科·物理"},
+  {word:"angle of reflection", phonetic:"/ˈæŋɡl əv rɪˈflekʃn/", meaning:"n. 反射角", type:"学科·物理"},
+  {word:"angle of refraction", phonetic:"/ˈæŋɡl əv rɪˈfrækʃn/", meaning:"n. 折射角", type:"学科·物理"},
+  {word:"plane mirror", phonetic:"/pleɪn ˈmɪrə(r)/", meaning:"n. 平面镜", type:"学科·物理"},
+  {word:"image", phonetic:"/ˈɪmɪdʒ/", meaning:"n. 像", type:"学科·物理"},
+  {word:"confidence", phonetic:"/ˈkɒnfɪdəns/", meaning:"n. 信心", type:"学科·经济"},
+  {word:"distribution of income", phonetic:"/ˌdɪstrɪˈbjuːʃn əv ˈɪnkʌm/", meaning:"n. 收入分配", type:"学科·经济"},
+  {word:"pension scheme", phonetic:"/ˈpenʃn skiːm/", meaning:"n. 养老金计划;退休金计划", type:"学科·经济"},
+  {word:"wage", phonetic:"/weɪdʒ/", meaning:"n. 工资", type:"学科·经济"},
+  {word:"salary", phonetic:"/ˈsæləri/", meaning:"n. 薪金;薪水", type:"学科·经济"},
+  {word:"overtime pay", phonetic:"/ˈəʊvətaɪm peɪ/", meaning:"n. 加班费", type:"学科·经济"},
+  {word:"bonus", phonetic:"/ˈbəʊnəs/", meaning:"n. 奖金", type:"学科·经济"},
+  {word:"commission", phonetic:"/kəˈmɪʃn/", meaning:"n. 销售佣金", type:"学科·经济"},
+  {word:"job satisfaction", phonetic:"/dʒɒb ˌsætɪsˈfækʃn/", meaning:"n. 工作满意度", type:"学科·经济"},
+  {word:"fringe benefit", phonetic:"/frɪndʒ ˈbenɪfɪt/", meaning:"n. 附加福利", type:"学科·经济"},
+  {word:"carbon monoxide", phonetic:"/ˌkɑːbən məˈnɒksaɪd/", meaning:"n. 一氧化碳", type:"学科·化学"},
+  {word:"carbon dioxide", phonetic:"/ˌkɑːbən daɪˈɒksaɪd/", meaning:"n. 二氧化碳", type:"学科·化学"},
+  {word:"complete combustion", phonetic:"/kəmˌpliːt kəmˈbʌstʃən/", meaning:"n. 完全燃烧", type:"学科·化学"},
+  {word:"incomplete combustion", phonetic:"/ˌɪnkəmˌpliːt kəmˈbʌstʃən/", meaning:"n. 不完全燃烧", type:"学科·化学"},
+  {word:"calcium carbonate", phonetic:"/ˌkælsiəm ˈkɑːbəneɪt/", meaning:"n. 碳酸钙", type:"学科·化学"},
+  {word:"limestone", phonetic:"/ˈlaɪmstəʊn/", meaning:"n. 石灰石", type:"学科·化学"},
+  {word:"calcium oxide", phonetic:"/ˌkælsiəm ˈɒksaɪd/", meaning:"n. 氧化钙(CaO)", type:"学科·化学"},
+  {word:"quicklime", phonetic:"/ˈkwɪklaɪm/", meaning:"n. 生石灰", type:"学科·化学"},
+  {word:"calcium hydroxide", phonetic:"/ˌkælsiəm haɪˈdrɒksaɪd/", meaning:"n. 氢氧化钙", type:"学科·化学"},
+  {word:"slaked lime", phonetic:"/sleɪkt laɪm/", meaning:"n. 熟石灰", type:"学科·化学"}
+];
+
+// ============================================================
+// SENTENCE EXAMPLES (embedded for reliability)
+// ============================================================
+const SENTENCES = {
+      "alternate angles":"Alternate angles are equal.",
+  "interior angles":"The interior angles of a triangle sum to 180.",
+  "exterior angle":"The exterior angle equals the two opposite interior angles.",
+  "angle bisector":"The angle bisector cuts the angle in half.",
+  "perpendicular bisector":"The perpendicular bisector cuts the segment at 90 degrees.",
+  "distance":"The distance between the two towns is 20 km.",
+  "midpoint":"The midpoint is halfway along the segment.",
+  "congruent":"Congruent triangles have the same size and shape.",
+  "similar":"Similar triangles have the same shape.",
+  "symmetry":"The butterfly has line symmetry.",
+  "electromagnetic spectrum":"The spectrum includes radio, light and X-rays.",
+  "electromagnetic wave":"Light is an electromagnetic wave.",
+  "light":"Light travels very fast.",
+  "ray":"A ray of light enters the glass.",
+  "normal":"The normal is at 90 degrees to the surface.",
+  "angle of incidence":"The angle of incidence equals the reflection angle.",
+  "angle of reflection":"The angle of reflection is measured from the normal.",
+  "angle of refraction":"The angle of refraction is smaller in water.",
+  "plane mirror":"A plane mirror gives a clear reflection.",
+  "image":"The mirror shows a virtual image.",
+  "confidence":"Consumer confidence drives spending.",
+  "distribution of income":"The distribution of income is unequal.",
+  "pension scheme":"The pension scheme pays after retirement.",
+  "wage":"The worker earns a weekly wage.",
+  "salary":"She earns a monthly salary.",
+  "overtime pay":"He got overtime pay for the extra hours.",
+  "bonus":"The staff received a year-end bonus.",
+  "commission":"The salesperson earns commission.",
+  "job satisfaction":"High pay does not always mean job satisfaction.",
+  "fringe benefit":"Health insurance is a fringe benefit.",
+  "carbon monoxide":"Carbon monoxide is a poisonous gas.",
+  "carbon dioxide":"Plants take in carbon dioxide.",
+  "complete combustion":"Complete combustion needs enough oxygen.",
+  "incomplete combustion":"Incomplete combustion produces carbon monoxide.",
+  "calcium carbonate":"Calcium carbonate is found in limestone.",
+  "limestone":"Limestone is used to make cement.",
+  "calcium oxide":"Calcium oxide reacts with water.",
+  "quicklime":"Quicklime is calcium oxide.",
+  "calcium hydroxide":"Calcium hydroxide is used in farming.",
+  "slaked lime":"Slaked lime is calcium hydroxide."
+};
+
+const TRANSLATIONS = {
+      "alternate angles":"内错角相等。",
+  "interior angles":"三角形内角和为180度。",
+  "exterior angle":"外角等于两个不相邻内角之和。",
+  "angle bisector":"角平分线把角分成两半。",
+  "perpendicular bisector":"垂直平分线以90度切分线段。",
+  "distance":"两个镇之间的距离是20千米。",
+  "midpoint":"中点是线段的中点位置。",
+  "congruent":"全等三角形大小形状完全相同。",
+  "similar":"相似三角形形状相同。",
+  "symmetry":"蝴蝶有对称性。",
+  "electromagnetic spectrum":"波谱包括无线电、光和X光。",
+  "electromagnetic wave":"光是电磁波。",
+  "light":"光传播得非常快。",
+  "ray":"一束光线进入玻璃。",
+  "normal":"法线与表面成90度。",
+  "angle of incidence":"入射角等于反射角。",
+  "angle of reflection":"反射角从法线测量。",
+  "angle of refraction":"水中折射角更小。",
+  "plane mirror":"平面镜产生清晰的反射。",
+  "image":"镜子显示虚像。",
+  "confidence":"消费者信心推动消费。",
+  "distribution of income":"收入分配不均。",
+  "pension scheme":"养老金计划在退休后支付。",
+  "wage":"工人挣周薪。",
+  "salary":"她挣月薪。",
+  "overtime pay":"他因加班得到加班费。",
+  "bonus":"员工获得了年终奖金。",
+  "commission":"销售人员赚取佣金。",
+  "job satisfaction":"高薪并不总是意味着工作满意度。",
+  "fringe benefit":"医疗保险是附加福利。",
+  "carbon monoxide":"一氧化碳是有毒气体。",
+  "carbon dioxide":"植物吸收二氧化碳。",
+  "complete combustion":"完全燃烧需要足够的氧气。",
+  "incomplete combustion":"不完全燃烧产生一氧化碳。",
+  "calcium carbonate":"碳酸钙存在于石灰石中。",
+  "limestone":"石灰石用来制水泥。",
+  "calcium oxide":"氧化钙与水反应。",
+  "quicklime":"生石灰就是氧化钙。",
+  "calcium hydroxide":"氢氧化钙用于农业。",
+  "slaked lime":"熟石灰就是氢氧化钙。"
+};
+
+const PHRASES = {
+      "alternate angles":["alternate angle theorem 内错角定理"],
+  "interior angles":["interior angles of triangle 三角形内角","sum of interior angles 内角和"],
+  "exterior angle":["exterior angle of polygon 多边形外角"],
+  "angle bisector":["angle bisector line 角平分线"],
+  "perpendicular bisector":["perpendicular bisector of segment 线段垂直平分线"],
+  "distance":["distance between 之间的距离","distance formula 距离公式"],
+  "midpoint":["midpoint of segment 线段中点"],
+  "congruent":["congruent triangles 全等三角形","congruent figures 全等图形"],
+  "similar":["similar triangles 相似三角形","similar figures 相似图形"],
+  "symmetry":["line symmetry 轴对称","axis of symmetry 对称轴"],
+  "electromagnetic spectrum":["electromagnetic spectrum range 电磁波谱范围"],
+  "electromagnetic wave":["electromagnetic wave speed 电磁波速度"],
+  "light":["speed of light 光速","light ray 光线"],
+  "ray":["light ray 光线","ray of light 一束光"],
+  "normal":["normal line 法线","normal to surface 表面法线"],
+  "angle of incidence":["angle of incidence equals reflection 入射角等于反射角"],
+  "angle of reflection":["angle of reflection rule 反射角定律"],
+  "angle of refraction":["angle of refraction in water 水中折射角"],
+  "plane mirror":["plane mirror image 平面镜像"],
+  "image":["virtual image 虚像","real image 实像"],
+  "confidence":["consumer confidence 消费者信心","confidence index 信心指数"],
+  "distribution of income":["income distribution gap 收入分配差距"],
+  "pension scheme":["pension scheme plan 养老金计划"],
+  "wage":["weekly wage 周薪","minimum wage 最低工资"],
+  "salary":["monthly salary 月薪","salary increase 加薪"],
+  "overtime pay":["overtime pay rate 加班费率"],
+  "bonus":["year-end bonus 年终奖","bonus payment 奖金支付"],
+  "commission":["sales commission 销售佣金","commission rate 佣金比例"],
+  "job satisfaction":["job satisfaction survey 工作满意度调查"],
+  "fringe benefit":["fringe benefit package 附加福利包"],
+  "carbon monoxide":["carbon monoxide poisoning 一氧化碳中毒"],
+  "carbon dioxide":["carbon dioxide emission 二氧化碳排放"],
+  "complete combustion":["complete combustion oxygen 完全燃烧需氧"],
+  "incomplete combustion":["incomplete combustion monoxide 不完全燃烧产生一氧化碳"],
+  "calcium carbonate":["calcium carbonate limestone 碳酸钙石灰石"],
+  "limestone":["limestone quarry 石灰石矿"],
+  "calcium oxide":["calcium oxide quicklime 氧化钙生石灰"],
+  "quicklime":["quicklime water reaction 生石灰与水反应"],
+  "calcium hydroxide":["calcium hydroxide slaked lime 氢氧化钙熟石灰"],
+  "slaked lime":["slaked lime solution 熟石灰溶液"]
+};
+
+const IMAGES = {
+  "alternate angles": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><line x1=\"40\" y1=\"52\" x2=\"200\" y2=\"52\" stroke=\"#311b92\" stroke-width=\"2\"/><line x1=\"40\" y1=\"92\" x2=\"200\" y2=\"92\" stroke=\"#311b92\" stroke-width=\"2\"/><line x1=\"70\" y1=\"30\" x2=\"170\" y2=\"114\" stroke=\"#6c63ff\" stroke-width=\"2.5\"/><path d=\"M96 64 A 10 10 0 0 0 88 68\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"1.8\"/><path d=\"M146 80 A 10 10 0 0 1 154 76\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"1.8\"/><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">Z 形内错角相等</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">两条线内部交替</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">内错角</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">内错角：Z 形相等</text></svg>",
+  "interior angles": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><polygon points=\"60,92 190,92 120,36\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2.5\"/><path d=\"M118 50 A 12 12 0 0 1 126 54\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"1.8\"/><path d=\"M118 86 A 12 12 0 0 0 110 86\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"1.8\"/><path d=\"M178 86 A 12 12 0 0 0 184 80\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"1.8\"/><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">三个内角和 180°</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">图形内部的角</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">内角</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">内角：图形内角</text></svg>",
+  "exterior angle": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><polygon points=\"60,92 170,92 115,44\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2.5\"/><line x1=\"170\" y1=\"92\" x2=\"212\" y2=\"92\" stroke=\"#6c63ff\" stroke-width=\"2.5\"/><path d=\"M186 86 A 12 12 0 0 0 192 80\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"1.8\"/><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">外角 = 两内角之和</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">延长边形成的角</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">外角</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">外角：延长线外角</text></svg>",
+  "angle bisector": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><path d=\"M70 92 L40 36\" stroke=\"#311b92\" stroke-width=\"2.5\"/><path d=\"M70 92 L186 92\" stroke=\"#311b92\" stroke-width=\"2.5\"/><path d=\"M70 92 L128 36\" stroke=\"#6c63ff\" stroke-width=\"2.5\" stroke-dasharray=\"5 3\"/><path d=\"M84 80 A 20 20 0 0 0 88 70\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"1.8\"/><path d=\"M86 82 A 18 18 0 0 0 88 74\" fill=\"none\" stroke=\"#311b92\" stroke-width=\"1.8\"/><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">两半相等</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">平分角</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">角平分线</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">角平分线：平分角</text></svg>",
+  "perpendicular bisector": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><line x1=\"50\" y1=\"70\" x2=\"190\" y2=\"70\" stroke=\"#311b92\" stroke-width=\"2.5\"/><line x1=\"120\" y1=\"34\" x2=\"120\" y2=\"106\" stroke=\"#6c63ff\" stroke-width=\"2\" stroke-dasharray=\"5 3\"/><rect x=\"120\" y=\"62\" width=\"8\" height=\"8\" fill=\"none\" stroke=\"#333333\" stroke-width=\"1.5\"/><line x1=\"120\" y1=\"58\" x2=\"120\" y2=\"82\" stroke=\"#888888\" stroke-width=\"1.5\"/><line x1=\"62\" y1=\"64\" x2=\"62\" y2=\"76\" stroke=\"#888888\" stroke-width=\"1.5\"/><line x1=\"178\" y1=\"64\" x2=\"178\" y2=\"76\" stroke=\"#888888\" stroke-width=\"1.5\"/><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">垂直且平分</text><text x=\"120\" y=\"116\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">90° 切中线段</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">垂直平分线</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">垂直平分线：垂直平分</text></svg>",
+  "distance": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><circle cx=\"70\" cy=\"60\" r=\"6\" fill=\"#311b92\"/><circle cx=\"180\" cy=\"90\" r=\"6\" fill=\"#311b92\"/><line x1=\"70\" y1=\"60\" x2=\"180\" y2=\"90\" stroke=\"#6c63ff\" stroke-width=\"2.5\" marker-end=\"url(#d16ds)\"/><defs><marker id=\"d16ds\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#6c63ff\"/></marker></defs><text x=\"62\" y=\"46\" text-anchor=\"middle\" font-size=\"12\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">A</text><text x=\"190\" y=\"102\" text-anchor=\"middle\" font-size=\"12\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">B</text><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">两点连线</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">两点之间最短</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">距离</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">距离：两点间长度</text></svg>",
+  "midpoint": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><line x1=\"50\" y1=\"70\" x2=\"190\" y2=\"70\" stroke=\"#311b92\" stroke-width=\"2.5\"/><circle cx=\"120\" cy=\"70\" r=\"7\" fill=\"#6c63ff\"/><line x1=\"62\" y1=\"64\" x2=\"62\" y2=\"76\" stroke=\"#888888\" stroke-width=\"1.5\"/><line x1=\"178\" y1=\"64\" x2=\"178\" y2=\"76\" stroke=\"#888888\" stroke-width=\"1.5\"/><path d=\"M88 60 l6 0 M88 66 l6 0 M152 60 l6 0 M152 66 l6 0\" stroke=\"#6c63ff\" stroke-width=\"1.8\"/><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">两边一样长</text><text x=\"120\" y=\"96\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">中点</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">中点</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">中点：线段正中间</text></svg>",
+  "congruent": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><polygon points=\"40,88 96,88 68,46\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2.5\"/><polygon points=\"152,88 208,88 180,46\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2.5\"/><path d=\"M52 82 A 8 8 0 0 0 56 78\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"1.5\"/><path d=\"M164 82 A 8 8 0 0 0 168 78\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"1.5\"/><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">大小形状都相同</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"12\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">△ABC ≅ △DEF</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">全等</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">全等：完全一样</text></svg>",
+  "similar": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><polygon points=\"40,88 90,88 65,50\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2.5\"/><polygon points=\"152,88 224,88 188,26\" fill=\"#ece7fb\" stroke=\"#6c63ff\" stroke-width=\"2.5\"/><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">形状相同大小不同</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"12\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">△ABC ~ △DEF</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">相似</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">相似：形状相同</text></svg>",
+  "symmetry": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><ellipse cx=\"66\" cy=\"66\" rx=\"22\" ry=\"30\" fill=\"#6c63ff\" opacity=\"0.7\"/><ellipse cx=\"66\" cy=\"66\" rx=\"7\" ry=\"10\" fill=\"#ffffff\"/><ellipse cx=\"174\" cy=\"66\" rx=\"22\" ry=\"30\" fill=\"#6c63ff\" opacity=\"0.7\"/><ellipse cx=\"174\" cy=\"66\" rx=\"7\" ry=\"10\" fill=\"#ffffff\"/><line x1=\"120\" y1=\"30\" x2=\"120\" y2=\"102\" stroke=\"#311b92\" stroke-width=\"2\" stroke-dasharray=\"5 3\"/><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">左右镜像相等</text><text x=\"120\" y=\"116\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">折叠后重合</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">对称</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">对称：两边镜像</text></svg>",
+  "electromagnetic spectrum": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"30\" y=\"52\" width=\"180\" height=\"30\" rx=\"6\" fill=\"url(#d16sp)\"/><defs><linearGradient id=\"d16sp\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"0\"><stop offset=\"0\" stop-color=\"#6c63ff\"/><stop offset=\"0.2\" stop-color=\"#311b92\"/><stop offset=\"0.4\" stop-color=\"#d62828\"/><stop offset=\"0.6\" stop-color=\"#ff8c00\"/><stop offset=\"0.8\" stop-color=\"#ffd700\"/><stop offset=\"1\" stop-color=\"#4caf50\"/></linearGradient></defs><text x=\"50\" y=\"44\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">无线电</text><text x=\"160\" y=\"44\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">可见光</text><text x=\"200\" y=\"44\" text-anchor=\"middle\" font-size=\"11\" fill=\"#888888\" font-family=\"sans-serif\">γ</text><path d=\"M40 96 l12 0 l6 8 l10 -14 l10 14 l6 -8 l12 0\" fill=\"none\" stroke=\"#311b92\" stroke-width=\"1.8\"/><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">波长从长到短排列</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">电磁波谱</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">电磁波谱：全波段</text></svg>",
+  "electromagnetic wave": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><path d=\"M36 68 q13 -26 26 0 q13 26 26 0 q13 -26 26 0 q13 26 26 0 q13 -26 26 0 q13 26 26 0 q13 -26 26 0 q13 26 26 0\" fill=\"none\" stroke=\"#311b92\" stroke-width=\"2.5\"/><path d=\"M36 68 q6 -10 12 0 q6 10 12 0\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"2\"/><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">电场 + 磁场</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">光就是电磁波</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">电磁波</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">电磁波：光也是</text></svg>",
+  "light": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><circle cx=\"56\" cy=\"52\" r=\"16\" fill=\"#ffd700\" stroke=\"#c9a227\" stroke-width=\"2\"/><path d=\"M56 26 l0 10 M56 68 l0 10 M30 52 l10 0 M72 52 l10 0 M38 34 l7 7 M67 63 l7 7 M74 34 l-7 7 M45 63 l-7 7\" stroke=\"#c9a227\" stroke-width=\"2\"/><line x1=\"80\" y1=\"60\" x2=\"150\" y2=\"84\" stroke=\"#311b92\" stroke-width=\"2.5\" marker-end=\"url(#d16lt)\"/><defs><marker id=\"d16lt\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#311b92\"/></marker></defs><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">直线传播</text><text x=\"120\" y=\"110\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">速度极快</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">光</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">光：直线传播</text></svg>",
+  "ray": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><circle cx=\"60\" cy=\"70\" r=\"7\" fill=\"#311b92\"/><line x1=\"60\" y1=\"70\" x2=\"200\" y2=\"70\" stroke=\"#311b92\" stroke-width=\"2.5\" marker-end=\"url(#d16ry)\"/><defs><marker id=\"d16ry\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#311b92\"/></marker></defs><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">带箭头的线</text><text x=\"120\" y=\"96\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">表示光的方向</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">光线</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">光线：带方向的光</text></svg>",
+  "normal": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><line x1=\"40\" y1=\"96\" x2=\"200\" y2=\"96\" stroke=\"#311b92\" stroke-width=\"2.5\"/><line x1=\"120\" y1=\"34\" x2=\"120\" y2=\"96\" stroke=\"#6c63ff\" stroke-width=\"2\" stroke-dasharray=\"5 3\"/><rect x=\"120\" y=\"86\" width=\"10\" height=\"10\" fill=\"none\" stroke=\"#333333\" stroke-width=\"1.5\"/><text x=\"132\" y=\"44\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">法线</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">与表面垂直</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">法线</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">法线：垂直的虚线</text></svg>",
+  "angle of incidence": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><line x1=\"40\" y1=\"96\" x2=\"200\" y2=\"96\" stroke=\"#311b92\" stroke-width=\"2.5\"/><line x1=\"120\" y1=\"34\" x2=\"120\" y2=\"96\" stroke=\"#6c63ff\" stroke-width=\"2\" stroke-dasharray=\"5 3\"/><line x1=\"52\" y1=\"40\" x2=\"114\" y2=\"92\" stroke=\"#311b92\" stroke-width=\"2.5\" marker-end=\"url(#d16ai)\"/><defs><marker id=\"d16ai\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#311b92\"/></marker></defs><path d=\"M112 72 A 24 24 0 0 0 104 62\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"2\"/><text x=\"88\" y=\"60\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">入射角</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">光线与法线的夹角</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">入射角</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">入射角：光线与法线</text></svg>",
+  "angle of reflection": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><line x1=\"40\" y1=\"96\" x2=\"200\" y2=\"96\" stroke=\"#311b92\" stroke-width=\"2.5\"/><line x1=\"120\" y1=\"34\" x2=\"120\" y2=\"96\" stroke=\"#6c63ff\" stroke-width=\"2\" stroke-dasharray=\"5 3\"/><line x1=\"128\" y1=\"92\" x2=\"190\" y2=\"40\" stroke=\"#6c63ff\" stroke-width=\"2.5\" marker-end=\"url(#d16ar)\"/><defs><marker id=\"d16ar\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#6c63ff\"/></marker></defs><path d=\"M128 72 A 24 24 0 0 1 136 62\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"2\"/><text x=\"158\" y=\"58\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">反射角</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">反射光与法线的夹角</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">反射角</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">反射角：等于入射角</text></svg>",
+  "angle of refraction": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><line x1=\"36\" y1=\"48\" x2=\"204\" y2=\"48\" stroke=\"#311b92\" stroke-width=\"2\"/><line x1=\"36\" y1=\"92\" x2=\"204\" y2=\"92\" stroke=\"#311b92\" stroke-width=\"2\"/><line x1=\"120\" y1=\"30\" x2=\"120\" y2=\"96\" stroke=\"#6c63ff\" stroke-width=\"1.8\" stroke-dasharray=\"4 3\"/><line x1=\"52\" y1=\"24\" x2=\"114\" y2=\"54\" stroke=\"#311b92\" stroke-width=\"2.5\" marker-end=\"url(#d16ag)\"/><defs><marker id=\"d16ag\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#311b92\"/></marker></defs><line x1=\"126\" y1=\"58\" x2=\"186\" y2=\"108\" stroke=\"#6c63ff\" stroke-width=\"2.5\" marker-end=\"url(#d16ag)\"/><path d=\"M122 48 A 12 12 0 0 1 128 54\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"1.8\"/><text x=\"140\" y=\"42\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">折射角</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">入水后角度变小</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">折射角</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">折射角：弯折后角</text></svg>",
+  "plane mirror": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"108\" y=\"36\" width=\"24\" height=\"70\" rx=\"3\" fill=\"#dde3ea\" stroke=\"#311b92\" stroke-width=\"2\"/><rect x=\"126\" y=\"38\" width=\"5\" height=\"66\" fill=\"#c9d2dd\"/><line x1=\"56\" y1=\"44\" x2=\"102\" y2=\"64\" stroke=\"#311b92\" stroke-width=\"2.5\" marker-end=\"url(#d16pm)\"/><defs><marker id=\"d16pm\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#311b92\"/></marker></defs><line x1=\"138\" y1=\"64\" x2=\"184\" y2=\"44\" stroke=\"#6c63ff\" stroke-width=\"2.5\" marker-end=\"url(#d16pm)\"/><circle cx=\"60\" cy=\"84.0\" r=\"5.25\" fill=\"#311b92\"/><path d=\"M51.75 108.0 q8.25 -14 16.5 0 l-5 12.0 q-3 3 -6 -1 l-4 -14 l-4 14 q-3 4 -6 1 Z\" fill=\"#311b92\" opacity=\"0.85\"/><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">平面镜</text><text x=\"120\" y=\"116\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">表面平整的镜子</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">平面镜</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">平面镜：平整镜面</text></svg>",
+  "image": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"110\" y=\"40\" width=\"20\" height=\"66\" rx=\"3\" fill=\"#dde3ea\" stroke=\"#311b92\" stroke-width=\"2\"/><circle cx=\"68\" cy=\"79.2\" r=\"5.6000000000000005\" fill=\"#311b92\"/><path d=\"M59.2 104.8 q8.8 -14 17.6 0 l-5 12.8 q-3 3 -6 -1 l-4 -14 l-4 14 q-3 4 -6 1 Z\" fill=\"#311b92\" opacity=\"0.85\"/><circle cx=\"172\" cy=\"79.2\" r=\"5.6000000000000005\" fill=\"#6c63ff\"/><path d=\"M163.2 104.8 q8.8 -14 17.6 0 l-5 12.8 q-3 3 -6 -1 l-4 -14 l-4 14 q-3 4 -6 1 Z\" fill=\"#6c63ff\" opacity=\"0.85\"/><text x=\"68\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#311b92\" font-family=\"sans-serif\">物体</text><text x=\"172\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#6c63ff\" font-family=\"sans-serif\">虚像</text><line x1=\"68\" y1=\"70\" x2=\"110\" y2=\"70\" stroke=\"#888888\" stroke-width=\"1.2\" stroke-dasharray=\"3 3\"/><line x1=\"172\" y1=\"70\" x2=\"130\" y2=\"70\" stroke=\"#888888\" stroke-width=\"1.2\" stroke-dasharray=\"3 3\"/><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">镜像在镜后</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">像</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">像：镜中的虚像</text></svg>",
+  "confidence": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><defs><marker id=\"d16ax\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#333333\"/></marker></defs><line x1=\"35\" y1=\"95\" x2=\"35\" y2=\"18\" stroke=\"#333333\" stroke-width=\"1.8\" marker-end=\"url(#d16ax)\"/><line x1=\"35\" y1=\"95\" x2=\"215\" y2=\"95\" stroke=\"#333333\" stroke-width=\"1.8\" marker-end=\"url(#d16ax)\"/><path d=\"M40 88 L80 72 L120 56 L160 42 L200 30\" fill=\"none\" stroke=\"#311b92\" stroke-width=\"2.5\"/><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">信心上升</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">信心 → 消费与投资</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">信心</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">信心：预期向好</text></svg>",
+  "distribution of income": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><circle cx=\"80\" cy=\"70\" r=\"30\" fill=\"none\" stroke=\"#311b92\" stroke-width=\"2\"/><path d=\"M80 70 L80 40 A 30 30 0 0 1 108 86 Z\" fill=\"#6c63ff\" opacity=\"0.6\"/><path d=\"M80 70 L108 86 A 30 30 0 0 1 62 92 Z\" fill=\"#311b92\" opacity=\"0.5\"/><path d=\"M80 70 L62 92 A 30 30 0 0 1 50 60 Z\" fill=\"#888888\" opacity=\"0.5\"/><path d=\"M80 70 L50 60 A 30 30 0 0 1 80 40 Z\" fill=\"#6c63ff\" opacity=\"0.35\"/><text x=\"80\" y=\"40\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">一份不均</text><rect x=\"140\" y=\"46\" width=\"60\" height=\"12\" fill=\"#6c63ff\" opacity=\"0.7\"/><rect x=\"140\" y=\"62\" width=\"38\" height=\"12\" fill=\"#311b92\" opacity=\"0.6\"/><rect x=\"140\" y=\"78\" width=\"22\" height=\"12\" fill=\"#888888\" opacity=\"0.6\"/><text x=\"170\" y=\"110\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">收入差距</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">收入分配</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">收入分配：谁拿多少</text></svg>",
+  "pension scheme": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><circle cx=\"56\" cy=\"76.4\" r=\"5.95\" fill=\"#311b92\"/><path d=\"M46.65 103.6 q9.35 -14 18.7 0 l-5 13.6 q-3 3 -6 -1 l-4 -14 l-4 14 q-3 4 -6 1 Z\" fill=\"#311b92\" opacity=\"0.85\"/><line x1=\"84\" y1=\"76\" x2=\"110\" y2=\"68\" stroke=\"#6c63ff\" stroke-width=\"2.5\" marker-end=\"url(#d16pn)\"/><defs><marker id=\"d16pn\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#6c63ff\"/></marker></defs><rect x=\"116\" y=\"50\" width=\"54\" height=\"40\" rx=\"5\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"143\" y=\"74\" text-anchor=\"middle\" font-size=\"11\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">养老金</text><line x1=\"176\" y1=\"68\" x2=\"200\" y2=\"76\" stroke=\"#6c63ff\" stroke-width=\"2.5\" marker-end=\"url(#d16pn)\"/><circle cx=\"214\" cy=\"78.8\" r=\"4.8999999999999995\" fill=\"#6c63ff\"/><path d=\"M206.3 101.2 q7.699999999999999 -14 15.399999999999999 0 l-5 11.2 q-3 3 -6 -1 l-4 -14 l-4 14 q-3 4 -6 1 Z\" fill=\"#6c63ff\" opacity=\"0.85\"/><text x=\"56\" y=\"110\" text-anchor=\"middle\" font-size=\"9.5\" fill=\"#888888\" font-family=\"sans-serif\">工作</text><text x=\"214\" y=\"108\" text-anchor=\"middle\" font-size=\"9.5\" fill=\"#888888\" font-family=\"sans-serif\">退休</text><text x=\"120\" y=\"44\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#888888\" font-family=\"sans-serif\">工作存钱退休领</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">养老金计划</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">养老金：退休后领</text></svg>",
+  "wage": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><circle cx=\"60\" cy=\"76.4\" r=\"5.95\" fill=\"#311b92\"/><path d=\"M50.65 103.6 q9.35 -14 18.7 0 l-5 13.6 q-3 3 -6 -1 l-4 -14 l-4 14 q-3 4 -6 1 Z\" fill=\"#311b92\" opacity=\"0.85\"/><line x1=\"88\" y1=\"78\" x2=\"112\" y2=\"70\" stroke=\"#6c63ff\" stroke-width=\"2.5\" marker-end=\"url(#d16wg)\"/><defs><marker id=\"d16wg\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#6c63ff\"/></marker></defs><rect x=\"118\" y=\"52\" width=\"56\" height=\"36\" rx=\"5\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"146\" y=\"78\" font-size=\"13\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\" text-anchor=\"middle\">¥周薪</text><text x=\"120\" y=\"44\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#888888\" font-family=\"sans-serif\">按周支付</text><text x=\"120\" y=\"110\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">体力/小时工</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">工资</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">工资：按周结算</text></svg>",
+  "salary": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><circle cx=\"60\" cy=\"76.4\" r=\"5.95\" fill=\"#311b92\"/><path d=\"M50.65 103.6 q9.35 -14 18.7 0 l-5 13.6 q-3 3 -6 -1 l-4 -14 l-4 14 q-3 4 -6 1 Z\" fill=\"#311b92\" opacity=\"0.85\"/><line x1=\"88\" y1=\"78\" x2=\"112\" y2=\"70\" stroke=\"#6c63ff\" stroke-width=\"2.5\" marker-end=\"url(#d16sl)\"/><defs><marker id=\"d16sl\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#6c63ff\"/></marker></defs><rect x=\"118\" y=\"52\" width=\"56\" height=\"36\" rx=\"5\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"146\" y=\"78\" font-size=\"13\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\" text-anchor=\"middle\">¥月薪</text><text x=\"120\" y=\"44\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#888888\" font-family=\"sans-serif\">按月支付</text><text x=\"120\" y=\"110\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">白领/固定工作</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">薪水</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">薪水：按月结算</text></svg>",
+  "overtime pay": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><circle cx=\"76\" cy=\"66\" r=\"20\" fill=\"none\" stroke=\"#311b92\" stroke-width=\"2.5\"/><line x1=\"76\" y1=\"66\" x2=\"76\" y2=\"54\" stroke=\"#311b92\" stroke-width=\"2\"/><line x1=\"76\" y1=\"66\" x2=\"86\" y2=\"70\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"76\" y=\"50\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">加班</text><line x1=\"104\" y1=\"72\" x2=\"126\" y2=\"72\" stroke=\"#6c63ff\" stroke-width=\"2.5\" marker-end=\"url(#d16ot)\"/><defs><marker id=\"d16ot\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#6c63ff\"/></marker></defs><rect x=\"132\" y=\"54\" width=\"58\" height=\"36\" rx=\"5\" fill=\"#ece7fb\" stroke=\"#6c63ff\" stroke-width=\"2\"/><text x=\"161\" y=\"80\" font-size=\"13\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\" text-anchor=\"middle\">¥1.5×</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">额外时间额外钱</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">加班费</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">加班费：额外报酬</text></svg>",
+  "bonus": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"40\" y=\"50\" width=\"70\" height=\"44\" rx=\"5\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"75\" y=\"76\" text-anchor=\"middle\" font-size=\"11\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">全年表现</text><line x1=\"118\" y1=\"72\" x2=\"142\" y2=\"72\" stroke=\"#6c63ff\" stroke-width=\"2.5\" marker-end=\"url(#d16bn)\"/><defs><marker id=\"d16bn\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#6c63ff\"/></marker></defs><rect x=\"150\" y=\"50\" width=\"60\" height=\"44\" rx=\"5\" fill=\"#fffde7\" stroke=\"#c9a227\" stroke-width=\"2\"/><circle cx=\"172\" cy=\"68\" r=\"10\" fill=\"#c9a227\"/><text x=\"172\" y=\"74\" font-size=\"11\" fill=\"#ffffff\" font-weight=\"700\" font-family=\"sans-serif\" text-anchor=\"middle\">¥</text><text x=\"186\" y=\"72\" font-size=\"9\" fill=\"#888888\" text-anchor=\"middle\">奖</text><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#888888\" font-family=\"sans-serif\">年度奖励</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">干得好发奖金</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">奖金</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">奖金：额外奖励</text></svg>",
+  "commission": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><circle cx=\"56\" cy=\"76.4\" r=\"5.95\" fill=\"#311b92\"/><path d=\"M46.65 103.6 q9.35 -14 18.7 0 l-5 13.6 q-3 3 -6 -1 l-4 -14 l-4 14 q-3 4 -6 1 Z\" fill=\"#311b92\" opacity=\"0.85\"/><line x1=\"84\" y1=\"76\" x2=\"108\" y2=\"66\" stroke=\"#6c63ff\" stroke-width=\"2.5\" marker-end=\"url(#d16cm)\"/><defs><marker id=\"d16cm\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#6c63ff\"/></marker></defs><rect x=\"114\" y=\"46\" width=\"56\" height=\"34\" rx=\"5\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"142\" y=\"68\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">卖出</text><line x1=\"178\" y1=\"66\" x2=\"202\" y2=\"76\" stroke=\"#6c63ff\" stroke-width=\"2.5\" marker-end=\"url(#d16cm)\"/><circle cx=\"216\" cy=\"78.8\" r=\"4.8999999999999995\" fill=\"#6c63ff\"/><path d=\"M208.3 101.2 q7.699999999999999 -14 15.399999999999999 0 l-5 11.2 q-3 3 -6 -1 l-4 -14 l-4 14 q-3 4 -6 1 Z\" fill=\"#6c63ff\" opacity=\"0.85\"/><text x=\"142\" y=\"46\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">按业绩提成</text><text x=\"120\" y=\"110\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">卖得多赚得多</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">销售佣金</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">销售佣金：按销量提成</text></svg>",
+  "job satisfaction": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><circle cx=\"84\" cy=\"76.8\" r=\"6.6499999999999995\" fill=\"#311b92\"/><path d=\"M73.55 107.2 q10.45 -14 20.9 0 l-5 15.2 q-3 3 -6 -1 l-4 -14 l-4 14 q-3 4 -6 1 Z\" fill=\"#311b92\" opacity=\"0.85\"/><path d=\"M76 78 q8 -6 16 0\" stroke=\"#311b92\" stroke-width=\"2\" fill=\"none\"/><path d=\"M52 44 q4 -10 0 -18 M58 48 q4 -10 0 -18 M110 44 q-4 -10 0 -18 M104 48 q-4 -10 0 -18\" stroke=\"#6c63ff\" stroke-width=\"2\" fill=\"none\"/><text x=\"84\" y=\"46\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">很开心</text><text x=\"84\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">喜欢自己的工作</text><text x=\"170\" y=\"66\" text-anchor=\"middle\" font-size=\"11\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">成就感</text><text x=\"170\" y=\"84\" text-anchor=\"middle\" font-size=\"11\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">同事关系</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">工作满意度</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">工作满意度：喜不喜欢</text></svg>",
+  "fringe benefit": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><circle cx=\"60\" cy=\"76.4\" r=\"5.95\" fill=\"#311b92\"/><path d=\"M50.65 103.6 q9.35 -14 18.7 0 l-5 13.6 q-3 3 -6 -1 l-4 -14 l-4 14 q-3 4 -6 1 Z\" fill=\"#311b92\" opacity=\"0.85\"/><line x1=\"88\" y1=\"78\" x2=\"112\" y2=\"70\" stroke=\"#6c63ff\" stroke-width=\"2.5\" marker-end=\"url(#d16fb)\"/><defs><marker id=\"d16fb\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#6c63ff\"/></marker></defs><rect x=\"118\" y=\"44\" width=\"60\" height=\"48\" rx=\"5\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"148\" y=\"62\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">医疗保险</text><text x=\"148\" y=\"78\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">带薪休假</text><text x=\"120\" y=\"44\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">工资之外</text><text x=\"120\" y=\"110\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">公司给的好处</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">附加福利</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">附加福利：工资外</text></svg>",
+  "carbon monoxide": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"52\" y=\"52\" width=\"60\" height=\"40\" rx=\"5\" fill=\"#fde8e8\" stroke=\"#d62828\" stroke-width=\"2\"/><text x=\"82\" y=\"76\" text-anchor=\"middle\" font-size=\"16\" fill=\"#d62828\" font-weight=\"700\" font-family=\"sans-serif\">CO</text><path d=\"M44 44 q4 -8 0 -14\" stroke=\"#6c63ff\" stroke-width=\"2\" fill=\"none\"/><text x=\"150\" y=\"62\" text-anchor=\"middle\" font-size=\"11\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">无色无味</text><text x=\"150\" y=\"80\" text-anchor=\"middle\" font-size=\"12\" fill=\"#d62828\" font-weight=\"700\" font-family=\"sans-serif\">有毒！</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">不完全燃烧产生</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">一氧化碳</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">一氧化碳：有毒气体</text></svg>",
+  "carbon dioxide": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"52\" y=\"52\" width=\"60\" height=\"40\" rx=\"5\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"82\" y=\"76\" text-anchor=\"middle\" font-size=\"16\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">CO₂</text><line x1=\"120\" y1=\"72\" x2=\"142\" y2=\"72\" stroke=\"#6c63ff\" stroke-width=\"2.5\" marker-end=\"url(#d16cd)\"/><defs><marker id=\"d16cd\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#6c63ff\"/></marker></defs><path d=\"M152 56 l14 0 l-8 10 M176 56 l14 0 l-8 10\" stroke=\"#6c63ff\" stroke-width=\"2\" fill=\"none\"/><text x=\"168\" y=\"48\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">植物吸收</text><text x=\"120\" y=\"110\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">光合作用原料</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">二氧化碳</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">二氧化碳：温室气体</text></svg>",
+  "complete combustion": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><path d=\"M40 56 q8 -14 0 -26 M56 60 q8 -14 0 -26\" stroke=\"#6c63ff\" stroke-width=\"2\" fill=\"none\"/><rect x=\"34\" y=\"70\" width=\"34\" height=\"26\" rx=\"4\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"51\" y=\"88\" text-anchor=\"middle\" font-size=\"10\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">燃料</text><text x=\"90\" y=\"74\" text-anchor=\"middle\" font-size=\"14\" fill=\"#333333\" font-weight=\"700\" font-family=\"sans-serif\">+</text><rect x=\"100\" y=\"62\" width=\"34\" height=\"26\" rx=\"4\" fill=\"#ece7fb\" stroke=\"#6c63ff\" stroke-width=\"2\"/><text x=\"117\" y=\"80\" text-anchor=\"middle\" font-size=\"10\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">O₂足</text><line x1=\"142\" y1=\"74\" x2=\"164\" y2=\"74\" stroke=\"#311b92\" stroke-width=\"2.5\" marker-end=\"url(#d16cc)\"/><defs><marker id=\"d16cc\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#311b92\"/></marker></defs><text x=\"196\" y=\"70\" text-anchor=\"middle\" font-size=\"13\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">CO₂</text><text x=\"196\" y=\"86\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">+ H₂O</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">氧气充足</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">完全燃烧</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">完全燃烧：氧充足</text></svg>",
+  "incomplete combustion": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><path d=\"M40 56 q8 -14 0 -26 M56 60 q8 -14 0 -26\" stroke=\"#6c63ff\" stroke-width=\"2\" fill=\"none\"/><rect x=\"34\" y=\"70\" width=\"34\" height=\"26\" rx=\"4\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"51\" y=\"88\" text-anchor=\"middle\" font-size=\"10\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">燃料</text><text x=\"90\" y=\"74\" text-anchor=\"middle\" font-size=\"14\" fill=\"#333333\" font-weight=\"700\" font-family=\"sans-serif\">+</text><rect x=\"100\" y=\"66\" width=\"34\" height=\"22\" rx=\"4\" fill=\"#ece7fb\" stroke=\"#888888\" stroke-width=\"2\"/><text x=\"117\" y=\"82\" text-anchor=\"middle\" font-size=\"9.5\" fill=\"#888888\" font-weight=\"700\" font-family=\"sans-serif\">O₂不足</text><line x1=\"142\" y1=\"74\" x2=\"164\" y2=\"74\" stroke=\"#311b92\" stroke-width=\"2.5\" marker-end=\"url(#d16ic)\"/><defs><marker id=\"d16ic\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#311b92\"/></marker></defs><text x=\"198\" y=\"70\" text-anchor=\"middle\" font-size=\"14\" fill=\"#d62828\" font-weight=\"700\" font-family=\"sans-serif\">CO</text><text x=\"198\" y=\"86\" text-anchor=\"middle\" font-size=\"9\" fill=\"#888888\" font-family=\"sans-serif\">(有毒)</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">产生一氧化碳</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">不完全燃烧</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">不完全燃烧：缺氧</text></svg>",
+  "calcium carbonate": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"44\" y=\"50\" width=\"76\" height=\"44\" rx=\"5\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"82\" y=\"76\" text-anchor=\"middle\" font-size=\"16\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">CaCO₃</text><rect x=\"136\" y=\"56\" width=\"60\" height=\"32\" rx=\"4\" fill=\"#e8dcc8\" stroke=\"#311b92\" stroke-width=\"1.5\"/><text x=\"166\" y=\"76\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">石灰石/大理石</text><text x=\"120\" y=\"44\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#888888\" font-family=\"sans-serif\">石灰石成分</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">碳酸钙</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">碳酸钙：石灰石成分</text></svg>",
+  "limestone": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><polygon points=\"60,92 90,58 120,74 150,50 178,80 188,92\" fill=\"#c9bda6\" stroke=\"#311b92\" stroke-width=\"2\"/><polygon points=\"90,58 120,74 102,78\" fill=\"#b3a68c\"/><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#888888\" font-family=\"sans-serif\">天然岩石</text><text x=\"120\" y=\"110\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">制水泥原料</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">石灰石</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">石灰石：天然岩石</text></svg>",
+  "calcium oxide": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"44\" y=\"52\" width=\"76\" height=\"40\" rx=\"5\" fill=\"#fff\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"82\" y=\"78\" text-anchor=\"middle\" font-size=\"16\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">CaO</text><line x1=\"128\" y1=\"72\" x2=\"152\" y2=\"72\" stroke=\"#6c63ff\" stroke-width=\"2.5\" marker-end=\"url(#d16co)\"/><defs><marker id=\"d16co\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#6c63ff\"/></marker></defs><rect x=\"158\" y=\"58\" width=\"54\" height=\"28\" rx=\"4\" fill=\"#ece7fb\" stroke=\"#6c63ff\" stroke-width=\"2\"/><text x=\"185\" y=\"76\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">白色固体</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">加水放热</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">氧化钙</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">氧化钙：白色固体</text></svg>",
+  "quicklime": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"40\" y=\"52\" width=\"70\" height=\"40\" rx=\"5\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"75\" y=\"78\" text-anchor=\"middle\" font-size=\"13\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">生石灰</text><line x1=\"118\" y1=\"72\" x2=\"140\" y2=\"72\" stroke=\"#6c63ff\" stroke-width=\"2.5\" marker-end=\"url(#d16ql)\"/><defs><marker id=\"d16ql\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#6c63ff\"/></marker></defs><text x=\"129\" y=\"62\" font-size=\"10.5\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\" text-anchor=\"middle\">加水</text><rect x=\"148\" y=\"52\" width=\"70\" height=\"40\" rx=\"5\" fill=\"#fff\" stroke=\"#6c63ff\" stroke-width=\"2\"/><text x=\"183\" y=\"78\" text-anchor=\"middle\" font-size=\"13\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">熟石灰</text><path d=\"M70 40 q4 -8 0 -14\" stroke=\"#6c63ff\" stroke-width=\"2\" fill=\"none\"/><text x=\"120\" y=\"110\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">生石灰 = CaO</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">生石灰</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">生石灰：即氧化钙</text></svg>",
+  "calcium hydroxide": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"44\" y=\"52\" width=\"90\" height=\"40\" rx=\"5\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"89\" y=\"78\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">Ca(OH)₂</text><rect x=\"150\" y=\"58\" width=\"60\" height=\"28\" rx=\"4\" fill=\"#ece7fb\" stroke=\"#6c63ff\" stroke-width=\"2\"/><text x=\"180\" y=\"76\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">农业用</text><text x=\"120\" y=\"44\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#888888\" font-family=\"sans-serif\">熟石灰成分</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">氢氧化钙</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">氢氧化钙：熟石灰</text></svg>",
+  "slaked lime": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"40\" y=\"52\" width=\"70\" height=\"40\" rx=\"5\" fill=\"#fff\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"75\" y=\"78\" text-anchor=\"middle\" font-size=\"13\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">熟石灰</text><text x=\"75\" y=\"42\" font-size=\"10\" fill=\"#888888\" text-anchor=\"middle\">= Ca(OH)₂</text><rect x=\"128\" y=\"58\" width=\"82\" height=\"28\" rx=\"4\" fill=\"#ece7fb\" stroke=\"#6c63ff\" stroke-width=\"2\"/><text x=\"169\" y=\"76\" text-anchor=\"middle\" font-size=\"10\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">改良酸性土壤</text><text x=\"120\" y=\"110\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">生石灰加水制成</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">熟石灰</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">熟石灰：氢氧化钙</text></svg>"
+};
+
+
+
+
+// ============================================================
+// APP STATE
+// ============================================================
+let currentIndex = 0;
+let shuffled = [];
+let utterance = null;
+
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function getVisibleState() {
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('quizScreen').style.display = 'none';
+  document.getElementById('answerScreen').style.display = 'none';
+  document.getElementById('completeScreen').style.display = 'none';
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function startQuiz(shuffleMode) {
+  if (shuffleMode) {
+    shuffled = shuffleArray([...WORDS]);
+  } else {
+    shuffled = [...WORDS];
+  }
+  currentIndex = 0;
+  showQuiz(currentIndex);
+}
+
+function goHome() {
+  if (utterance && window.speechSynthesis) window.speechSynthesis.cancel();
+  getVisibleState();
+  document.getElementById('startScreen').style.display = 'flex';
+}
+
+function nextWord() {
+  if (utterance && window.speechSynthesis) window.speechSynthesis.cancel();
+  currentIndex++;
+  if (currentIndex >= shuffled.length) {
+    showComplete();
+  } else {
+    showQuiz(currentIndex);
+  }
+}
+
+function showComplete() {
+  getVisibleState();
+  document.getElementById('completeScreen').style.display = 'flex';
+}
+
+// ============================================================
+// WORD LIST
+// ============================================================
+function showWordList() {
+  const overlay = document.getElementById('wordlistOverlay');
+  const grid = document.getElementById('wordlistGrid');
+  overlay.classList.add('open');
+
+  // Build grid from WORDS (original order)
+  grid.innerHTML = WORDS.map((w, i) => {
+    // Find this word in shuffled to check status
+    const shuffledIdx = shuffled.findIndex(s => s.word === w.word);
+    const isDone = shuffledIdx < currentIndex;
+    const isCurrent = shuffledIdx === currentIndex;
+
+    let cls = 'wordlist-item';
+    if (isCurrent) cls += ' current';
+    else if (isDone) cls += ' done';
+
+    const label = (i + 1).toString().padStart(2, '0');
+    return `<div class="${cls}" data-word="${w.word}" onclick="jumpToWord('${w.word.replace(/'/g, "\\'")}')">
+      <span class="wl-idx">${label}</span>
+      <span class="wl-word">${w.word}</span>
+      <span class="wl-mean">${w.meaning}</span>
+    </div>`;
+  }).join('');
+}
+
+function hideWordList() {
+  document.getElementById('wordlistOverlay').classList.remove('open');
+}
+
+function jumpToWord(word) {
+  const idx = shuffled.findIndex(w => w.word === word);
+  if (idx === -1) return;
+  currentIndex = idx;
+  hideWordList();
+  if (utterance && window.speechSynthesis) window.speechSynthesis.cancel();
+  showQuiz(currentIndex);
+}
+
+// ============================================================
+// QUIZ
+// ============================================================
+function showQuiz(index) {
+  getVisibleState();
+  document.getElementById('quizScreen').style.display = 'block';
+
+  const word = shuffled[index];
+  const total = shuffled.length;
+  document.getElementById('progressText').textContent = `${index+1}/${total}`;
+  document.getElementById('progressFill').style.width = `${((index+1)/total)*100}%`;
+
+  const isPhrasal = word.word.includes(' ');
+  const wordEl = document.getElementById('quizWord');
+  wordEl.textContent = word.word;
+  wordEl.className = 'word' + (isPhrasal ? ' phrasal' : '');
+
+  document.getElementById('quizPhonetic').textContent = word.phonetic;
+
+  // Example sentence
+  const sentKey = word.word;
+  const sentEl = document.getElementById('sentenceText');
+  if (SENTENCES[sentKey]) {
+    sentEl.textContent = SENTENCES[sentKey];
+  } else {
+    sentEl.textContent = `"${word.word}" — ${word.meaning.replace(/^[nvadj]+\/\w+\.\s*/,'')}`;
+  }
+
+  // Choices — smarter: avoid duplicate meanings, include word for wrong hints
+  const correct = word.meaning;
+  const wrongPool = [];
+  const seenMeanings = new Set([correct]);
+  for (const w of WORDS) {
+    if (w.meaning !== correct && !seenMeanings.has(w.meaning)) {
+      seenMeanings.add(w.meaning);
+      wrongPool.push({meaning: w.meaning, word: w.word});
+    }
+  }
+  // Prefer confusable words (same starting letter, similar length)
+  const targetWord = word.word.toLowerCase();
+  const scored = wrongPool.map(item => {
+    let score = Math.random();
+    const ow = item.word.toLowerCase();
+    if (ow[0] === targetWord[0]) score += 3;
+    if (Math.abs(ow.length - targetWord.length) <= 2) score += 1;
+    for (let i = 0; i < Math.min(4, targetWord.length, ow.length); i++) {
+      if (targetWord[i] === ow[i]) score += 1;
+    }
+    return {item, score};
+  });
+  scored.sort((a, b) => b.score - a.score);
+  const wrongs = scored.slice(0, 3).map(s => s.item);
+  const choices = shuffleArray([{meaning: correct, word: word.word}, ...wrongs]);
+  const labels = ['A', 'B', 'C', 'D'];
+  const container = document.getElementById('choicesContainer');
+  container.innerHTML = '';
+  choices.forEach((choice, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = `<span class="choice-label">${labels[i]}</span><span>${choice.meaning}</span>`;
+    btn.dataset.value = choice.meaning;
+    btn.dataset.correct = (choice.meaning === correct) ? '1' : '0';
+    btn.dataset.choiceWord = choice.word;
+    btn.onclick = () => handleChoice(btn, correct, word);
+    container.appendChild(btn);
+  });
+
+  // Reset any remaining wrong-button state from previous attempts
+  document.querySelectorAll('.choice-btn.wrong').forEach(b => {
+    b.classList.remove('wrong');
+    b.classList.remove('disabled');
+  });
+}
+
+function handleChoice(btn, correct, word) {
+  const isCorrect = btn.dataset.correct === '1';
+
+  if (isCorrect) {
+    const allBtns = document.querySelectorAll('.choice-btn');
+    allBtns.forEach(b => b.classList.add('disabled'));
+    btn.classList.add('correct');
+    showToast('✅ 回答正确！', 'success');
+    setTimeout(() => showAnswer(word), 600);
+  } else {
+    btn.classList.add('wrong');
+    btn.classList.add('disabled');
+    btn.style.animation = 'shake 0.3s ease';
+    setTimeout(() => { btn.style.animation = ''; }, 300);
+    // Show which word this wrong meaning belongs to
+    const ww = btn.dataset.choiceWord || '';
+    const vm = btn.dataset.value;
+    let hint = btn.querySelector('.wrong-hint');
+    if (!hint) {
+      hint = document.createElement('div');
+      hint.className = 'wrong-hint';
+      btn.appendChild(hint);
+    }
+    hint.textContent = '→ ' + ww;
+    showToast('❌ ' + ww + ' = ' + vm, 'error');
+  }
+}
+
+// ============================================================
+// ANSWER (DETAIL) PAGE
+// ============================================================
+function showAnswer(word) {
+  if (utterance && window.speechSynthesis) window.speechSynthesis.cancel();
+  getVisibleState();
+  document.getElementById('answerScreen').style.display = 'block';
+
+  const isPhrasal = word.word.includes(' ');
+  const ansWordEl = document.getElementById('ansWord');
+  ansWordEl.textContent = word.word;
+  ansWordEl.className = 'word' + (isPhrasal ? ' phrasal' : '');
+
+  document.getElementById('ansPhonetic').textContent = word.phonetic;
+  document.getElementById('ansMeaning').textContent = word.meaning;
+
+  const sentKey = word.word;
+  document.getElementById('ansExampleEn').textContent = SENTENCES[sentKey] || '——';
+  document.getElementById('ansExampleCn').textContent = TRANSLATIONS[sentKey] || '——';
+
+  // Phrases
+  const phrasesContainer = document.getElementById('ansPhrasesContainer');
+  const phrasesEl = document.getElementById('ansPhrases');
+  if (PHRASES[sentKey] && PHRASES[sentKey].length > 0) {
+    phrasesContainer.style.display = 'block';
+    phrasesEl.innerHTML = PHRASES[sentKey].map(p =>
+      `<div class="phrase-item"><span class="phrase-en">${p}</span></div>`
+    ).join('');
+  } else {
+    phrasesContainer.style.display = 'none';
+  }
+
+  // Example image (subject words)
+  const imgCard = document.getElementById('ansImageCard');
+  const imgEl = document.getElementById('ansImage');
+  if (typeof IMAGES !== 'undefined' && IMAGES[sentKey]) {
+    imgCard.style.display = 'block';
+    imgEl.innerHTML = IMAGES[sentKey];
+  } else {
+    imgCard.style.display = 'none';
+  }
+
+  // Auto-play pronunciation
+  playWordAudio(word.word);
+}
+
+// ============================================================
+// AUDIO (Web Speech API)
+// ============================================================
+let _voicesLoaded = false;
+const PREFERRED_VOICES = [
+  // Tier 1: best natural macOS voices
+  'Samantha',   // en-US — excellent
+  'Karen',      // en-AU — excellent
+  'Daniel',     // en-GB — excellent British
+  'Moira',      // en-IE — excellent Irish
+  'Tessa',      // en-ZA — excellent
+  // Tier 2: Google Chrome voices
+  'Google US English',
+  'Google UK English Female',
+  'Google UK English Male',
+  // Tier 3: remaining macOS English voices
+  'Flo (英语（美国）)', 'Flo (英语（英国）)',
+  'Reed (英语（美国）)', 'Reed (英语（英国）)',
+  'Sandy (英语（美国）)', 'Sandy (英语（英国）)',
+  'Shelley (英语（美国）)', 'Shelley (英语（英国）)',
+  'Grandma (英语（美国）)', 'Grandma (英语（英国）)',
+  'Grandpa (英语（美国）)', 'Grandpa (英语（英国）)',
+  'Rocko (英语（美国）)', 'Rocko (英语（英国）)',
+  'Eddy (英语（美国）)', 'Eddy (英语（英国）)',
+  'Albert', 'Kathy', 'Rishi',
+  // Fallback - any English
+];
+
+function ensureVoices() {
+  return new Promise((resolve) => {
+    if (_voicesLoaded) { resolve(); return; }
+    const voices = window.speechSynthesis.getVoices();
+    if (voices.length > 0) {
+      _voicesLoaded = true;
+      resolve();
+      return;
+    }
+    window.speechSynthesis.onvoiceschanged = () => {
+      _voicesLoaded = true;
+      resolve();
+    };
+    // Safety timeout
+    setTimeout(() => { _voicesLoaded = true; resolve(); }, 1000);
+  });
+}
+
+function findBestVoice() {
+  const voices = window.speechSynthesis.getVoices();
+  if (!voices || voices.length === 0) return null;
+
+  // 1. Try preferred voices by name
+  for (const name of PREFERRED_VOICES) {
+    const found = voices.find(v => v.name === name);
+    if (found) return found;
+  }
+
+  // 2. Try any English voice, prefer en-US then en-GB
+  const enUS = voices.find(v => v.lang.startsWith('en-US'));
+  if (enUS) return enUS;
+  const enGB = voices.find(v => v.lang.startsWith('en-GB'));
+  if (enGB) return enGB;
+  const enAU = voices.find(v => v.lang.startsWith('en-AU'));
+  if (enAU) return enAU;
+  const anyEn = voices.find(v => v.lang.startsWith('en'));
+  if (anyEn) return anyEn;
+
+  // 3. Last resort: first available voice
+  return voices[0];
+}
+
+function playWordAudio(forceWord) {
+  if (!window.speechSynthesis) return;
+  const word = forceWord || shuffled[currentIndex]?.word;
+  if (!word) return;
+
+  window.speechSynthesis.cancel();
+
+  // Handle speaker button on whichever page is visible
+  const quizSpeaker = document.getElementById('speakerBtn');
+  const ansSpeaker = document.getElementById('ansSpeakerBtn');
+  [quizSpeaker, ansSpeaker].forEach(el => { if (el) el.classList.add('playing'); });
+
+  utterance = new SpeechSynthesisUtterance(word);
+
+  const best = findBestVoice();
+  if (best) {
+    utterance.voice = best;
+    utterance.lang = best.lang;
+  } else {
+    utterance.lang = 'en-US';
+  }
+
+  // HIFI: slower, clearer, with natural pitch variation
+  utterance.rate = 0.82;
+  utterance.pitch = 1.05;
+  utterance.volume = 1.0;
+
+  utterance.onend = () => {
+    [quizSpeaker, ansSpeaker].forEach(el => { if (el) el.classList.remove('playing'); });
+  };
+  utterance.onerror = () => {
+    [quizSpeaker, ansSpeaker].forEach(el => { if (el) el.classList.remove('playing'); });
+  };
+
+  window.speechSynthesis.speak(utterance);
+}
+
+// Load voices eagerly
+if (window.speechSynthesis) {
+  ensureVoices();
+  // Refresh voices list periodically (Chrome loads them async)
+  window.speechSynthesis.onvoiceschanged = ensureVoices;
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+let toastTimer = null;
+function showToast(msg, type) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast ' + type + ' show';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    el.classList.remove('show');
+  }, 1500);
+}
+</script>
+</body>
+</html>
