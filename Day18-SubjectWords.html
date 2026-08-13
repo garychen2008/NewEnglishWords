@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>学科综合 · DAY 18</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", Roboto, "Helvetica Neue", sans-serif;
+  background: #f5f7fb;
+  color: #1a1a2e;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+/* ===== START SCREEN ===== */
+#startScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 40px 24px;
+  text-align: center;
+  background: linear-gradient(135deg, #1b4332 0%, #0d2b1a 100%);
+  color: #fff;
+}
+#startScreen h1 {
+  font-size: 42px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+#startScreen .subtitle {
+  font-size: 18px;
+  opacity: 0.9;
+  margin-bottom: 12px;
+}
+#startScreen .word-count {
+  font-size: 14px;
+  opacity: 0.7;
+  margin-bottom: 48px;
+}
+#startScreen .start-btn {
+  background: #fff;
+  color: #0d2b1a;
+  border: none;
+  border-radius: 50px;
+  padding: 16px 64px;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+  margin-bottom: 14px;
+}
+#startScreen .start-btn:active { transform: scale(0.96); }
+#startScreen .start-btn.secondary {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  box-shadow: none;
+  padding: 16px 64px;
+  font-size: 20px;
+  border: 1.5px solid rgba(255,255,255,0.35);
+}
+#startScreen .btn-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+/* ===== QUIZ SCREEN ===== */
+#quizScreen { display: none; }
+.quiz-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.quiz-header .back-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #666;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+.quiz-header .progress-text {
+  font-size: 14px;
+  color: #999;
+  font-weight: 500;
+}
+.quiz-header .progress-bar-wrap {
+  flex: 1;
+  height: 6px;
+  background: #eee;
+  border-radius: 3px;
+  margin: 0 16px;
+  overflow: hidden;
+}
+.quiz-header .progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #1b4332, #0d2b1a);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+  width: 0%;
+}
+.quiz-body {
+  padding: 32px 24px 24px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.word-display {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.word-display .word {
+  font-size: 36px;
+  font-weight: 800;
+  color: #1a1a2e;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+.word-display .word.phrasal { font-size: 28px; }
+.word-display .phonetic-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.word-display .phonetic {
+  font-size: 18px;
+  color: #888;
+  font-family: "Times New Roman", serif;
+}
+.word-display .speaker-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: #f0f0f5;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s;
+  color: #1b4332;
+  font-size: 18px;
+}
+.word-display .speaker-btn:active { background: #e0e0ea; }
+.word-display .speaker-btn.playing { background: #1b4332; color: #fff; }
+.example-sentence {
+  background: #f8f9ff;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 28px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #555;
+  text-align: center;
+  min-height: 52px;
+  border-left: 3px solid #1b4332;
+  border-right: 3px solid #1b4332;
+}
+.example-sentence .highlight-word {
+  color: #1b4332;
+  font-weight: 700;
+}
+.choices-title {
+  font-size: 14px;
+  color: #aaa;
+  margin-bottom: 12px;
+  text-align: center;
+  letter-spacing: 1px;
+}
+.choices-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.choice-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 16px 20px;
+  background: #fff;
+  border: 2px solid #e8e8f0;
+  border-radius: 14px;
+  font-size: 17px;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+.choice-btn .choice-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #f0f0f5;
+  font-size: 13px;
+  font-weight: 700;
+  color: #888;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.choice-btn:active { transform: scale(0.98); }
+.choice-btn.correct {
+  border-color: #4caf50;
+  background: #e8f5e9;
+}
+.choice-btn.correct .choice-label {
+  background: #4caf50;
+  color: #fff;
+}
+.choice-btn.wrong {
+  border-color: #f44336;
+  background: #ffebee;
+}
+.choice-btn.wrong .choice-label {
+  background: #f44336;
+  color: #fff;
+}
+.choice-btn.reveal-correct {
+  border-color: #4caf50;
+  background: #e8f5e9;
+}
+.choice-btn.reveal-correct .choice-label {
+  background: #4caf50;
+  color: #fff;
+}
+.choice-btn.disabled { pointer-events: none; }
+/* Wrong-answer hint showing confused word */
+.choice-btn .wrong-hint {
+  font-size: 12px;
+  color: #c62828;
+  margin-top: 4px;
+  font-weight: 600;
+  text-align: right;
+  padding-right: 4px;
+}
+
+.wordlist-btn {
+  background: #f0f0f5;
+  border: 1px solid #e0e0ea;
+  border-radius: 18px;
+  padding: 4px 14px;
+  font-size: 13px;
+  color: #1b4332;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  font-weight: 600;
+  line-height: 1.6;
+}
+.wordlist-btn:hover { background: #e4e6f0; }
+.wordlist-btn:active { transform: scale(0.95); }
+
+/* ===== WORD LIST OVERLAY ===== */
+#wordlistOverlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #fff;
+  z-index: 1000;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+#wordlistOverlay.open { display: block; }
+.wordlist-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #1b4332, #0d2b1a);
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.wordlist-header span { font-size: 18px; font-weight: 700; }
+.wordlist-close {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: #fff;
+  font-size: 14px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+.wordlist-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: #f0f0f0;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.wordlist-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 14px;
+  background: #fff;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-size: 14px;
+  line-height: 1.3;
+}
+.wordlist-item:active { background: #e8edff; }
+.wordlist-item .wl-idx {
+  color: #bbb;
+  font-size: 11px;
+  min-width: 22px;
+  text-align: right;
+  flex-shrink: 0;
+}
+.wordlist-item .wl-word {
+  color: #333;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.wordlist-item .wl-mean {
+  color: #999;
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wordlist-item.current .wl-idx { color: #1b4332; font-weight: 700; }
+.wordlist-item.current .wl-word { color: #1b4332; }
+.wordlist-item.done { background: #f0f7f0; }
+.wordlist-item.done .wl-word { color: #4caf50; }
+.wordlist-item.done .wl-idx { color: #4caf50; }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+.quiz-footer {
+  text-align: center;
+  padding: 24px;
+  color: #bbb;
+  font-size: 13px;
+}
+
+/* ===== ANSWER (DETAIL) SCREEN ===== */
+#answerScreen { display: none; }
+.answer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #1b4332, #0d2b1a);
+  color: #fff;
+}
+.answer-header .back-btn {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: #fff;
+  font-size: 14px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+.answer-body {
+  padding: 24px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.answer-word-section {
+  text-align: center;
+  margin-bottom: 24px;
+  padding: 32px 20px 24px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.answer-word-section .word {
+  font-size: 34px;
+  font-weight: 800;
+  color: #1a1a2e;
+  margin-bottom: 6px;
+}
+.answer-word-section .word.phrasal { font-size: 26px; }
+.answer-word-section .phonetic {
+  font-size: 17px;
+  color: #888;
+  font-family: "Times New Roman", serif;
+  margin-bottom: 4px;
+}
+.answer-word-section .chinese-mean {
+  font-size: 20px;
+  color: #333;
+  font-weight: 600;
+  margin-top: 8px;
+  padding: 8px 20px;
+  background: #f0f4ff;
+  border-radius: 8px;
+  display: inline-block;
+}
+.answer-word-section .word-type {
+  font-size: 13px;
+  color: #999;
+  margin-top: 4px;
+}
+.answer-detail-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.answer-detail-card .card-label {
+  font-size: 12px;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.answer-detail-card .en-sentence {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+  margin-bottom: 4px;
+}
+.answer-detail-card .cn-translation {
+  font-size: 15px;
+  color: #888;
+  line-height: 1.5;
+}
+.answer-detail-card .phrase-item {
+  font-size: 15px;
+  color: #555;
+  line-height: 1.7;
+  padding: 4px 0;
+}
+.answer-detail-card .phrase-item .phrase-en { font-weight: 600; }
+.answer-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 0 6px;
+}
+.answer-image svg {
+  width: 100%;
+  max-width: 280px;
+  border: 1px solid #e8e3f5;
+}
+.answer-detail-card .phrase-item .phrase-cn { color: #888; margin-left: 8px; }
+.continue-btn-wrap {
+  text-align: center;
+  padding: 16px 0 40px;
+}
+.continue-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #1b4332, #0d2b1a);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: 16px 56px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 6px 20px rgba(27,67,50,0.4);
+}
+.continue-btn:active { transform: scale(0.96); }
+.continue-btn .arrow { font-size: 22px; }
+
+/* ===== COMPLETION SCREEN ===== */
+#completeScreen {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 40px 24px;
+  text-align: center;
+  background: linear-gradient(135deg, #1b4332 0%, #0d2b1a 100%);
+  color: #fff;
+}
+#completeScreen .trophy { font-size: 72px; margin-bottom: 16px; }
+#completeScreen h1 { font-size: 32px; margin-bottom: 8px; }
+#completeScreen p { font-size: 16px; opacity: 0.85; margin-bottom: 32px; }
+#completeScreen .completion-quote { margin-top: 36px; text-align: center; line-height: 1.7; }
+#completeScreen .completion-quote .en { font-size: 18px; opacity: 0.85; margin-bottom: 4px; font-weight: 600; }
+#completeScreen .completion-quote .cn { font-size: 15px; opacity: 0.65; }
+
+/* ===== TOAST ===== */
+.toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-size: 15px;
+  font-weight: 600;
+  opacity: 0;
+  transition: all 0.3s;
+  z-index: 100;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.success { background: #4caf50; color: #fff; }
+.toast.error { background: #f44336; color: #fff; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 420px) {
+  .word-display .word { font-size: 30px; }
+  .word-display .word.phrasal { font-size: 22px; }
+  .answer-word-section .word { font-size: 28px; }
+  .answer-word-section .word.phrasal { font-size: 22px; }
+  .choice-btn { padding: 14px 16px; font-size: 15px; }
+}
+
+/* ===== LOADING SPINNER ===== */
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(27,67,50,0.3);
+  border-top-color: #1b4332;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- ===== START SCREEN ===== -->
+<div id="startScreen">
+  <h1>📖 DAY 18</h1>
+  <div class="subtitle">基础必背词汇</div>
+  <div class="word-count">共 40 个词汇</div>
+  <div class="btn-group">
+    <button class="start-btn" onclick="startQuiz(true)">开始学习（乱序）</button>
+    <button class="start-btn secondary" onclick="startQuiz(false)">开始学习（顺序）</button>
+  </div>
+</div>
+
+<!-- ===== QUIZ SCREEN ===== -->
+<div id="quizScreen">
+  <div class="quiz-header">
+    <button class="back-btn" onclick="goHome()">✕</button>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
+    <span style="display:flex;align-items:center;gap:8px;">
+      <span class="progress-text" id="progressText">0/40</span>
+      <button class="wordlist-btn" onclick="showWordList()">📋 浏览词汇列表</button>
+    </span>
+  </div>
+  <div class="quiz-body">
+    <div class="word-display">
+      <div class="word" id="quizWord">fare</div>
+      <div class="phonetic-row">
+        <span class="phonetic" id="quizPhonetic">/feə(r)/</span>
+        <button class="speaker-btn" id="speakerBtn" onclick="playWordAudio()">🔊</button>
+      </div>
+    </div>
+    <div class="example-sentence" id="quizSentence">
+      <span id="sentenceText">加载例句中...</span>
+    </div>
+    <div class="choices-title">— 选择正确的中文释义 —</div>
+    <div class="choices-grid" id="choicesContainer"></div>
+  </div>
+  <div class="quiz-footer">点击正确答案查看详情</div>
+</div>
+
+<!-- ===== ANSWER (DETAIL) SCREEN ===== -->
+<div id="answerScreen">
+  <div class="answer-header">
+    <span style="font-weight:700;">📖 单词详情</span>
+    <button class="back-btn" onclick="goHome()">返回首页</button>
+  </div>
+  <div class="answer-body">
+    <div class="answer-word-section">
+      <div class="word" id="ansWord">fare</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
+        <span class="phonetic" id="ansPhonetic">/feə(r)/</span>
+        <button class="speaker-btn" id="ansSpeakerBtn" onclick="playWordAudio(document.getElementById('ansWord').textContent)">🔊</button>
+      </div>
+      <div class="chinese-mean" id="ansMeaning">n. 车费；票价</div>
+    </div>
+    <div class="answer-detail-card" id="ansImageCard" style="display:none;">
+      <div class="card-label">📊 示例图示</div>
+      <div class="answer-image" id="ansImage"></div>
+    </div>
+    <div class="answer-detail-card">
+      <div class="card-label">📝 英文例句</div>
+      <div class="en-sentence" id="ansExampleEn">Loading...</div>
+    </div>
+    <div class="answer-detail-card">
+      <div class="card-label">🌏 中文翻译</div>
+      <div class="cn-translation" id="ansExampleCn">加载中...</div>
+    </div>
+    <div id="ansPhrasesContainer" style="display:none;">
+      <div class="answer-detail-card">
+        <div class="card-label">🔗 常用搭配</div>
+        <div id="ansPhrases"></div>
+      </div>
+    </div>
+    <div class="continue-btn-wrap">
+      <button class="continue-btn" onclick="nextWord()">
+        继续 <span class="arrow">→</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== WORD LIST OVERLAY ===== -->
+<div id="wordlistOverlay">
+  <div class="wordlist-header">
+    <span>📋 词汇列表</span>
+    <button class="wordlist-close" onclick="hideWordList()">关闭 ✕</button>
+  </div>
+  <div class="wordlist-grid" id="wordlistGrid"></div>
+</div>
+
+<!-- ===== COMPLETION SCREEN ===== -->
+<div id="completeScreen">
+  <div class="trophy">🎉</div>
+  <h1>DAY 18 完成！</h1>
+  <p>恭喜你完成今天全部单词学习！<br>明天继续加油 💪</p>
+  <button class="start-btn" onclick="goHome()" style="background:#fff;color:#0d2b1a;border:none;border-radius:50px;padding:16px 56px;font-size:18px;font-weight:700;cursor:pointer;box-shadow:0 8px 25px rgba(0,0,0,0.2);">👍 太棒了</button>
+  <div class="completion-quote">
+    <div class="en">"Little by little, one travels far."</div>
+    <div class="cn">每日单词 · 积少成多</div>
+  </div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// WORD DATA
+// ============================================================
+const WORDS = [
+  // ---- 基础必背词汇 (1-60) ----
+  {word:"triangle", phonetic:"/ˈtraɪæŋɡl/", meaning:"n. 三角形", type:"学科·数学"},
+  {word:"equilateral triangle", phonetic:"/ˌiːkwɪˈlætərəl ˈtraɪæŋɡl/", meaning:"n. 等边三角形", type:"学科·数学"},
+  {word:"isosceles triangle", phonetic:"/aɪˌsɒsəliːz ˈtraɪæŋɡl/", meaning:"n. 等腰三角形", type:"学科·数学"},
+  {word:"scalene triangle", phonetic:"/ˈskeɪliːn ˈtraɪæŋɡl/", meaning:"n. 不等边三角形", type:"学科·数学"},
+  {word:"right-angled triangle", phonetic:"/ˌraɪt ˈæŋɡld ˈtraɪæŋɡl/", meaning:"n. 直角三角形", type:"学科·数学"},
+  {word:"hypotenuse", phonetic:"/haɪˈpɒtənjuːz/", meaning:"n. 斜边", type:"学科·数学"},
+  {word:"leg", phonetic:"/leɡ/", meaning:"n. 直角边;边", type:"学科·数学"},
+  {word:"base angle", phonetic:"/beɪs ˈæŋɡl/", meaning:"n. 底角", type:"学科·数学"},
+  {word:"triangle median", phonetic:"/ˈtraɪæŋɡl ˈmiːdiən/", meaning:"n. 三角形的中线", type:"学科·数学"},
+  {word:"altitude", phonetic:"/ˈæltɪtjuːd/", meaning:"n. 高", type:"学科·数学"},
+  {word:"critical angle", phonetic:"/ˈkrɪtɪkl ˈæŋɡl/", meaning:"n. 临界角", type:"学科·物理"},
+  {word:"optical fibre", phonetic:"/ˈɒptɪkl ˈfaɪbə(r)/", meaning:"n. 光导纤维", type:"学科·物理"},
+  {word:"sound", phonetic:"/saʊnd/", meaning:"n. 声音", type:"学科·物理"},
+  {word:"sound wave", phonetic:"/saʊnd weɪv/", meaning:"n. 声波", type:"学科·物理"},
+  {word:"pitch", phonetic:"/pɪtʃ/", meaning:"n. 音调", type:"学科·物理"},
+  {word:"loudness", phonetic:"/ˈlaʊdnəs/", meaning:"n. 响度", type:"学科·物理"},
+  {word:"audible range", phonetic:"/ˈɔːdəbl reɪndʒ/", meaning:"n. 可听频率范围", type:"学科·物理"},
+  {word:"ultrasound", phonetic:"/ˈʌltrəsaʊnd/", meaning:"n. 超声波", type:"学科·物理"},
+  {word:"echo", phonetic:"/ˈekəʊ/", meaning:"n. 回声", type:"学科·物理"},
+  {word:"microphone", phonetic:"/ˈmaɪkrəfəʊn/", meaning:"n. 麦克风", type:"学科·物理"},
+  {word:"unit cost", phonetic:"/ˈjuːnɪt kɒst/", meaning:"n. 单位生产成本", type:"学科·经济"},
+  {word:"labour-intensive", phonetic:"/ˈleɪbə ɪnˈtensɪv/", meaning:"adj. 劳动密集型的", type:"学科·经济"},
+  {word:"capital-intensive", phonetic:"/ˈkæpɪtl ɪnˈtensɪv/", meaning:"adj. 资本密集型的", type:"学科·经济"},
+  {word:"primary sector", phonetic:"/ˈpraɪməri ˈsektə(r)/", meaning:"n. 第一产业", type:"学科·经济"},
+  {word:"secondary sector", phonetic:"/ˈsekəndri ˈsektə(r)/", meaning:"n. 第二产业", type:"学科·经济"},
+  {word:"tertiary sector", phonetic:"/ˈtɜːʃəri ˈsektə(r)/", meaning:"n. 第三产业", type:"学科·经济"},
+  {word:"firm", phonetic:"/fɜːm/", meaning:"n. 厂商;企业", type:"学科·经济"},
+  {word:"plant", phonetic:"/plɑːnt/", meaning:"n. 工厂;厂房", type:"学科·经济"},
+  {word:"branch", phonetic:"/brɑːntʃ/", meaning:"n. 分支机构", type:"学科·经济"},
+  {word:"industry", phonetic:"/ˈɪndəstri/", meaning:"n. 行业", type:"学科·经济"},
+  {word:"calorific value", phonetic:"/ˌkælərɪfɪk ˈvæljuː/", meaning:"n. 热值", type:"学科·化学"},
+  {word:"pollutant", phonetic:"/pəˈluːtənt/", meaning:"n. 污染物", type:"学科·化学"},
+  {word:"air pollution", phonetic:"/eə(r) pəˈluːʃn/", meaning:"n. 空气污染", type:"学科·化学"},
+  {word:"smog", phonetic:"/smɒɡ/", meaning:"n. 烟雾;雾霾", type:"学科·化学"},
+  {word:"sulfur dioxide", phonetic:"/ˈsʌlfə daɪˈɒksaɪd/", meaning:"n. 二氧化硫(SO₂)", type:"学科·化学"},
+  {word:"sulfur trioxide", phonetic:"/ˈsʌlfə traɪˈɒksaɪd/", meaning:"n. 三氧化硫(SO₃)", type:"学科·化学"},
+  {word:"nitrogen dioxide", phonetic:"/ˈnaɪtrədʒən daɪˈɒksaɪd/", meaning:"n. 二氧化氮(NO₂)", type:"学科·化学"},
+  {word:"greenhouse effect", phonetic:"/ˈɡriːnhaʊs ɪˈfekt/", meaning:"n. 温室效应", type:"学科·化学"},
+  {word:"global warming", phonetic:"/ˈɡləʊbl ˈwɔːmɪŋ/", meaning:"n. 全球变暖", type:"学科·化学"},
+  {word:"metallic property", phonetic:"/məˈtælɪk ˈprɒpəti/", meaning:"n. 金属性质", type:"学科·化学"}
+];
+
+// ============================================================
+// SENTENCE EXAMPLES (embedded for reliability)
+// ============================================================
+const SENTENCES = {
+      "triangle":"A triangle has three sides.",
+  "equilateral triangle":"All sides of an equilateral triangle are equal.",
+  "isosceles triangle":"An isosceles triangle has two equal sides.",
+  "scalene triangle":"A scalene triangle has no equal sides.",
+  "right-angled triangle":"A right-angled triangle has a 90 degree angle.",
+  "hypotenuse":"The hypotenuse is the longest side.",
+  "leg":"The two legs meet at the right angle.",
+  "base angle":"The base angles of an isosceles triangle are equal.",
+  "triangle median":"The median joins a vertex to the middle of the opposite side.",
+  "altitude":"The altitude is the height of the triangle.",
+  "critical angle":"Beyond the critical angle, light reflects fully.",
+  "optical fibre":"Optical fibre carries light signals.",
+  "sound":"Sound travels through air.",
+  "sound wave":"A sound wave is a longitudinal wave.",
+  "pitch":"Higher pitch means a higher frequency.",
+  "loudness":"Loudness depends on amplitude.",
+  "audible range":"Humans hear from 20 to 20000 Hz.",
+  "ultrasound":"Ultrasound is above 20000 Hz.",
+  "echo":"The echo came back from the wall.",
+  "microphone":"The microphone turns sound into signals.",
+  "unit cost":"Unit cost falls with mass production.",
+  "labour-intensive":"Clothing is labour-intensive.",
+  "capital-intensive":"Oil refining is capital-intensive.",
+  "primary sector":"Farming belongs to the primary sector.",
+  "secondary sector":"Manufacturing is the secondary sector.",
+  "tertiary sector":"Teaching is in the tertiary sector.",
+  "firm":"The firm hired new staff.",
+  "plant":"The plant employs 500 workers.",
+  "branch":"The bank opened a new branch.",
+  "industry":"The car industry is growing.",
+  "calorific value":"Coal has a high calorific value.",
+  "pollutant":"Smoke is a pollutant.",
+  "air pollution":"Air pollution harms health.",
+  "smog":"Smog covered the city.",
+  "sulfur dioxide":"Sulfur dioxide comes from burning coal.",
+  "sulfur trioxide":"Sulfur trioxide forms acid rain.",
+  "nitrogen dioxide":"Nitrogen dioxide is a brown gas.",
+  "greenhouse effect":"The greenhouse effect warms the earth.",
+  "global warming":"Global warming melts the ice.",
+  "metallic property":"Conduction is a metallic property."
+};
+
+const TRANSLATIONS = {
+      "triangle":"三角形有三条边。",
+  "equilateral triangle":"等边三角形的三条边都相等。",
+  "isosceles triangle":"等腰三角形有两条边相等。",
+  "scalene triangle":"不等边三角形没有相等的边。",
+  "right-angled triangle":"直角三角形有一个90度角。",
+  "hypotenuse":"斜边是最长的边。",
+  "leg":"两条直角边在直角处相交。",
+  "base angle":"等腰三角形的底角相等。",
+  "triangle median":"中线连接顶点和对边中点。",
+  "altitude":"高是三角形的高度。",
+  "critical angle":"超过临界角，光全反射。",
+  "optical fibre":"光导纤维传输光信号。",
+  "sound":"声音通过空气传播。",
+  "sound wave":"声波是纵波。",
+  "pitch":"音调越高频率越高。",
+  "loudness":"响度取决于振幅。",
+  "audible range":"人类可听20到20000赫兹。",
+  "ultrasound":"超声波高于20000赫兹。",
+  "echo":"回声从墙壁返回。",
+  "microphone":"麦克风把声音变成信号。",
+  "unit cost":"批量生产降低单位成本。",
+  "labour-intensive":"服装业是劳动密集型的。",
+  "capital-intensive":"炼油是资本密集型的。",
+  "primary sector":"农业属于第一产业。",
+  "secondary sector":"制造业是第二产业。",
+  "tertiary sector":"教育属于第三产业。",
+  "firm":"这家企业雇了新员工。",
+  "plant":"这家工厂雇了500名工人。",
+  "branch":"银行开了新分行。",
+  "industry":"汽车行业在增长。",
+  "calorific value":"煤的热值很高。",
+  "pollutant":"烟雾是污染物。",
+  "air pollution":"空气污染危害健康。",
+  "smog":"雾霾笼罩了城市。",
+  "sulfur dioxide":"二氧化硫来自燃煤。",
+  "sulfur trioxide":"三氧化硫形成酸雨。",
+  "nitrogen dioxide":"二氧化氮是棕色气体。",
+  "greenhouse effect":"温室效应使地球变暖。",
+  "global warming":"全球变暖融化冰川。",
+  "metallic property":"导电性是金属性质。"
+};
+
+const PHRASES = {
+      "triangle":["triangle shape 三角形","triangle area 三角形面积"],
+  "equilateral triangle":["equilateral triangle sides 等边三角形边"],
+  "isosceles triangle":["isosceles triangle base 等腰三角形底边"],
+  "scalene triangle":["scalene triangle shape 不等边三角形"],
+  "right-angled triangle":["right-angled triangle hypotenuse 直角三角形斜边"],
+  "hypotenuse":["hypotenuse length 斜边长度"],
+  "leg":["leg of triangle 三角形直角边","triangle leg 三角形边"],
+  "base angle":["base angle equality 底角相等"],
+  "triangle median":["triangle median line 三角形中线"],
+  "altitude":["altitude of triangle 三角形的高"],
+  "critical angle":["critical angle reflection 临界角反射"],
+  "optical fibre":["optical fibre cable 光纤电缆"],
+  "sound":["sound wave 声波","speed of sound 声速"],
+  "sound wave":["sound wave frequency 声波频率"],
+  "pitch":["high pitch 高音调","pitch of sound 声音音调"],
+  "loudness":["loudness of sound 声音响度"],
+  "audible range":["audible range of humans 人类可听范围"],
+  "ultrasound":["ultrasound scan 超声检查"],
+  "echo":["echo sound 回声","echo effect 回声效应"],
+  "microphone":["microphone signal 麦克风信号"],
+  "unit cost":["unit cost reduction 单位成本降低"],
+  "labour-intensive":["labour-intensive industry 劳动密集型产业"],
+  "capital-intensive":["capital-intensive production 资本密集型生产"],
+  "primary sector":["primary sector farming 第一产业农业"],
+  "secondary sector":["secondary sector manufacturing 第二产业制造业"],
+  "tertiary sector":["tertiary sector services 第三产业服务业"],
+  "firm":["small firm 小企业","firm owner 企业主"],
+  "plant":["factory plant 工厂厂房","manufacturing plant 制造厂"],
+  "branch":["bank branch 银行分行","branch office 分支机构"],
+  "industry":["car industry 汽车行业","industry growth 行业增长"],
+  "calorific value":["calorific value of fuel 燃料热值"],
+  "pollutant":["air pollutant 空气污染物","chemical pollutant 化学污染物"],
+  "air pollution":["air pollution control 空气污染控制"],
+  "smog":["smog warning 雾霾预警","heavy smog 重度雾霾"],
+  "sulfur dioxide":["sulfur dioxide emission 二氧化硫排放"],
+  "sulfur trioxide":["sulfur trioxide acid rain 三氧化硫酸雨"],
+  "nitrogen dioxide":["nitrogen dioxide brown gas 二氧化氮棕色气体"],
+  "greenhouse effect":["greenhouse effect gas 温室效应气体"],
+  "global warming":["global warming impact 全球变暖影响"],
+  "metallic property":["metallic property conduction 金属导电性"]
+};
+
+const IMAGES = {
+  "triangle": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><polygon points=\"60,92 190,92 120,36\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2.5\"/><path d=\"M118 50 A 12 12 0 0 1 126 54\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"1.8\"/><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">三条边三个角</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">最基本的多边形</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">三角形</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">三角形：三边三角</text></svg>",
+  "equilateral triangle": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><polygon points=\"60,90 180,90 120,30\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2.5\"/><line x1=\"66\" y1=\"86\" x2=\"66\" y2=\"78\" stroke=\"#6c63ff\" stroke-width=\"1.8\"/><line x1=\"174\" y1=\"86\" x2=\"174\" y2=\"78\" stroke=\"#6c63ff\" stroke-width=\"1.8\"/><line x1=\"116\" y1=\"40\" x2=\"124\" y2=\"40\" stroke=\"#6c63ff\" stroke-width=\"1.8\"/><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">三边都相等</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">三个角都是 60°</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">等边三角形</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">等边：三边相等</text></svg>",
+  "isosceles triangle": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><polygon points=\"60,90 180,90 120,24\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2.5\"/><line x1=\"66\" y1=\"84\" x2=\"66\" y2=\"76\" stroke=\"#6c63ff\" stroke-width=\"1.8\"/><line x1=\"116\" y1=\"36\" x2=\"124\" y2=\"36\" stroke=\"#6c63ff\" stroke-width=\"1.8\"/><path d=\"M118 52 A 12 12 0 0 1 124 56\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"1.8\"/><path d=\"M118 84 A 12 12 0 0 0 112 86\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"1.8\"/><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">两条边相等</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">底角相等</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">等腰三角形</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">等腰：两边相等</text></svg>",
+  "scalene triangle": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><polygon points=\"56,90 190,90 130,30\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2.5\"/><line x1=\"76\" y1=\"84\" x2=\"76\" y2=\"76\" stroke=\"#6c63ff\" stroke-width=\"1.8\"/><line x1=\"162\" y1=\"84\" x2=\"162\" y2=\"74\" stroke=\"#6c63ff\" stroke-width=\"1.8\"/><line x1=\"126\" y1=\"40\" x2=\"133\" y2=\"37\" stroke=\"#6c63ff\" stroke-width=\"1.8\"/><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">三条边都不等</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">没有相等的边</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">不等边三角形</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">不等边：三边各异</text></svg>",
+  "right-angled triangle": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><polygon points=\"60,92 190,92 60,34\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2.5\"/><rect x=\"60\" y=\"80\" width=\"12\" height=\"12\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"1.8\"/><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">有一个 90° 角</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">勾股定理适用</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">直角三角形</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">直角：含90°角</text></svg>",
+  "hypotenuse": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><polygon points=\"60,92 190,92 60,34\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2.5\"/><rect x=\"60\" y=\"80\" width=\"12\" height=\"12\" fill=\"none\" stroke=\"#888888\" stroke-width=\"1.5\"/><line x1=\"100\" y1=\"74\" x2=\"140\" y2=\"46\" stroke=\"#6c63ff\" stroke-width=\"2\"/><text x=\"120\" y=\"60\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">斜边</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">直角对面的最长边</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">斜边</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">斜边：最长边</text></svg>",
+  "leg": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><polygon points=\"60,92 190,92 60,34\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2.5\"/><rect x=\"60\" y=\"80\" width=\"12\" height=\"12\" fill=\"none\" stroke=\"#888888\" stroke-width=\"1.5\"/><line x1=\"76\" y1=\"86\" x2=\"96\" y2=\"86\" stroke=\"#6c63ff\" stroke-width=\"2\"/><line x1=\"70\" y1=\"74\" x2=\"70\" y2=\"54\" stroke=\"#6c63ff\" stroke-width=\"2\"/><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">组成直角的两条边</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">直角边</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">直角边</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">直角边：组成直角</text></svg>",
+  "base angle": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><polygon points=\"60,90 180,90 120,24\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2.5\"/><path d=\"M74 80 A 16 16 0 0 0 78 72\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"1.8\"/><path d=\"M166 80 A 16 16 0 0 1 162 72\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"1.8\"/><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">底边两端的角</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">等腰三角形底角相等</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">底角</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">底角：底边两端角</text></svg>",
+  "triangle median": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><polygon points=\"60,92 190,92 120,36\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2.5\"/><circle cx=\"125\" cy=\"92\" r=\"5\" fill=\"#6c63ff\"/><line x1=\"120\" y1=\"36\" x2=\"125\" y2=\"92\" stroke=\"#6c63ff\" stroke-width=\"2\" stroke-dasharray=\"5 3\"/><line x1=\"88\" y1=\"86\" x2=\"88\" y2=\"78\" stroke=\"#6c63ff\" stroke-width=\"1.8\"/><line x1=\"164\" y1=\"86\" x2=\"164\" y2=\"78\" stroke=\"#6c63ff\" stroke-width=\"1.8\"/><text x=\"140\" y=\"58\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">中线</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">顶点连对边中点</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">中线</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">中线：顶点连中点</text></svg>",
+  "altitude": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><polygon points=\"60,92 190,92 120,36\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2.5\"/><line x1=\"120\" y1=\"36\" x2=\"120\" y2=\"92\" stroke=\"#6c63ff\" stroke-width=\"2\" stroke-dasharray=\"5 3\"/><rect x=\"120\" y=\"80\" width=\"10\" height=\"10\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"1.5\"/><text x=\"132\" y=\"60\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">高</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">顶点到底边垂直</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">高</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">高：垂直高度</text></svg>",
+  "critical angle": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><line x1=\"36\" y1=\"48\" x2=\"204\" y2=\"48\" stroke=\"#311b92\" stroke-width=\"2\"/><line x1=\"36\" y1=\"92\" x2=\"204\" y2=\"92\" stroke=\"#311b92\" stroke-width=\"2\"/><line x1=\"120\" y1=\"30\" x2=\"120\" y2=\"96\" stroke=\"#888888\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/><line x1=\"52\" y1=\"24\" x2=\"116\" y2=\"56\" stroke=\"#311b92\" stroke-width=\"2.5\" marker-end=\"url(#d18ca)\"/><defs><marker id=\"d18ca\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#311b92\"/></marker></defs><line x1=\"124\" y1=\"60\" x2=\"186\" y2=\"104\" stroke=\"#6c63ff\" stroke-width=\"2.5\" marker-end=\"url(#d18ca)\"/><path d=\"M124 56 A 12 12 0 0 1 130 62\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"1.8\"/><text x=\"96\" y=\"44\" text-anchor=\"middle\" font-size=\"10\" fill=\"#311b92\" font-family=\"sans-serif\">入射角</text><text x=\"168\" y=\"84\" text-anchor=\"middle\" font-size=\"10\" fill=\"#6c63ff\" font-family=\"sans-serif\">折射角90°</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">刚好全反射的角度</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">临界角</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">临界角：全反射起点</text></svg>",
+  "optical fibre": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><path d=\"M40 60 q50 -16 100 0 q50 16 100 0\" fill=\"none\" stroke=\"#888888\" stroke-width=\"8\"/><path d=\"M40 60 q50 -16 100 0 q50 16 100 0\" fill=\"none\" stroke=\"#311b92\" stroke-width=\"2\"/><path d=\"M48 58 l12 -3 l-3 8 M66 54 l12 -3 l-3 8 M150 60 l12 -3 l-3 8\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"2\"/><line x1=\"36\" y1=\"52\" x2=\"50\" y2=\"56\" stroke=\"#311b92\" stroke-width=\"2.5\" marker-end=\"url(#d18of)\"/><defs><marker id=\"d18of\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#311b92\"/></marker></defs><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">光在管内来回弹</text><text x=\"120\" y=\"104\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">通信靠光纤</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">光导纤维</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">光导纤维：传光</text></svg>",
+  "sound": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><path d=\"M52 64 q10 -14 0 -28 M72 58 q10 -14 0 -28\" stroke=\"#311b92\" stroke-width=\"2\" fill=\"none\"/><rect x=\"40\" y=\"64\" width=\"34\" height=\"22\" rx=\"4\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><path d=\"M90 72 q8 -4 16 0 q8 4 16 0 q8 -4 16 0 q8 4 16 0 q8 -4 16 0\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"2\"/><path d=\"M90 72 q8 -6 16 0\" fill=\"none\" stroke=\"#888888\" stroke-width=\"1.5\"/><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">耳朵听到的</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">由振动产生</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">声音</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">声音：振动传播</text></svg>",
+  "sound wave": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><path d=\"M36 70 q12 -10 24 0 q12 10 24 0 q12 -10 24 0 q12 10 24 0 q12 -10 24 0 q12 10 24 0 q12 -10 24 0 q12 10 24 0\" fill=\"none\" stroke=\"#311b92\" stroke-width=\"2.5\"/><text x=\"120\" y=\"46\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\" text-anchor=\"middle\">疏密相间</text><circle cx=\"60\" cy=\"62\" r=\"6\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"1.5\"/><circle cx=\"108\" cy=\"62\" r=\"6\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"1.5\"/><circle cx=\"156\" cy=\"62\" r=\"6\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"1.5\"/><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">纵波</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">声波</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">声波：纵波</text></svg>",
+  "pitch": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><path d=\"M36 78 q8 -14 16 0 q8 14 16 0 q8 -14 16 0 q8 14 16 0 q8 -14 16 0 q8 14 16 0\" fill=\"none\" stroke=\"#311b92\" stroke-width=\"2.5\"/><path d=\"M36 44 q16 -24 32 0 q16 24 32 0 q16 -24 32 0 q16 24 32 0 q16 -24 32 0 q16 24 32 0\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"2.5\"/><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#888888\" font-family=\"sans-serif\">上密下疏</text><text x=\"56\" y=\"36\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">高音</text><text x=\"56\" y=\"92\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">低音</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">频率决定音调</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">音调</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">音调：频率高低</text></svg>",
+  "loudness": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><path d=\"M36 70 q6 -8 12 0 q6 8 12 0 q6 -8 12 0 q6 8 12 0 q6 -8 12 0 q6 8 12 0 q6 -8 12 0 q6 8 12 0\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"2\"/><path d=\"M36 70 q12 -20 24 0 q12 20 24 0 q12 -20 24 0 q12 20 24 0 q12 -20 24 0 q12 20 24 0 q12 -20 24 0 q12 20 24 0\" fill=\"none\" stroke=\"#311b92\" stroke-width=\"2.5\"/><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">波越高声越大</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">振幅决定响度</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">响度</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">响度：声音大小</text></svg>",
+  "audible range": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><line x1=\"40\" y1=\"66\" x2=\"200\" y2=\"66\" stroke=\"#311b92\" stroke-width=\"2\"/><rect x=\"74\" y=\"54\" width=\"92\" height=\"24\" rx=\"4\" fill=\"#6c63ff\" opacity=\"0.3\"/><circle cx=\"74\" cy=\"66\" r=\"4\" fill=\"#6c63ff\"/><circle cx=\"166\" cy=\"66\" r=\"4\" fill=\"#6c63ff\"/><text x=\"120\" y=\"44\" text-anchor=\"middle\" font-size=\"12\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">20 Hz ~ 20000 Hz</text><text x=\"120\" y=\"88\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">人能听到的范围</text><text x=\"120\" y=\"106\" text-anchor=\"middle\" font-size=\"9.5\" fill=\"#888888\" font-family=\"sans-serif\">低于20是次声波</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">可听范围</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">可听范围：20-2万Hz</text></svg>",
+  "ultrasound": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><path d=\"M40 70 q10 -18 20 0 q10 18 20 0 q10 -18 20 0 q10 18 20 0 q10 -18 20 0 q10 18 20 0 q10 -18 20 0 q10 18 20 0\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"2.5\"/><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">频率高于 20000 Hz</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">B超、清洁用</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">超声波</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">超声波：人听不见</text></svg>",
+  "echo": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><circle cx=\"56\" cy=\"79.2\" r=\"5.6000000000000005\" fill=\"#311b92\"/><path d=\"M47.2 104.8 q8.8 -14 17.6 0 l-5 12.8 q-3 3 -6 -1 l-4 -14 l-4 14 q-3 4 -6 1 Z\" fill=\"#311b92\" opacity=\"0.85\"/><path d=\"M66 78 q12 -4 24 0\" stroke=\"#888888\" stroke-width=\"1.5\" fill=\"none\"/><path d=\"M40 40 l30 10 l-8 12\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"2\"/><line x1=\"120\" y1=\"34\" x2=\"120\" y2=\"96\" stroke=\"#311b92\" stroke-width=\"2\"/><path d=\"M170 60 q-12 -4 -24 0 M176 40 q-10 -8 -16 -20\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"2\"/><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">声音撞墙弹回</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">山谷里喊有回声</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">回声</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">回声：声的反射</text></svg>",
+  "microphone": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"44\" y=\"46\" width=\"34\" height=\"34\" rx=\"6\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><rect x=\"44\" y=\"44\" width=\"34\" height=\"14\" rx=\"4\" fill=\"#888888\"/><line x1=\"61\" y1=\"80\" x2=\"61\" y2=\"96\" stroke=\"#311b92\" stroke-width=\"2.5\"/><path d=\"M48 96 h26 l-8 -12 h-10 Z\" fill=\"#311b92\"/><path d=\"M92 60 q10 -6 20 0 q10 6 20 0 q10 -6 20 0\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"2\"/><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">声音变电信号</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">说话→电波</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">麦克风</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">麦克风：声转电</text></svg>",
+  "unit cost": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"24\" y=\"50\" width=\"60\" height=\"40\" rx=\"6\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"1.5\"/><text x=\"54\" y=\"74\" text-anchor=\"middle\" font-size=\"11\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">总成本</text><text x=\"88\" y=\"70\" text-anchor=\"middle\" font-size=\"16\" fill=\"#333333\" font-weight=\"700\" font-family=\"sans-serif\">÷</text><rect x=\"98\" y=\"50\" width=\"52\" height=\"40\" rx=\"6\" fill=\"#ece7fb\" stroke=\"#6c63ff\" stroke-width=\"1.5\"/><text x=\"124\" y=\"74\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">产量</text><text x=\"152\" y=\"70\" text-anchor=\"middle\" font-size=\"16\" fill=\"#333333\" font-weight=\"700\" font-family=\"sans-serif\">=</text><rect x=\"162\" y=\"50\" width=\"58\" height=\"40\" rx=\"6\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"1.5\"/><text x=\"191\" y=\"74\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">单位成本</text><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#888888\" font-family=\"sans-serif\">每件产品的成本</text><text x=\"120\" y=\"108\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">生产越多越低</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">单位成本</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">单位成本：每件成本</text></svg>",
+  "labour-intensive": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><circle cx=\"52\" cy=\"79.2\" r=\"5.6000000000000005\" fill=\"#311b92\"/><path d=\"M43.2 104.8 q8.8 -14 17.6 0 l-5 12.8 q-3 3 -6 -1 l-4 -14 l-4 14 q-3 4 -6 1 Z\" fill=\"#311b92\" opacity=\"0.85\"/><circle cx=\"86\" cy=\"79.2\" r=\"5.6000000000000005\" fill=\"#311b92\"/><path d=\"M77.2 104.8 q8.8 -14 17.6 0 l-5 12.8 q-3 3 -6 -1 l-4 -14 l-4 14 q-3 4 -6 1 Z\" fill=\"#311b92\" opacity=\"0.85\"/><circle cx=\"120\" cy=\"79.2\" r=\"5.6000000000000005\" fill=\"#311b92\"/><path d=\"M111.2 104.8 q8.8 -14 17.6 0 l-5 12.8 q-3 3 -6 -1 l-4 -14 l-4 14 q-3 4 -6 1 Z\" fill=\"#311b92\" opacity=\"0.85\"/><circle cx=\"154\" cy=\"79.2\" r=\"5.6000000000000005\" fill=\"#311b92\"/><path d=\"M145.2 104.8 q8.8 -14 17.6 0 l-5 12.8 q-3 3 -6 -1 l-4 -14 l-4 14 q-3 4 -6 1 Z\" fill=\"#311b92\" opacity=\"0.85\"/><circle cx=\"188\" cy=\"79.2\" r=\"5.6000000000000005\" fill=\"#311b92\"/><path d=\"M179.2 104.8 q8.8 -14 17.6 0 l-5 12.8 q-3 3 -6 -1 l-4 -14 l-4 14 q-3 4 -6 1 Z\" fill=\"#311b92\" opacity=\"0.85\"/><rect x=\"96\" y=\"48\" width=\"48\" height=\"26\" rx=\"4\" fill=\"#ece7fb\" stroke=\"#888888\" stroke-width=\"1.5\"/><text x=\"120\" y=\"66\" text-anchor=\"middle\" font-size=\"9.5\" fill=\"#888888\" font-weight=\"700\" font-family=\"sans-serif\">机器少</text><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">人很多</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">如服装厂</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">劳动密集型</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">劳动密集：靠人力</text></svg>",
+  "capital-intensive": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"56\" y=\"60\" width=\"128\" height=\"34\" rx=\"5\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><circle cx=\"88\" cy=\"77\" r=\"9\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"2\"/><line x1=\"80\" y1=\"77\" x2=\"96\" y2=\"77\" stroke=\"#6c63ff\" stroke-width=\"2\"/><line x1=\"88\" y1=\"69\" x2=\"88\" y2=\"85\" stroke=\"#6c63ff\" stroke-width=\"2\"/><rect x=\"124\" y=\"66\" width=\"34\" height=\"22\" rx=\"3\" fill=\"#888888\"/><line x1=\"131\" y1=\"70\" x2=\"131\" y2=\"84\" stroke=\"#333333\" stroke-width=\"1.5\"/><line x1=\"141\" y1=\"70\" x2=\"141\" y2=\"84\" stroke=\"#333333\" stroke-width=\"1.5\"/><line x1=\"151\" y1=\"70\" x2=\"151\" y2=\"84\" stroke=\"#333333\" stroke-width=\"1.5\"/><circle cx=\"180\" cy=\"83.2\" r=\"3.8500000000000005\" fill=\"#311b92\"/><path d=\"M173.95 100.8 q6.050000000000001 -14 12.100000000000001 0 l-5 8.8 q-3 3 -6 -1 l-4 -14 l-4 14 q-3 4 -6 1 Z\" fill=\"#311b92\" opacity=\"0.85\"/><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">机器多钱多</text><text x=\"120\" y=\"110\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">如炼油厂</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">资本密集型</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">资本密集：靠设备</text></svg>",
+  "primary sector": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"84\" y=\"52\" width=\"72\" height=\"40\" rx=\"5\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"120\" y=\"76\" text-anchor=\"middle\" font-size=\"13\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">第一产业</text><text x=\"52\" y=\"68\" text-anchor=\"middle\" font-size=\"14\" fill=\"#333333\" font-family=\"sans-serif\">🌾</text><text x=\"188\" y=\"68\" text-anchor=\"middle\" font-size=\"14\" fill=\"#333333\" font-family=\"sans-serif\">⛏️</text><text x=\"52\" y=\"88\" text-anchor=\"middle\" font-size=\"9.5\" fill=\"#888888\" font-family=\"sans-serif\">农业</text><text x=\"188\" y=\"88\" text-anchor=\"middle\" font-size=\"9.5\" fill=\"#888888\" font-family=\"sans-serif\">采矿</text><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#888888\" font-family=\"sans-serif\">直接取自然资源</text><text x=\"120\" y=\"110\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">农、林、渔、矿</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">第一产业</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">第一产业：采资源</text></svg>",
+  "secondary sector": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"84\" y=\"52\" width=\"72\" height=\"40\" rx=\"5\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"120\" y=\"76\" text-anchor=\"middle\" font-size=\"13\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">第二产业</text><rect x=\"36\" y=\"56\" width=\"36\" height=\"28\" rx=\"4\" fill=\"#888888\"/><path d=\"M36 68 l18 -6 l8 4 l-8 6 Z\" fill=\"#333333\" opacity=\"0.6\"/><text x=\"54\" y=\"98\" text-anchor=\"middle\" font-size=\"9.5\" fill=\"#888888\" font-family=\"sans-serif\">制造</text><path d=\"M168 60 q10 -8 20 0 q10 8 20 0\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"2\"/><text x=\"188\" y=\"84\" text-anchor=\"middle\" font-size=\"9.5\" fill=\"#6c63ff\" font-family=\"sans-serif\">加工</text><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#888888\" font-family=\"sans-serif\">把原料变产品</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">工厂制造业</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">第二产业</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">第二产业：造产品</text></svg>",
+  "tertiary sector": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"84\" y=\"52\" width=\"72\" height=\"40\" rx=\"5\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"120\" y=\"76\" text-anchor=\"middle\" font-size=\"13\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">第三产业</text><circle cx=\"50\" cy=\"76.8\" r=\"4.8999999999999995\" fill=\"#6c63ff\"/><path d=\"M42.3 99.2 q7.699999999999999 -14 15.399999999999999 0 l-5 11.2 q-3 3 -6 -1 l-4 -14 l-4 14 q-3 4 -6 1 Z\" fill=\"#6c63ff\" opacity=\"0.85\"/><circle cx=\"190\" cy=\"76.8\" r=\"4.8999999999999995\" fill=\"#6c63ff\"/><path d=\"M182.3 99.2 q7.699999999999999 -14 15.399999999999999 0 l-5 11.2 q-3 3 -6 -1 l-4 -14 l-4 14 q-3 4 -6 1 Z\" fill=\"#6c63ff\" opacity=\"0.85\"/><path d=\"M64 76 q10 -6 20 0 M170 76 q-10 -6 -20 0\" stroke=\"#6c63ff\" stroke-width=\"1.8\" fill=\"none\"/><text x=\"50\" y=\"104\" text-anchor=\"middle\" font-size=\"9.5\" fill=\"#888888\" font-family=\"sans-serif\">服务</text><text x=\"190\" y=\"104\" text-anchor=\"middle\" font-size=\"9.5\" fill=\"#888888\" font-family=\"sans-serif\">教育</text><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#888888\" font-family=\"sans-serif\">提供服务</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">教育/医疗/金融</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">第三产业</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">第三产业：服务业</text></svg>",
+  "firm": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"44\" y=\"54\" width=\"70\" height=\"40\" rx=\"5\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><polygon points=\"44,54 79,38 114,54\" fill=\"#311b92\"/><text x=\"79\" y=\"78\" text-anchor=\"middle\" font-size=\"12\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">企业</text><text x=\"140\" y=\"64\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">生产商品</text><text x=\"140\" y=\"84\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">或服务</text><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#888888\" font-family=\"sans-serif\">一个经营单位</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">厂商</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">厂商：经营单位</text></svg>",
+  "plant": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"36\" y=\"56\" width=\"80\" height=\"36\" rx=\"4\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><rect x=\"52\" y=\"46\" width=\"10\" height=\"12\" fill=\"#888888\"/><rect x=\"86\" y=\"46\" width=\"10\" height=\"12\" fill=\"#888888\"/><path d=\"M96 62 l14 0 l-7 10 Z\" fill=\"#6c63ff\" opacity=\"0.7\"/><text x=\"76\" y=\"84\" text-anchor=\"middle\" font-size=\"11\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">厂房</text><text x=\"140\" y=\"66\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">生产的地方</text><text x=\"140\" y=\"86\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">机器轰鸣</text><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#888888\" font-family=\"sans-serif\">工厂车间</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">工厂</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">工厂：生产场所</text></svg>",
+  "branch": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"30\" y=\"52\" width=\"64\" height=\"40\" rx=\"5\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"62\" y=\"76\" text-anchor=\"middle\" font-size=\"11\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">总部</text><line x1=\"102\" y1=\"72\" x2=\"124\" y2=\"72\" stroke=\"#6c63ff\" stroke-width=\"2.5\" marker-end=\"url(#d18br)\"/><defs><marker id=\"d18br\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#6c63ff\"/></marker></defs><rect x=\"132\" y=\"52\" width=\"80\" height=\"40\" rx=\"5\" fill=\"#ece7fb\" stroke=\"#6c63ff\" stroke-width=\"2\"/><text x=\"172\" y=\"70\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">分店</text><text x=\"172\" y=\"88\" text-anchor=\"middle\" font-size=\"9.5\" fill=\"#888888\" font-family=\"sans-serif\">分行/分部</text><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#888888\" font-family=\"sans-serif\">总部的派出机构</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">分支机构</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">分支机构：分部</text></svg>",
+  "industry": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"36\" y=\"52\" width=\"52\" height=\"40\" rx=\"5\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"62\" y=\"76\" text-anchor=\"middle\" font-size=\"11\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">汽车</text><rect x=\"94\" y=\"52\" width=\"52\" height=\"40\" rx=\"5\" fill=\"#ece7fb\" stroke=\"#6c63ff\" stroke-width=\"2\"/><text x=\"120\" y=\"76\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">钢铁</text><rect x=\"152\" y=\"52\" width=\"52\" height=\"40\" rx=\"5\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"178\" y=\"76\" text-anchor=\"middle\" font-size=\"11\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">旅游</text><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#888888\" font-family=\"sans-serif\">同类企业的集合</text><text x=\"120\" y=\"110\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">行业</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">行业</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">行业：同类企业</text></svg>",
+  "calorific value": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"40\" y=\"54\" width=\"52\" height=\"38\" rx=\"5\" fill=\"#3a3a4a\"/><text x=\"66\" y=\"78\" text-anchor=\"middle\" font-size=\"11\" fill=\"#ffffff\" font-weight=\"700\" font-family=\"sans-serif\">煤</text><path d=\"M112 60 q8 -14 0 -26 M128 64 q8 -14 0 -26\" stroke=\"#6c63ff\" stroke-width=\"2\" fill=\"none\"/><rect x=\"104\" y=\"72\" width=\"34\" height=\"20\" rx=\"4\" fill=\"#ece7fb\" stroke=\"#6c63ff\" stroke-width=\"2\"/><text x=\"168\" y=\"62\" text-anchor=\"middle\" font-size=\"11\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">放出的热量</text><text x=\"168\" y=\"82\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">单位：J/kg</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">燃料能量多少</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">热值</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">热值：燃料放热</text></svg>",
+  "pollutant": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"36\" y=\"56\" width=\"64\" height=\"36\" rx=\"4\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><rect x=\"48\" y=\"48\" width=\"10\" height=\"10\" fill=\"#888888\"/><path d=\"M58 44 q4 -8 0 -14\" stroke=\"#888888\" stroke-width=\"2\" fill=\"none\"/><text x=\"68\" y=\"84\" text-anchor=\"middle\" font-size=\"11\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">工厂</text><path d=\"M116 62 q8 -4 16 0 q8 4 16 0\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"2\"/><text x=\"150\" y=\"46\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">废气</text><text x=\"120\" y=\"110\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">污染环境的物质</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">污染物</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">污染物：害环境</text></svg>",
+  "air pollution": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"30\" y=\"56\" width=\"54\" height=\"34\" rx=\"4\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><rect x=\"40\" y=\"48\" width=\"10\" height=\"10\" fill=\"#888888\"/><path d=\"M52 44 q4 -8 0 -14\" stroke=\"#888888\" stroke-width=\"2\" fill=\"none\"/><path d=\"M100 60 q8 -4 16 0 q8 4 16 0 q8 -4 16 0\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"2\"/><circle cx=\"92\" cy=\"70\" r=\"4\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"1.5\"/><circle cx=\"120\" cy=\"66\" r=\"5\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"1.5\"/><circle cx=\"150\" cy=\"72\" r=\"4\" fill=\"none\" stroke=\"#6c63ff\" stroke-width=\"1.5\"/><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">有害气体入空气</text><text x=\"120\" y=\"110\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">尾气+烟尘</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">空气污染</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">空气污染：害健康</text></svg>",
+  "smog": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"40\" y=\"48\" width=\"90\" height=\"16\" rx=\"8\" fill=\"#888888\" opacity=\"0.5\"/><rect x=\"60\" y=\"68\" width=\"90\" height=\"14\" rx=\"7\" fill=\"#888888\" opacity=\"0.4\"/><rect x=\"52\" y=\"88\" width=\"70\" height=\"12\" rx=\"6\" fill=\"#888888\" opacity=\"0.35\"/><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">灰蒙蒙的雾</text><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">雾霾天</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">雾霾</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">雾霾：灰蒙蒙</text></svg>",
+  "sulfur dioxide": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"44\" y=\"52\" width=\"76\" height=\"40\" rx=\"5\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"82\" y=\"78\" text-anchor=\"middle\" font-size=\"17\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">SO₂</text><rect x=\"134\" y=\"58\" width=\"66\" height=\"28\" rx=\"4\" fill=\"#ece7fb\" stroke=\"#6c63ff\" stroke-width=\"2\"/><text x=\"167\" y=\"76\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">燃煤产生</text><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#888888\" font-family=\"sans-serif\">刺鼻气体</text><text x=\"120\" y=\"110\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">酸雨元凶之一</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">二氧化硫</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">二氧化硫：酸雨</text></svg>",
+  "sulfur trioxide": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"44\" y=\"52\" width=\"76\" height=\"40\" rx=\"5\" fill=\"#ece7fb\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"82\" y=\"78\" text-anchor=\"middle\" font-size=\"17\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">SO₃</text><line x1=\"128\" y1=\"72\" x2=\"152\" y2=\"72\" stroke=\"#6c63ff\" stroke-width=\"2.5\" marker-end=\"url(#d18so)\"/><defs><marker id=\"d18so\" markerWidth=\"9\" markerHeight=\"9\" refX=\"7\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L7,3 L0,6 Z\" fill=\"#6c63ff\"/></marker></defs><rect x=\"158\" y=\"58\" width=\"58\" height=\"28\" rx=\"4\" fill=\"#ece7fb\" stroke=\"#6c63ff\" stroke-width=\"2\"/><text x=\"187\" y=\"76\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">酸雨</text><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#888888\" font-family=\"sans-serif\">遇水变硫酸</text><text x=\"120\" y=\"110\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">腐蚀建筑</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">三氧化硫</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">三氧化硫：致酸雨</text></svg>",
+  "nitrogen dioxide": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"44\" y=\"52\" width=\"76\" height=\"40\" rx=\"5\" fill=\"#f5e6d8\" stroke=\"#b26a2b\" stroke-width=\"2\"/><text x=\"82\" y=\"78\" text-anchor=\"middle\" font-size=\"17\" fill=\"#b26a2b\" font-weight=\"700\" font-family=\"sans-serif\">NO₂</text><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#b26a2b\" font-weight=\"700\" font-family=\"sans-serif\">棕色气体</text><text x=\"120\" y=\"110\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">汽车尾气</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">二氧化氮</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">二氧化氮：棕气体</text></svg>",
+  "greenhouse effect": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><circle cx=\"70\" cy=\"70\" r=\"18\" fill=\"#ffd700\" stroke=\"#c9a227\" stroke-width=\"2\"/><path d=\"M70 34 l0 14 M70 92 l0 14 M34 70 l14 0 M92 70 l14 0 M42 42 l10 10 M88 88 l10 10 M98 42 l-10 10 M52 88 l-10 10\" stroke=\"#c9a227\" stroke-width=\"2\"/><path d=\"M118 74 q10 -10 20 0\" stroke=\"#888888\" stroke-width=\"1.5\" fill=\"none\"/><path d=\"M118 74 q10 10 20 0\" stroke=\"#888888\" stroke-width=\"1.5\" fill=\"none\"/><text x=\"156\" y=\"68\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">热量</text><text x=\"156\" y=\"88\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">被锁住</text><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">CO₂ 留住热量</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">地球变暖</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">温室效应</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">温室效应：热量留存</text></svg>",
+  "global warming": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><circle cx=\"120\" cy=\"74\" r=\"24\" fill=\"#4caf50\" stroke=\"#311b92\" stroke-width=\"2\"/><path d=\"M120 52 q-14 8 -12 16 q8 8 24 4 q8 -2 6 -10 q-4 -12 -18 -10 Z\" fill=\"#64b5f6\"/><path d=\"M88 44 q4 -8 0 -16 M96 48 q4 -8 0 -16 M146 44 q-4 -8 0 -16 M138 48 q-4 -8 0 -16\" stroke=\"#c9a227\" stroke-width=\"2\" fill=\"none\"/><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"11\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">温度在上升</text><text x=\"120\" y=\"112\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888888\" font-family=\"sans-serif\">冰川融化</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">全球变暖</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">全球变暖：升温</text></svg>",
+  "metallic property": "<svg viewBox=\"0 0 240 140\" xmlns=\"http://www.w3.org/2000/svg\" style=\"height:auto;display:block;margin:0 auto;background:#f3f0fa;border-radius:10px;\"><rect x=\"34\" y=\"58\" width=\"56\" height=\"34\" rx=\"4\" fill=\"#c9d2dd\" stroke=\"#311b92\" stroke-width=\"2\"/><text x=\"62\" y=\"80\" text-anchor=\"middle\" font-size=\"12\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">金属</text><text x=\"110\" y=\"60\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">导电</text><text x=\"110\" y=\"78\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">导热</text><text x=\"110\" y=\"96\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#6c63ff\" font-weight=\"700\" font-family=\"sans-serif\">可延展</text><text x=\"168\" y=\"60\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#888888\" font-weight=\"700\" font-family=\"sans-serif\">有光泽</text><text x=\"168\" y=\"80\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#888888\" font-weight=\"700\" font-family=\"sans-serif\">密度大</text><text x=\"120\" y=\"46\" text-anchor=\"middle\" font-size=\"10.5\" fill=\"#888888\" font-family=\"sans-serif\">金属的共同特点</text><text x=\"120\" y=\"26\" text-anchor=\"middle\" font-size=\"15\" fill=\"#311b92\" font-weight=\"700\" font-family=\"sans-serif\">金属性质</text><line x1=\"24\" y1=\"121\" x2=\"216\" y2=\"121\" stroke=\"#ddd\" stroke-width=\"1\"/><text x=\"120\" y=\"133\" text-anchor=\"middle\" font-size=\"11.5\" fill=\"#888888\" font-family=\"sans-serif\">金属性质：导电导热</text></svg>"
+};
+
+
+// ============================================================
+// APP STATE
+// ============================================================
+let currentIndex = 0;
+let shuffled = [];
+let utterance = null;
+
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function getVisibleState() {
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('quizScreen').style.display = 'none';
+  document.getElementById('answerScreen').style.display = 'none';
+  document.getElementById('completeScreen').style.display = 'none';
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function startQuiz(shuffleMode) {
+  if (shuffleMode) {
+    shuffled = shuffleArray([...WORDS]);
+  } else {
+    shuffled = [...WORDS];
+  }
+  currentIndex = 0;
+  showQuiz(currentIndex);
+}
+
+function goHome() {
+  if (utterance && window.speechSynthesis) window.speechSynthesis.cancel();
+  getVisibleState();
+  document.getElementById('startScreen').style.display = 'flex';
+}
+
+function nextWord() {
+  if (utterance && window.speechSynthesis) window.speechSynthesis.cancel();
+  currentIndex++;
+  if (currentIndex >= shuffled.length) {
+    showComplete();
+  } else {
+    showQuiz(currentIndex);
+  }
+}
+
+function showComplete() {
+  getVisibleState();
+  document.getElementById('completeScreen').style.display = 'flex';
+}
+
+// ============================================================
+// WORD LIST
+// ============================================================
+function showWordList() {
+  const overlay = document.getElementById('wordlistOverlay');
+  const grid = document.getElementById('wordlistGrid');
+  overlay.classList.add('open');
+
+  // Build grid from WORDS (original order)
+  grid.innerHTML = WORDS.map((w, i) => {
+    // Find this word in shuffled to check status
+    const shuffledIdx = shuffled.findIndex(s => s.word === w.word);
+    const isDone = shuffledIdx < currentIndex;
+    const isCurrent = shuffledIdx === currentIndex;
+
+    let cls = 'wordlist-item';
+    if (isCurrent) cls += ' current';
+    else if (isDone) cls += ' done';
+
+    const label = (i + 1).toString().padStart(2, '0');
+    return `<div class="${cls}" data-word="${w.word}" onclick="jumpToWord('${w.word.replace(/'/g, "\\'")}')">
+      <span class="wl-idx">${label}</span>
+      <span class="wl-word">${w.word}</span>
+      <span class="wl-mean">${w.meaning}</span>
+    </div>`;
+  }).join('');
+}
+
+function hideWordList() {
+  document.getElementById('wordlistOverlay').classList.remove('open');
+}
+
+function jumpToWord(word) {
+  const idx = shuffled.findIndex(w => w.word === word);
+  if (idx === -1) return;
+  currentIndex = idx;
+  hideWordList();
+  if (utterance && window.speechSynthesis) window.speechSynthesis.cancel();
+  showQuiz(currentIndex);
+}
+
+// ============================================================
+// QUIZ
+// ============================================================
+function showQuiz(index) {
+  getVisibleState();
+  document.getElementById('quizScreen').style.display = 'block';
+
+  const word = shuffled[index];
+  const total = shuffled.length;
+  document.getElementById('progressText').textContent = `${index+1}/${total}`;
+  document.getElementById('progressFill').style.width = `${((index+1)/total)*100}%`;
+
+  const isPhrasal = word.word.includes(' ');
+  const wordEl = document.getElementById('quizWord');
+  wordEl.textContent = word.word;
+  wordEl.className = 'word' + (isPhrasal ? ' phrasal' : '');
+
+  document.getElementById('quizPhonetic').textContent = word.phonetic;
+
+  // Example sentence
+  const sentKey = word.word;
+  const sentEl = document.getElementById('sentenceText');
+  if (SENTENCES[sentKey]) {
+    sentEl.textContent = SENTENCES[sentKey];
+  } else {
+    sentEl.textContent = `"${word.word}" — ${word.meaning.replace(/^[nvadj]+\/\w+\.\s*/,'')}`;
+  }
+
+  // Choices — smarter: avoid duplicate meanings, include word for wrong hints
+  const correct = word.meaning;
+  const wrongPool = [];
+  const seenMeanings = new Set([correct]);
+  for (const w of WORDS) {
+    if (w.meaning !== correct && !seenMeanings.has(w.meaning)) {
+      seenMeanings.add(w.meaning);
+      wrongPool.push({meaning: w.meaning, word: w.word});
+    }
+  }
+  // Prefer confusable words (same starting letter, similar length)
+  const targetWord = word.word.toLowerCase();
+  const scored = wrongPool.map(item => {
+    let score = Math.random();
+    const ow = item.word.toLowerCase();
+    if (ow[0] === targetWord[0]) score += 3;
+    if (Math.abs(ow.length - targetWord.length) <= 2) score += 1;
+    for (let i = 0; i < Math.min(4, targetWord.length, ow.length); i++) {
+      if (targetWord[i] === ow[i]) score += 1;
+    }
+    return {item, score};
+  });
+  scored.sort((a, b) => b.score - a.score);
+  const wrongs = scored.slice(0, 3).map(s => s.item);
+  const choices = shuffleArray([{meaning: correct, word: word.word}, ...wrongs]);
+  const labels = ['A', 'B', 'C', 'D'];
+  const container = document.getElementById('choicesContainer');
+  container.innerHTML = '';
+  choices.forEach((choice, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = `<span class="choice-label">${labels[i]}</span><span>${choice.meaning}</span>`;
+    btn.dataset.value = choice.meaning;
+    btn.dataset.correct = (choice.meaning === correct) ? '1' : '0';
+    btn.dataset.choiceWord = choice.word;
+    btn.onclick = () => handleChoice(btn, correct, word);
+    container.appendChild(btn);
+  });
+
+  // Reset any remaining wrong-button state from previous attempts
+  document.querySelectorAll('.choice-btn.wrong').forEach(b => {
+    b.classList.remove('wrong');
+    b.classList.remove('disabled');
+  });
+}
+
+function handleChoice(btn, correct, word) {
+  const isCorrect = btn.dataset.correct === '1';
+
+  if (isCorrect) {
+    const allBtns = document.querySelectorAll('.choice-btn');
+    allBtns.forEach(b => b.classList.add('disabled'));
+    btn.classList.add('correct');
+    showToast('✅ 回答正确！', 'success');
+    setTimeout(() => showAnswer(word), 600);
+  } else {
+    btn.classList.add('wrong');
+    btn.classList.add('disabled');
+    btn.style.animation = 'shake 0.3s ease';
+    setTimeout(() => { btn.style.animation = ''; }, 300);
+    // Show which word this wrong meaning belongs to
+    const ww = btn.dataset.choiceWord || '';
+    const vm = btn.dataset.value;
+    let hint = btn.querySelector('.wrong-hint');
+    if (!hint) {
+      hint = document.createElement('div');
+      hint.className = 'wrong-hint';
+      btn.appendChild(hint);
+    }
+    hint.textContent = '→ ' + ww;
+    showToast('❌ ' + ww + ' = ' + vm, 'error');
+  }
+}
+
+// ============================================================
+// ANSWER (DETAIL) PAGE
+// ============================================================
+function showAnswer(word) {
+  if (utterance && window.speechSynthesis) window.speechSynthesis.cancel();
+  getVisibleState();
+  document.getElementById('answerScreen').style.display = 'block';
+
+  const isPhrasal = word.word.includes(' ');
+  const ansWordEl = document.getElementById('ansWord');
+  ansWordEl.textContent = word.word;
+  ansWordEl.className = 'word' + (isPhrasal ? ' phrasal' : '');
+
+  document.getElementById('ansPhonetic').textContent = word.phonetic;
+  document.getElementById('ansMeaning').textContent = word.meaning;
+
+  const sentKey = word.word;
+  document.getElementById('ansExampleEn').textContent = SENTENCES[sentKey] || '——';
+  document.getElementById('ansExampleCn').textContent = TRANSLATIONS[sentKey] || '——';
+
+  // Phrases
+  const phrasesContainer = document.getElementById('ansPhrasesContainer');
+  const phrasesEl = document.getElementById('ansPhrases');
+  if (PHRASES[sentKey] && PHRASES[sentKey].length > 0) {
+    phrasesContainer.style.display = 'block';
+    phrasesEl.innerHTML = PHRASES[sentKey].map(p =>
+      `<div class="phrase-item"><span class="phrase-en">${p}</span></div>`
+    ).join('');
+  } else {
+    phrasesContainer.style.display = 'none';
+  }
+
+  // Example image (subject words)
+  const imgCard = document.getElementById('ansImageCard');
+  const imgEl = document.getElementById('ansImage');
+  if (typeof IMAGES !== 'undefined' && IMAGES[sentKey]) {
+    imgCard.style.display = 'block';
+    imgEl.innerHTML = IMAGES[sentKey];
+  } else {
+    imgCard.style.display = 'none';
+  }
+
+  // Auto-play pronunciation
+  playWordAudio(word.word);
+}
+
+// ============================================================
+// AUDIO (Web Speech API)
+// ============================================================
+let _voicesLoaded = false;
+const PREFERRED_VOICES = [
+  // Tier 1: best natural macOS voices
+  'Samantha',   // en-US — excellent
+  'Karen',      // en-AU — excellent
+  'Daniel',     // en-GB — excellent British
+  'Moira',      // en-IE — excellent Irish
+  'Tessa',      // en-ZA — excellent
+  // Tier 2: Google Chrome voices
+  'Google US English',
+  'Google UK English Female',
+  'Google UK English Male',
+  // Tier 3: remaining macOS English voices
+  'Flo (英语（美国）)', 'Flo (英语（英国）)',
+  'Reed (英语（美国）)', 'Reed (英语（英国）)',
+  'Sandy (英语（美国）)', 'Sandy (英语（英国）)',
+  'Shelley (英语（美国）)', 'Shelley (英语（英国）)',
+  'Grandma (英语（美国）)', 'Grandma (英语（英国）)',
+  'Grandpa (英语（美国）)', 'Grandpa (英语（英国）)',
+  'Rocko (英语（美国）)', 'Rocko (英语（英国）)',
+  'Eddy (英语（美国）)', 'Eddy (英语（英国）)',
+  'Albert', 'Kathy', 'Rishi',
+  // Fallback - any English
+];
+
+function ensureVoices() {
+  return new Promise((resolve) => {
+    if (_voicesLoaded) { resolve(); return; }
+    const voices = window.speechSynthesis.getVoices();
+    if (voices.length > 0) {
+      _voicesLoaded = true;
+      resolve();
+      return;
+    }
+    window.speechSynthesis.onvoiceschanged = () => {
+      _voicesLoaded = true;
+      resolve();
+    };
+    // Safety timeout
+    setTimeout(() => { _voicesLoaded = true; resolve(); }, 1000);
+  });
+}
+
+function findBestVoice() {
+  const voices = window.speechSynthesis.getVoices();
+  if (!voices || voices.length === 0) return null;
+
+  // 1. Try preferred voices by name
+  for (const name of PREFERRED_VOICES) {
+    const found = voices.find(v => v.name === name);
+    if (found) return found;
+  }
+
+  // 2. Try any English voice, prefer en-US then en-GB
+  const enUS = voices.find(v => v.lang.startsWith('en-US'));
+  if (enUS) return enUS;
+  const enGB = voices.find(v => v.lang.startsWith('en-GB'));
+  if (enGB) return enGB;
+  const enAU = voices.find(v => v.lang.startsWith('en-AU'));
+  if (enAU) return enAU;
+  const anyEn = voices.find(v => v.lang.startsWith('en'));
+  if (anyEn) return anyEn;
+
+  // 3. Last resort: first available voice
+  return voices[0];
+}
+
+function playWordAudio(forceWord) {
+  if (!window.speechSynthesis) return;
+  const word = forceWord || shuffled[currentIndex]?.word;
+  if (!word) return;
+
+  window.speechSynthesis.cancel();
+
+  // Handle speaker button on whichever page is visible
+  const quizSpeaker = document.getElementById('speakerBtn');
+  const ansSpeaker = document.getElementById('ansSpeakerBtn');
+  [quizSpeaker, ansSpeaker].forEach(el => { if (el) el.classList.add('playing'); });
+
+  utterance = new SpeechSynthesisUtterance(word);
+
+  const best = findBestVoice();
+  if (best) {
+    utterance.voice = best;
+    utterance.lang = best.lang;
+  } else {
+    utterance.lang = 'en-US';
+  }
+
+  // HIFI: slower, clearer, with natural pitch variation
+  utterance.rate = 0.82;
+  utterance.pitch = 1.05;
+  utterance.volume = 1.0;
+
+  utterance.onend = () => {
+    [quizSpeaker, ansSpeaker].forEach(el => { if (el) el.classList.remove('playing'); });
+  };
+  utterance.onerror = () => {
+    [quizSpeaker, ansSpeaker].forEach(el => { if (el) el.classList.remove('playing'); });
+  };
+
+  window.speechSynthesis.speak(utterance);
+}
+
+// Load voices eagerly
+if (window.speechSynthesis) {
+  ensureVoices();
+  // Refresh voices list periodically (Chrome loads them async)
+  window.speechSynthesis.onvoiceschanged = ensureVoices;
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+let toastTimer = null;
+function showToast(msg, type) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast ' + type + ' show';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    el.classList.remove('show');
+  }, 1500);
+}
+</script>
+</body>
+</html>
